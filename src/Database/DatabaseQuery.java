@@ -47,7 +47,7 @@ public class DatabaseQuery extends DbInitalizer{
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Constructors">
-    DatabaseQuery() {
+    public DatabaseQuery() {
         try {
 
             cnn = DriverManager.getConnection(url, user, password);
@@ -61,7 +61,7 @@ public class DatabaseQuery extends DbInitalizer{
         }
     }
 
-    DatabaseQuery(String url, String user, String password) {
+   public DatabaseQuery(String url, String user, String password) {
         try {
             this.url = url;
             this.password = password;
@@ -78,6 +78,8 @@ public class DatabaseQuery extends DbInitalizer{
     }
 // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Clean Ups">
+
+   
 
     private void cleanQueryArrays() {
         setQueryFieldNames(null);

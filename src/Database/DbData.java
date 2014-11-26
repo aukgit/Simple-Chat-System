@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Arrays;
 
 /**
  *
@@ -97,9 +98,39 @@ public class DbData extends SQLError {
         for (String column : _columns) {
             rowValues[currentCol++] = _rs.getString(column);
         }
+        _rs.beforeFirst();
 
         return rowValues;
 
+    }
+
+    public String getRowValue(int index, String columnName) throws SQLException {
+        if (isInitialized) {
+            String[] rowValues = _data.get(index);
+            //get the index of the column name
+            int colIndex = java.util.Arrays.asList(_columns).indexOf(columnName);
+            if (colIndex > -1) {
+                return rowValues[colIndex];
+            } else {
+                return "";
+            }
+        }
+
+        if (_rs == null || _columns == null || _columns.length == 0) {
+            ErrorMessage("Record Set empty.", "reIntialize");
+            return null;
+        }
+        _rs.beforeFirst();
+        _rs.relative(index); // go to the row index
+
+        for (String column : _columns) {
+            if (column.equals(columnName)) {
+                String result = _rs.getString(column);
+                _rs.beforeFirst();
+                return result;
+            }
+        }
+        return "";
     }
 
     public ArrayList<String[]> getData(int index) {

@@ -1,6 +1,9 @@
 package ChatConnection;
 
 import ChatConnection.*;
+import CurrentDb.*;
+import Database.DatabaseQuery;
+import Database.DbData;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,19 +24,48 @@ public class ServerConfig implements Runnable {
     private static Scanner in;
     private int serverRefershAfterHits;
     private int serverHitCounter = 0;
+    private ResultSet server;
+    DatabaseQuery query;
+    DbData serverData;
+    int port;
+    boolean isActive = false;
 
     public ServerConfig() {
         this.serverRefershAfterHits = 20000;
+        serverData = new DbData();
     }
-    
-    private ReadDataFrom
-    
+
+    private void initalizeQuery() {
+        query = new DatabaseQuery();
+        // setting table name
+        query.setTableName(TableNames.SERVERSETTING);
+    }
+
+    /// Refreshing Server ResultSet
+    /// refresh port
+    private void reReadDataFromServer() {
+        // executing the query
+        server = query.ExecuteReadQuery(query.getSelectSQL());
+        serverData.intialize(server, query.columnsNames());
+        try {
+            port = Integer.parseInt(serverData.getRowValue(0, ServerSettingColumns.ServerPort));
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerConfig.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            isActive = serverData.getRowValue(0, ServerSettingColumns.IsActive).equals("1");
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerConfig.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     @Override
     public void run() {
         in = new Scanner(System.in);
-        
-        System.out.println("(Server) Enter your server port no:");
-        int port = in.nextInt();
+
+        //refeshes port and is active state
+        reReadDataFromServer();
+
         System.out.println("Server Estabilsh Connection On Localhost or own ip with port : "
                 + port);
         try {
@@ -41,7 +75,7 @@ public class ServerConfig implements Runnable {
         }
         System.out.println("Now you can run your client app.");
 
-        while (true) {
+        while (isActive) {
             Socket connectionSocket = null;
             try {
                 connectionSocket = severSocket.accept();
@@ -70,7 +104,7 @@ public class ServerConfig implements Runnable {
             // output to client, to send data to the server
             DataOutputStream dataOutputStream = new DataOutputStream(
                     outputStream);
-			// get output from server
+            // get output from server
 
             String readingLineFromClientSocket = null;
             try {
@@ -85,6 +119,13 @@ public class ServerConfig implements Runnable {
                 dataOutputStream.writeBytes(modified + "\n");
             } catch (IOException ex) {
                 Logger.getLogger(ServerConfig.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            serverHitCounter++;
+            System.err.println("Counter : " + serverHitCounter);
+            if (serverHitCounter >= serverRefershAfterHits) {
+                serverHitCounter = 0;
+                //refeshes port and is active state
+                reReadDataFromServer();
             }
 
         }
