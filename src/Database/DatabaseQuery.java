@@ -1188,18 +1188,21 @@ public class DatabaseQuery implements ISoftwareInformation, QueryTypes {
 // </editor-fold>
     // /**
 //
-    public static void main(String args[]) {
-//        ArraryMore arr = new ArraryMore();
-        DatabaseQuery q = new DatabaseQuery();
-        q.setTableName("chatsession");
-        q.insertData("timed,isActive", "2014-11-26 03:55:57,1");
-
-        q.readData(true);
-        q.ExecuteReadQuery(q.getSelectSQL(), true);
-        q.showDataSmartFormat();
-        String db[] = q.showDatabases();
-
-    }
+//    public static void main(String args[]) {
+//
+//        DatabaseQuery q = new DatabaseQuery();
+//        q.setTableName("chatsession");
+//        q.insertData("timed,isActive", "2014-11-26 03:55:57,1");
+//
+//        q.readData(true);
+//        q.ExecuteReadQuery(q.getSelectSQL(), true);
+//        q.showDataSmartFormat();
+//        String db[] = q.showDatabases();
+//        for (String singleDb : db) {
+//            System.out.println(singleDb);
+//        }
+//    }
+    
 //    
 //    public static void main(String[] argv) throws Exception {
 //
