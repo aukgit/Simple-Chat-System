@@ -15,7 +15,7 @@ import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DatabaseQuery implements ISoftwareInformation, QueryTypes {
+public class DatabaseQuery extends DbInitalizer{
 
     StringMore strMore = new StringMore();
     // <editor-fold defaultstate="collapsed" desc="Intializers & Configarations">
@@ -836,30 +836,12 @@ public class DatabaseQuery implements ISoftwareInformation, QueryTypes {
         return s.replaceAll("_", " ").replace(c, c2);
     }
 // </editor-fold>
+    
+//    public DbData GetData(){
+//        
+//    }
 
-    // <editor-fold defaultstate="collapsed" desc="Error Message">
-    public void ErrorMessage(Exception e, String QueryText) {
-        System.out.println("{SQL Syntax: " + QueryText);
-        System.err.println(e);
-        System.out.println("}");
-    }
-
-    public void ErrorMessage(Exception e, String QueryText, String MethodName) {
-        System.out.println("{SQL Syntax: " + QueryText + " \nMethod Name: [" + MethodName + "]");
-        System.err.println(e);
-        System.out.println("}");
-
-    }
-
-    public void ErrorMessage(String QueryText) {
-        System.out.println("{SQL Syntax: " + QueryText);
-        System.out.println("}");
-    }
-
-    public void ErrorMessage(Exception e) {
-        System.err.println("{" + e + "}");
-    }
-    // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Getters Setters Folder">
 
     /**

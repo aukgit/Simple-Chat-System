@@ -14,7 +14,7 @@ package Database;
  *
  * @author Alim
  */
-public interface QueryTypes {
+public interface IQueryTypes {
     public int EXACT = 0;
     public int EXACT_FROM_FRIST = 1;
     public int ANYWHERE = 2;
