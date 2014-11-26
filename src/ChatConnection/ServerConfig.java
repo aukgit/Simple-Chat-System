@@ -23,7 +23,9 @@ public class ServerConfig implements Runnable {
     public ServerConfig() {
         this.serverRefershAfterHits = 20000;
     }
-
+    
+    private ReadDataFrom
+    
     @Override
     public void run() {
         in = new Scanner(System.in);
