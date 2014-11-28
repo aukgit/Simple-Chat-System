@@ -4,10 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/E:/Working/GitHub/Simple-Chat-System/src/Database/SQLError.java</file>
-            <file>file:/E:/Working/GitHub/Simple-Chat-System/src/Startup/Startup.java</file>
+            <file>file:/E:/Working/GitHub/Simple-Chat-System/src/SimpleChatSystem/RegisterForm.java</file>
             <file>file:/E:/Working/GitHub/Simple-Chat-System/src/SimpleChatSystem/SimpleChatSystem.java</file>
             <file>file:/E:/Working/GitHub/Simple-Chat-System/src/Database/DatabaseQuery.java</file>
             <file>file:/E:/Working/GitHub/Simple-Chat-System/src/Database/DbInitalizer.java</file>
+            <file>file:/E:/Working/GitHub/Simple-Chat-System/src/SimpleChatSystem/Startup.java</file>
             <file>file:/E:/Working/GitHub/Simple-Chat-System/src/Database/DbData.java</file>
             <file>file:/E:/Working/GitHub/Simple-Chat-System/src/CurrentDb/TableNames.java</file>
             <file>file:/E:/Working/GitHub/Simple-Chat-System/src/CurrentDb/ServerSettingColumns.java</file>
