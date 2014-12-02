@@ -5,12 +5,12 @@
  */
 package Database;
 
+import Database.Components.SQLError;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.Arrays;
 
 /**
  *
@@ -64,7 +64,6 @@ public class DbData extends SQLError {
                     rowValues[currentCol++] = _rs.getString(column);
                 }
                 _data.set(currentRow++, rowValues);
-
             }
             isInitialized = true;
 
@@ -80,8 +79,9 @@ public class DbData extends SQLError {
     public ResultSet getResultSet() {
         return _rs;
     }
-
-    public String[] getRow(int index) throws SQLException {
+    
+    // it moves the cursor to the index
+    public String[] getRow(int index) {
         if (isInitialized) {
             return _data.get(index);
         }
@@ -90,21 +90,28 @@ public class DbData extends SQLError {
             ErrorMessage("Record Set empty.", "reIntialize");
             return null;
         }
-        _rs.beforeFirst();
-        _rs.relative(index); // go to the row index
+        try {
+            _rs.absolute(index);
+        } catch (SQLException sQLException) {
+            ErrorMessage(sQLException, "Can't move record.", "getRow method");
+        }
 
         String[] rowValues = new String[_columns.length];
         int currentCol = 0;
-        for (String column : _columns) {
-            rowValues[currentCol++] = _rs.getString(column);
-        }
-        _rs.beforeFirst();
+        try {
+            for (String column : _columns) {
+                rowValues[currentCol++] = _rs.getString(column);
+            }
+        } catch (SQLException ex) {
+            ErrorMessage(ex, "Can't give column value.", "getRow method");
+        }      
+        
 
         return rowValues;
 
     }
 
-    public String getRowValue(int index, String columnName) throws SQLException {
+    public String getRowValue(int index, String columnName) {
         if (isInitialized) {
             String[] rowValues = _data.get(index);
             //get the index of the column name
@@ -120,13 +127,20 @@ public class DbData extends SQLError {
             ErrorMessage("Record Set empty.", "reIntialize");
             return null;
         }
-        _rs.beforeFirst();
-        _rs.relative(index); // go to the row index
+        try {
+            _rs.absolute(index);
+        } catch (SQLException sQLException) {
+            ErrorMessage(sQLException, "Can't move record.", "getRow method");
+        }
 
         for (String column : _columns) {
             if (column.equals(columnName)) {
-                String result = _rs.getString(column);
-                _rs.beforeFirst();
+                String result = null;
+                try {
+                    result = _rs.getString(column);
+                } catch (SQLException ex) {
+                    Logger.getLogger(DbData.class.getName()).log(Level.SEVERE, null, ex);
+                }              
                 return result;
             }
         }

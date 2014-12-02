@@ -22,7 +22,7 @@ public class ServerConfig implements Runnable {
 
     private static ServerSocket severSocket;
     private static Scanner in;
-    private int serverRefershAfterHits;
+    private final int serverRefershAfterHits;
     private int serverHitCounter = 0;
     private ResultSet server;
     DatabaseQuery query;

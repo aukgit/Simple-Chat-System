@@ -5,17 +5,21 @@
  */
 package DesignPattern;
 
+
+
 /**
  *
  * @author Alim
  */
-public class InheritableJFrame extends javax.swing.JFrame {
+public class InheritableJFrame extends DatabaseRunnableComponents {
+    
 
     /**
      * Creates new form InheritableJFrame
      */
     public InheritableJFrame() {
         initComponents();
+      
     }
 
     /**

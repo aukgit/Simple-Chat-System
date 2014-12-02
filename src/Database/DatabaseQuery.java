@@ -10,6 +10,8 @@
  */
 package Database;
 
+import Database.Components.DbInitalizer;
+import Database.Components.StringMore;
 import java.sql.*;
 
 import java.util.logging.Level;
@@ -619,7 +621,19 @@ public class DatabaseQuery extends DbInitalizer{
     }
 // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="U - [Update] in CRUD">
-
+//    public boolean updateDataWithoutSQL(int rowNumber , String [] dataColumnWise){
+//        
+//        if(isResultValid(rowNumber)){
+//            try {
+//                rs.absolute(rowNumber);
+//                rs.updateArray(rowNumber, null);
+//            } catch (SQLException ex) {
+//                Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            
+//        }
+//    }
+    
     public String formulateUpdateSQL() {
         String str = "", value = "";
         if (getUpdateFields() == null) {
@@ -838,11 +852,59 @@ public class DatabaseQuery extends DbInitalizer{
         return s.replaceAll("_", " ").replace(c, c2);
     }
 // </editor-fold>
-    
-//    public DbData GetData(){
-//        
-//    }
-
+ 
+    /**
+     * 
+     * @return how many rows exist in the result set.
+     */
+    public int rowCount(){
+        if(rs != null){
+            try {
+                int currentPos = rs.getRow();
+                rs.last();
+                int count =  rs.getRow();     
+                rs.absolute(currentPos);
+                return count;                        
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+                
+            }
+        }
+        return 0;
+    }
+    /**
+     * 
+     * @return does same as rowCount, alias
+     */
+    public int size(){
+        return rowCount();
+    }
+    /**
+     * 
+     * @param rowNumberExist : if -1 then returns only if result set is not null.
+     * @return 
+     */
+    public boolean isResultValid(int rowNumberExist){
+        if(rs != null){
+            try {
+                if(rowNumberExist < 0){
+                    return true;
+                }
+                int currentPos = rs.getRow();
+                rs.last();
+                int count = rs.getRow();
+                int existingIndex = count - 1;
+                if(rowNumberExist <= existingIndex){
+                    rs.absolute(currentPos);
+                    return true;
+                }
+                rs.absolute(currentPos);
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return false;
+    }
     
     // <editor-fold defaultstate="collapsed" desc="Getters Setters Folder">
 

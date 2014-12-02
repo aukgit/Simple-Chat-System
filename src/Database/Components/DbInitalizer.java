@@ -3,7 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Database;
+package Database.Components;
+
+import Database.Components.SQLError;
+import Database.Components.IQueryTypes;
+import Database.Components.ISoftwareInformation;
 
 /**
  *

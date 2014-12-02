@@ -9,7 +9,7 @@
  *------------------------------------------------
  *------------------------------------------------
  */
-package Database;
+package Database.Components;
 
 import java.awt.Component;
 import java.awt.Graphics;

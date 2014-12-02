@@ -9,7 +9,7 @@
  *------------------------------------------------
  *------------------------------------------------
  */
-package Database;
+package Database.Components;
 
 
 import javax.swing.JComboBox;

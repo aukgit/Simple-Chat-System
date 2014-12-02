@@ -5,6 +5,8 @@
  */
 package SimpleChatSystem;
 
+import ComonCodes.ErrorHighLight;
+
 /**
  *
  * @author Alim
@@ -35,8 +37,8 @@ public class RegisterForm extends javax.swing.JFrame {
         ConfrimPasswordTextBox = new javax.swing.JPasswordField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        PasswrodLabel = new javax.swing.JLabel();
+        ConfirmPasswordLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -72,9 +74,9 @@ public class RegisterForm extends javax.swing.JFrame {
 
         jLabel3.setText("Email");
 
-        jLabel4.setText("Password");
+        PasswrodLabel.setText("Password");
 
-        jLabel5.setText("Confirm");
+        ConfirmPasswordLabel.setText("Confirm");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -95,11 +97,11 @@ public class RegisterForm extends javax.swing.JFrame {
                         .addGap(34, 34, 34)
                         .addComponent(EmailTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
+                        .addComponent(PasswrodLabel)
                         .addGap(12, 12, 12)
                         .addComponent(PasswordTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel5)
+                        .addComponent(ConfirmPasswordLabel)
                         .addGap(21, 21, 21)
                         .addComponent(ConfrimPasswordTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
@@ -124,11 +126,11 @@ public class RegisterForm extends javax.swing.JFrame {
                         .addComponent(EmailTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
+                    .addComponent(PasswrodLabel)
                     .addComponent(PasswordTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
+                    .addComponent(ConfirmPasswordLabel)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(1, 1, 1)
                         .addComponent(ConfrimPasswordTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -148,8 +150,12 @@ public class RegisterForm extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         boolean passwordMatch = this.PasswordTextBox.getText().equals(this.ConfrimPasswordTextBox.getText());
-        ErrorHigh
-
+        ErrorHighLight.ErrorValidate(passwordMatch, this.PasswrodLabel, this.PasswordTextBox, null, null);
+        ErrorHighLight.ErrorValidate(passwordMatch, this.ConfirmPasswordLabel, this.ConfrimPasswordTextBox, null, null);
+        
+        if(passwordMatch){
+            
+        }
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -189,15 +195,15 @@ public class RegisterForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel ConfirmPasswordLabel;
     private javax.swing.JPasswordField ConfrimPasswordTextBox;
     private javax.swing.JTextField EmailTextBox;
     public javax.swing.JPasswordField PasswordTextBox;
+    private javax.swing.JLabel PasswrodLabel;
     private javax.swing.JTextField UsernameTextBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     // End of variables declaration//GEN-END:variables
 }
