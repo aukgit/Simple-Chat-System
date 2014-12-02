@@ -13,6 +13,17 @@ package DesignPattern;
  */
 public class InheritableJFrame extends DatabaseRunnableComponents {
     
+    // <editor-fold defaultstate="collapsed" desc="Personal Methods added by Alim Ul Karim">
+
+    public void Println(String title, String msg) {
+        System.out.println(title + " : " + msg);
+    }
+    
+    public void Sysout(String title, String msg) {
+        this.Println(title, msg);
+    }
+
+    // </editor-fold>
 
     /**
      * Creates new form InheritableJFrame
