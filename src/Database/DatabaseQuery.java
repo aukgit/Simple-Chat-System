@@ -164,6 +164,7 @@ public class DatabaseQuery extends DbInitalizer {
 
     /**
      *
+     * @param values
      * @param fields :Query joining(AND,OR) types ie.: where ... column = value
      * *AND* column = value
      */

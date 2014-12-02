@@ -17,6 +17,14 @@ import javax.swing.JTextField;
 public class ErrorHighLight {
 
     //<editor-fold defaultstate="collapsed" desc="Error Validate">
+    /**
+     * 
+     * @param isError : true means error occured
+     * @param label ; label object
+     * @param textbox : textbox object
+     * @param errorMsg : Error message if isError True
+     * @param normalTooltip : if not isError then this message will be displayed.s
+     */
     public static void ErrorValidate(boolean isError, JLabel label, JTextField textbox, String errorMsg, String normalTooltip) {
         if (isError) {
             ErrorLabel(label, textbox, errorMsg);
