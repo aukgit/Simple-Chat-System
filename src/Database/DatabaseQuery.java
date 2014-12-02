@@ -381,8 +381,8 @@ public class DatabaseQuery extends DbInitalizer {
 
     /**
      *
-     * @param columns
-     * @param values
+     * @param columns : comma separated values
+     * @param values : comma separated values
      */
     public void createData(String columns, String values) {
         try {
@@ -396,7 +396,14 @@ public class DatabaseQuery extends DbInitalizer {
         }
 
     }
-
+    /**
+     * setCreateFields(columns.split(","));
+     * setCreateFieldsValues(values.split(","));
+     * has been initalized now just call this method.
+     * Only useful if you are not using createData(columns,values) function directly.
+     * May be you want to combine array based on condition
+     */
+    
     public void createData() {
         try {
             completeCreateQuery();
@@ -408,8 +415,9 @@ public class DatabaseQuery extends DbInitalizer {
 
     /**
      *
-     * @param columns : does the same as createData method
-     * @param values : does the same as createData method
+     * @param columns : comma separated values
+     * @param values : comma separated values
+     * it's going to call createData method.
      */
     public void insertData(String columns[], String values[]) {
         try {
@@ -421,8 +429,9 @@ public class DatabaseQuery extends DbInitalizer {
 
     /**
      *
-     * @param columns : does the same as createData method
-     * @param values : does the same as createData method
+     * @param columns : comma separated values
+     * @param values : comma separated values
+     * it's going to call createData method.
      */
     public void insertData(String columns, String values) {
         try {
@@ -431,7 +440,13 @@ public class DatabaseQuery extends DbInitalizer {
             ErrorMessage(ex, this.getCreateSQL(), "insertData(String columns[], String values[])");
         }
     }
-
+    /**
+     * setCreateFields(columns.split(","));
+     * setCreateFieldsValues(values.split(","));
+     * has been initalized now just call this method.
+     * Only useful if you are not using createData(columns,values) function directly.
+     * May be you want to combine array based on condition
+     */
     public void insertData() {
         try {
             createData();
