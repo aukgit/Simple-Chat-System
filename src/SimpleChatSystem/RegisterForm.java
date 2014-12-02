@@ -6,13 +6,12 @@
 package SimpleChatSystem;
 
 import ComonCodes.ErrorHighLight;
-import DesignPattern.InheritableJFrame;
 
 /**
  *
  * @author Alim
  */
-public class RegisterForm extends InheritableJFrame {
+public class RegisterForm extends javax.swing.JFrame {
 
     /**
      * Creates new form RegisterForm
@@ -140,8 +139,6 @@ public class RegisterForm extends InheritableJFrame {
                 .addGap(51, 51, 51))
         );
 
-        UsernameTextBox.getAccessibleContext().setAccessibleName("hello");
-
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
@@ -156,10 +153,9 @@ public class RegisterForm extends InheritableJFrame {
         ErrorHighLight.ErrorValidate(passwordMatch, this.PasswrodLabel, this.PasswordTextBox, null, null);
         ErrorHighLight.ErrorValidate(passwordMatch, this.ConfirmPasswordLabel, this.ConfrimPasswordTextBox, null, null);
         
-//        if(passwordMatch){
-//            this._db.insertData(null, null);
-//        }
-        
+        if(passwordMatch){
+            
+        }
 
     }//GEN-LAST:event_jButton1ActionPerformed
 

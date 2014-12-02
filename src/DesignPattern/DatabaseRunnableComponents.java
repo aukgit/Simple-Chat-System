@@ -16,9 +16,9 @@ import javax.swing.JFrame;
  */
 public class DatabaseRunnableComponents extends JFrame {
 
-    protected DatabaseQuery _db;
-    protected DbData _dbData;
-    protected ResultSet _rs;
+    private DatabaseQuery _db;
+    private DbData _dbData;
+    private ResultSet _rs;
 
     public DatabaseRunnableComponents() {
         _db = new DatabaseQuery();
