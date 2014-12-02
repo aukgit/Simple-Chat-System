@@ -12,12 +12,13 @@ package Database;
 
 import Database.Components.DbInitalizer;
 import Database.Components.StringMore;
+import DesignPattern.DatabaseRunnableComponents;
 import java.sql.*;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DatabaseQuery extends DbInitalizer{
+public class DatabaseQuery extends DbInitalizer {
 
     StringMore strMore = new StringMore();
     // <editor-fold defaultstate="collapsed" desc="Intializers & Configarations">
@@ -63,7 +64,7 @@ public class DatabaseQuery extends DbInitalizer{
         }
     }
 
-   public DatabaseQuery(String url, String user, String password) {
+    public DatabaseQuery(String url, String user, String password) {
         try {
             this.url = url;
             this.password = password;
@@ -80,8 +81,6 @@ public class DatabaseQuery extends DbInitalizer{
     }
 // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Clean Ups">
-
-   
 
     private void cleanQueryArrays() {
         setQueryFieldNames(null);
@@ -113,7 +112,7 @@ public class DatabaseQuery extends DbInitalizer{
 
     // <editor-fold defaultstate="collapsed" desc="Special Query Setters">
     /**
-     * 
+     *
      * @param fields :Query Fields ie.: where ... *column* = value
      */
     public void setSpecialQueryFields_(String... fields) {
@@ -125,7 +124,7 @@ public class DatabaseQuery extends DbInitalizer{
     }
 
     /**
-     * 
+     *
      * @param fields :Query Fields ie.: where ... *column* = value
      */
     public void setSpecialQueryFields_(int... fields) {
@@ -138,7 +137,7 @@ public class DatabaseQuery extends DbInitalizer{
     }
 
     /**
-     * 
+     *
      * @param values :Query Values ie.: where ... column = *value*
      */
     public void setSpecialQueryValues_(String... values) {
@@ -150,8 +149,9 @@ public class DatabaseQuery extends DbInitalizer{
     }
 
     /**
-     * 
-     * @param values :Query Methods: 0 = Exact, 1 = ExactFromFirst, 2 = Anywhere , 3 = Word based Query
+     *
+     * @param values :Query Methods: 0 = Exact, 1 = ExactFromFirst, 2 = Anywhere
+     * , 3 = Word based Query
      */
     public void setSpecialTypes_(int... values) {
         setQueryTypeInitalized((Boolean) true);
@@ -163,8 +163,9 @@ public class DatabaseQuery extends DbInitalizer{
     }
 
     /**
-     * 
-     * @param fields :Query joining(AND,OR) types ie.: where ... column = value *AND* column = value
+     *
+     * @param fields :Query joining(AND,OR) types ie.: where ... column = value
+     * *AND* column = value
      */
     public void setSpecialJoiningType_(String... values) {
         setJoiningArray(new String[values.length]);
@@ -282,7 +283,7 @@ public class DatabaseQuery extends DbInitalizer{
     }
 
     /**
-     * 
+     *
      * @param sql :because it supports update , delete , insert
      */
     public void ExecuteUpdateQueries(String sql) {
@@ -310,7 +311,7 @@ public class DatabaseQuery extends DbInitalizer{
     }
 
     /**
-     * 
+     *
      * @param sql :because it supports update , delete , insert
      */
     public void ExecuteUpdateQueries(String sql, boolean showSQL) {
@@ -379,9 +380,9 @@ public class DatabaseQuery extends DbInitalizer{
     }
 
     /**
-     * 
+     *
      * @param columns
-     * @param values 
+     * @param values
      */
     public void createData(String columns, String values) {
         try {
@@ -406,7 +407,7 @@ public class DatabaseQuery extends DbInitalizer{
     }
 
     /**
-     * 
+     *
      * @param columns : does the same as createData method
      * @param values : does the same as createData method
      */
@@ -419,7 +420,7 @@ public class DatabaseQuery extends DbInitalizer{
     }
 
     /**
-     * 
+     *
      * @param columns : does the same as createData method
      * @param values : does the same as createData method
      */
@@ -487,7 +488,6 @@ public class DatabaseQuery extends DbInitalizer{
             }
         }
 
-
         cleanQueryArrays();
         //System.out.println("Query Last:" + q);
         return q;
@@ -542,12 +542,12 @@ public class DatabaseQuery extends DbInitalizer{
     }
 
     /**
-     * 
+     *
      * @param Columns
      * @param ValuesToSearch
      * @param joingTypes : can put null
      * @param QueryTypesV : can put null
-     * @return 
+     * @return
      */
     public ResultSet readData(String Columns[], String ValuesToSearch[], String joingTypes[], int QueryTypesV[]) {
         try {
@@ -633,7 +633,7 @@ public class DatabaseQuery extends DbInitalizer{
 //            
 //        }
 //    }
-    
+
     public String formulateUpdateSQL() {
         String str = "", value = "";
         if (getUpdateFields() == null) {
@@ -852,49 +852,83 @@ public class DatabaseQuery extends DbInitalizer{
         return s.replaceAll("_", " ").replace(c, c2);
     }
 // </editor-fold>
- 
+
+    // <editor-fold defaultstate="collapsed" desc=" move to row ">
+    public ResultSet moveToRow(int rowNumber) {
+        if (isResultValid(rowNumber)) {
+            try {
+                rs.absolute(rowNumber);
+                return rs;
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseRunnableComponents.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
+
+    }
+
+    public ResultSet moveToRow(ResultSet _rs, int rowNumber) {
+        if (isResultValid(_rs, rowNumber)) {
+            try {
+                _rs.absolute(rowNumber);
+                return _rs;
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseRunnableComponents.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
+
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc=" row counts of result set">
     /**
-     * 
+     *
      * @return how many rows exist in the result set.
      */
-    public int rowCount(){
-        if(rs != null){
+    public int rowCount() {
+        if (rs != null) {
             try {
                 int currentPos = rs.getRow();
                 rs.last();
-                int count =  rs.getRow();     
+                int count = rs.getRow();
                 rs.absolute(currentPos);
-                return count;                        
+                return count;
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
-                
+
             }
         }
         return 0;
     }
+
     /**
-     * 
+     *
      * @return does same as rowCount, alias
      */
-    public int size(){
+    public int size() {
         return rowCount();
     }
+
+// </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
     /**
-     * 
-     * @param rowNumberExist : if -1 then returns only if result set is not null.
-     * @return 
+     *
+     * @param rowNumberExist : if -1 then returns only if result set is not
+     * null.
+     * @return
      */
-    public boolean isResultValid(int rowNumberExist){
-        if(rs != null){
+    public boolean isResultValid(int rowNumberExist) {
+        if (rs != null) {
             try {
-                if(rowNumberExist < 0){
+                if (rowNumberExist < 0) {
                     return true;
                 }
                 int currentPos = rs.getRow();
                 rs.last();
                 int count = rs.getRow();
                 int existingIndex = count - 1;
-                if(rowNumberExist <= existingIndex){
+                if (rowNumberExist <= existingIndex) {
                     rs.absolute(currentPos);
                     return true;
                 }
@@ -905,9 +939,31 @@ public class DatabaseQuery extends DbInitalizer{
         }
         return false;
     }
-    
-    // <editor-fold defaultstate="collapsed" desc="Getters Setters Folder">
 
+    public boolean isResultValid(ResultSet _rs, int rowNumberExist) {
+        if (_rs != null) {
+            try {
+                if (rowNumberExist < 0) {
+                    return true;
+                }
+                int currentPos = _rs.getRow();
+                _rs.last();
+                int count = _rs.getRow();
+                int existingIndex = count - 1;
+                if (rowNumberExist <= existingIndex) {
+                    _rs.absolute(currentPos);
+                    return true;
+                }
+                _rs.absolute(currentPos);
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return false;
+    }
+
+// </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Getters Setters Folder">
     /**
      * @return the url
      */
@@ -1232,7 +1288,8 @@ public class DatabaseQuery extends DbInitalizer{
         this.createFieldsValuesString = createFieldsValuesString;
     }
 // </editor-fold>
-    // /**
+
+    // <editor-fold defaultstate="collapsed" desc=" How to use it comments ">
 //
 //    public static void main(String args[]) {
 //
@@ -1248,7 +1305,6 @@ public class DatabaseQuery extends DbInitalizer{
 //            System.out.println(singleDb);
 //        }
 //    }
-    
 //    
 //    public static void main(String[] argv) throws Exception {
 //
@@ -1257,5 +1313,5 @@ public class DatabaseQuery extends DbInitalizer{
 //    System.out.println(date.getYear() + " "+ date.getMonth());
 //  }
     // */
-
+// </editor-fold>
 }

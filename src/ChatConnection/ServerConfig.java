@@ -47,16 +47,8 @@ public class ServerConfig implements Runnable {
         // executing the query
         server = query.ExecuteReadQuery(query.getSelectSQL());
         serverData.intialize(server, query.columnsNames());
-        try {
-            port = Integer.parseInt(serverData.getRowValue(0, ServerSettingColumns.ServerPort));
-        } catch (SQLException ex) {
-            Logger.getLogger(ServerConfig.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            isActive = serverData.getRowValue(0, ServerSettingColumns.IsActive).equals("1");
-        } catch (SQLException ex) {
-            Logger.getLogger(ServerConfig.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        port = Integer.parseInt(serverData.getRowValue(0, ServerSettingColumns.ServerPort));
+        isActive = serverData.getRowValue(0, ServerSettingColumns.IsActive).equals("1");
     }
 
     @Override

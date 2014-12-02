@@ -8,9 +8,6 @@ package DesignPattern;
 import Database.DatabaseQuery;
 import Database.DbData;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 /**
@@ -18,16 +15,31 @@ import javax.swing.JFrame;
  * @author Alim
  */
 public class DatabaseRunnableComponents extends JFrame {
+
     private DatabaseQuery _db;
     private DbData _dbData;
     private ResultSet _rs;
 
     public DatabaseRunnableComponents() {
-        
+        _db = new DatabaseQuery();
+        _dbData = new DbData();
+        _rs = null;
     }
-    
-    public DbData RunQuery(String sql){
-        
+
+    /**
+     * Spread out result set from _db
+     */
+    public void getResultSetFromDb() {
+        _rs = _db.getRs();
+        _dbData.setResultSet(_rs);
+    }
+
+    /**
+     * feed current rs to others.
+     */
+    public void feedCurrentResultSetToOthers() {
+        _db.setRs(_rs);
+        _dbData.setResultSet(_rs);
     }
 
     /**
@@ -71,17 +83,10 @@ public class DatabaseRunnableComponents extends JFrame {
     public void setRs(ResultSet _rs) {
         this._rs = _rs;
     }
-    
-    public void moveToRow(int rowNumber){
-        _rs =_db.getRs();
-        
-        if(_db.isResultValid(rowNumber)){
-            try {
-                _rs.absolute(rowNumber);
-            } catch (SQLException ex) {
-                Logger.getLogger(DatabaseRunnableComponents.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+
+    public void moveToRow(int rowNumber) {
+        _db.moveToRow(rowNumber);
+        getResultSetFromDb();
     }
-    
+
 }
