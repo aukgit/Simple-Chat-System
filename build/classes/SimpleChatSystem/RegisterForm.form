@@ -144,6 +144,9 @@
         <Property name="toolTipText" type="java.lang.String" value="Password"/>
         <Property name="name" type="java.lang.String" value="ConfirmPasswordText" noResource="true"/>
       </Properties>
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="confirmPasswordAccess"/>
+      </AccessibilityProperties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
