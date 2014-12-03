@@ -148,6 +148,46 @@ public class DatabaseQuery extends DbInitalizer {
         //</editor-fold>
     }
     //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Adding or Appending items to the list">
+    public void appendItemsToList(ArrayList<String> list, String[] items) {
+        initializeListIfNecessary(list);
+
+        list.addAll(Arrays.asList(items));
+    }
+
+    /**
+     *
+     * @param list : pass the list
+     * @param items : items that needed to be added to the list
+     */
+    public void addItemsToListNewly(ArrayList<String> list, String[] items) {
+        initializeListIfNecessary(list);
+        list.clear();
+        list.addAll(Arrays.asList(items));
+    }
+    
+    public void appendItemsToIntList(ArrayList<Integer> list, int[] items) {
+        initializeListIntIfNecessary(list);
+
+        for (int item : items) {
+            list.add(item);
+        }
+    }
+
+    /**
+     *
+     * @param list : pass the list
+     * @param items : items that needed to be added to the list
+     */
+    public void addItemsToIntListNewly(ArrayList<Integer> list, int[] items) {
+        initializeListIntIfNecessary(list);
+        list.clear();
+        for (int item : items) {
+            list.add(item);
+        }
+    }
+    //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Query Setters">
     /**
@@ -198,9 +238,8 @@ public class DatabaseQuery extends DbInitalizer {
 
     /**
      *
-     * @param values
-     * @param fields :Query joining(AND,OR) types ie.: where ... column = value
-     * *AND* column = value
+     * @param append  : should append or add newly
+     * @param values :Query joining(AND,OR) types ie.: where ... column = value
      */
     public void setSpecialJoiningType_(boolean append, String... values) {
         setJoiningArray(new String[values.length]);
@@ -208,7 +247,11 @@ public class DatabaseQuery extends DbInitalizer {
             getJoiningArray()[i] = values[i].toUpperCase();
         }
     }
-
+    /**
+     *
+     * @param append  : should append or add newly
+     * @param values :Query joining(AND,OR) types ie.: where ... column = value
+     */
     public void setSpecialUpdateFields_(boolean append, String... values) {
         setUpdateFields(new String[values.length]);
         for (int i = 0; i < values.length; i++) {
@@ -230,7 +273,12 @@ public class DatabaseQuery extends DbInitalizer {
         }
     }
 
-    public void setSpecialCreateieldsValues_(boolean append, String... values) {
+    /**
+     *
+     * @param append
+     * @param values
+     */
+    public void setSpecialCreateFieldsValues_(boolean append, String... values) {
         setCreateFieldsValues(new String[values.length]);
         for (int i = 0; i < values.length; i++) {
             getCreateFieldsValues()[i] = values[i];
@@ -888,7 +936,7 @@ public class DatabaseQuery extends DbInitalizer {
     }
 // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc=" move to row ">
+    // <editor-fold defaultstate="collapsed" desc="Move to row ">
     public ResultSet moveToRow(int rowNumber) {
         if (isResultValid(rowNumber)) {
             try {
@@ -946,6 +994,7 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
     /**
      *
@@ -998,32 +1047,8 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="Adding or Appending items to the list">
-    public void appendItemsToList(ArrayList<String> list, String[] items) {
-        if (list == null) {
-            list = new ArrayList<>(defaultListCreatingNumber);
-        }
-
-        for (String item : items) {
-            list.add(item);
-        }
-    }
-
-    /**
-     *
-     * @param list : pass the list
-     * @param items : items that needed to be added to the list
-     */
-    public void addItemsToListNewly(ArrayList<String> list, String[] items) {
-        if (list == null) {
-            list = new ArrayList<>(defaultListCreatingNumber);
-        }
-        list.clear();
-        for (String item : items) {
-            list.add(item);
-        }
-    }
-//</editor-fold>
+    
+   
 
     // <editor-fold defaultstate="collapsed" desc="Getters Setters Folder">
     
