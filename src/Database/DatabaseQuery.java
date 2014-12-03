@@ -754,7 +754,11 @@ public class DatabaseQuery extends DbInitalizer {
 //            
 //        }
 //    }
-
+    
+    /**
+     * translate all conditions to sql statement
+     * @return 
+     */
     public String formulateUpdateSQL() {
         String str = "", value = "";
         if (getUpdateFields() == null) {
