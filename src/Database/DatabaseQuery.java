@@ -113,6 +113,7 @@ public class DatabaseQuery extends DbInitalizer {
         }
     }
     
+    //<editor-fold defaultstate="collapsed" desc="Adding Items to the list from params of fields">
     public void addFieldsToList(boolean append,ArrayList<String> list, String... fields) {
         if(list == null){
             list = new ArrayList<>(defaultListCreatingNumber);
@@ -120,10 +121,11 @@ public class DatabaseQuery extends DbInitalizer {
         if(append == false){
             list.clear();
         }
-        //<editor-fold defaultstate="collapsed" desc="addint items to the list">
+        //<editor-fold defaultstate="collapsed" desc="adding items to the list">
         list.addAll(Arrays.asList(fields));
         //</editor-fold>
     }
+    //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Query Setters">
     /**
