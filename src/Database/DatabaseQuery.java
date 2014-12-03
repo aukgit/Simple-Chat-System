@@ -14,6 +14,8 @@ import Database.Components.DbInitalizer;
 import Database.Components.StringMore;
 import DesignPattern.DatabaseRunnableComponents;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,15 +38,16 @@ public class DatabaseQuery extends DbInitalizer {
     private String openFieldsName = "*";
     //Boleans
     private Boolean QueryTypeInitalized = false;
+    private int defaultListCreatingNumber = 30;
     //Arrays
-    private String queryFieldNames[];
-    private String queryValues[];
-    private String joiningArray[] = null;
+    private ArrayList<String> queryFieldNames;
+    private ArrayList<String> queryValues;
+    private ArrayList<String> joiningArray = null;
     private int queryTypes[];
-    private String updateFields[];
-    private String updateFieldsValues[];
-    private String createFields[];
-    private String createFieldsValues[];
+    private ArrayList<String> updateFields;
+    private ArrayList<String> updateFieldsValues;
+    private ArrayList<String> createFields;
+    private ArrayList<String> createFieldsValues;
     private String createFieldsString = "";
     private String createFieldsValuesString = "";
 
@@ -109,13 +112,25 @@ public class DatabaseQuery extends DbInitalizer {
             Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void addFieldsToList(boolean append,ArrayList<String> list, String... fields) {
+        if(list == null){
+            list = new ArrayList<>(defaultListCreatingNumber);
+        }
+        if(append == false){
+            list.clear();
+        }
+        //<editor-fold defaultstate="collapsed" desc="addint items to the list">
+        list.addAll(Arrays.asList(fields));
+        //</editor-fold>
+    }
 
     // <editor-fold defaultstate="collapsed" desc="Special Query Setters">
     /**
      *
      * @param fields :Query Fields ie.: where ... *column* = value
      */
-    public void setSpecialQueryFields_(String... fields) {
+    public void setSpecialQueryFields_(boolean append , String... fields) {
         setQueryFieldNames(new String[fields.length]);
         for (int i = 0; i < fields.length; i++) {
             getQueryFieldNames()[i] = fields[i];
@@ -552,9 +567,9 @@ public class DatabaseQuery extends DbInitalizer {
      */
     public ResultSet readData(String Columns[], String ValuesToSearch[], String joingTypes[], int QueryTypesV[]) {
         try {
-            this.queryFieldNames = Columns;
-            this.queryValues = ValuesToSearch;
-            this.joiningArray = joingTypes;
+            setQueryFieldNames(Columns);
+            setQueryValues(ValuesToSearch);
+            setJoiningArray(joingTypes);
             this.queryTypes = QueryTypesV;
             completeReadQuery(); // generated Select SQL
             rs = ExecuteReadQuery(this.getSelectSQL());
@@ -882,7 +897,7 @@ public class DatabaseQuery extends DbInitalizer {
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc=" row counts of result set">
+    // <editor-fold defaultstate="collapsed" desc="row counts of result set">
     /**
      *
      * @return how many rows exist in the result set.
@@ -912,6 +927,7 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
     /**
      *
@@ -964,19 +980,42 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Adding or Appending items to the list">
+    public void appendItemsToList(ArrayList<String> list, String[] items) {
+        if (list == null) {
+            list = new ArrayList<>(defaultListCreatingNumber);
+        }
+        
+        for (String item : items) {
+            list.add(item);
+        }
+    }
+    
+    /**
+     *
+     * @param list : pass the list
+     * @param items : items that needed to be added to the list
+     */
+    public void addItemsToListNewly(ArrayList<String> list, String[] items) {
+        if (list == null) {
+            list = new ArrayList<>(defaultListCreatingNumber);
+        }
+        list.clear();
+        for (String item : items) {
+            list.add(item);
+        }
+    }
+//</editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Getters Setters Folder">
+    
+    //<editor-fold defaultstate="collapsed" desc="Getters">
     /**
      * @return the url
      */
     public String getUrl() {
         return url;
-    }
-
-    /**
-     * @param url the url to set
-     */
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     /**
@@ -987,38 +1026,10 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     /**
-     * @param user the user to set
-     */
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    /**
-     * @return the password
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * @param password the password to set
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    /**
      * @return the cnn
      */
     public Connection getCnn() {
         return cnn;
-    }
-
-    /**
-     * @param cnn the cnn to set
-     */
-    public void setCnn(Connection cnn) {
-        this.cnn = cnn;
     }
 
     /**
@@ -1029,38 +1040,10 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     /**
-     * @param stmt the stmt to set
-     */
-    public void setStmt(Statement stmt) {
-        this.stmt = stmt;
-    }
-
-    /**
      * @return the rs
      */
     public ResultSet getRs() {
         return rs;
-    }
-
-    /**
-     * @param rs the rs to set
-     */
-    public void setRs(ResultSet rs) {
-        this.rs = rs;
-    }
-
-    /**
-     * @return the selectSQL
-     */
-    public String getSelectSQL() {
-        return selectSQL;
-    }
-
-    /**
-     * @param selectSQL the selectSQL to set
-     */
-    public void setSelectSQL(String selectSQL) {
-        this.selectSQL = selectSQL;
     }
 
     /**
@@ -1071,54 +1054,10 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     /**
-     * @param updateSQL the updateSQL to set
-     */
-    public void setUpdateSQL(String updateSQL) {
-        this.updateSQL = updateSQL;
-    }
-
-    /**
      * @return the deleteSQL
      */
     public String getDeleteSQL() {
         return deleteSQL;
-    }
-
-    /**
-     * @param deleteSQL the deleteSQL to set
-     */
-    public void setDeleteSQL(String deleteSQL) {
-        this.deleteSQL = deleteSQL;
-    }
-
-    /**
-     * @return the createSQL
-     */
-    public String getCreateSQL() {
-        return createSQL;
-    }
-
-    /**
-     * @param createSQL the createSQL to set
-     */
-    public void setCreateSQL(String createSQL) {
-        this.createSQL = createSQL;
-    }
-
-    /**
-     * @return the TableName
-     */
-    public String getTableName() {
-        return TableName;
-    }
-
-    /**
-     * @param TableName the TableName to set
-     */
-    public void setTableName(String TableName) {
-//        TableName = TableName.replaceAll("_", " ").toLowerCase();
-//        TableName = strMore.EachWordUpperCase(TableName).replaceAll(" ", "");
-        this.TableName = TableName;
     }
 
     /**
@@ -1129,10 +1068,10 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     /**
-     * @param openFieldsName the openFieldsName to set
+     * @return the TableName
      */
-    public void setOpenFieldsName(String openFieldsName) {
-        this.openFieldsName = openFieldsName;
+    public String getTableName() {
+        return TableName;
     }
 
     /**
@@ -1143,117 +1082,87 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     /**
-     * @param QueryTypeInitalized the QueryTypeInitalized to set
-     */
-    public void setQueryTypeInitalized(Boolean QueryTypeInitalized) {
-        this.QueryTypeInitalized = QueryTypeInitalized;
-    }
-
-    /**
      * @return the queryFieldNames
      */
-    public String[] getQueryFieldNames() {
+    public ArrayList<String> getQueryFieldNames() {
         return queryFieldNames;
-    }
-
-    /**
-     * @param queryFieldNames the queryFieldNames to set
-     */
-    public void setQueryFieldNames(String[] queryFieldNames) {
-        this.queryFieldNames = queryFieldNames;
     }
 
     /**
      * @return the queryValues
      */
-    public String[] getQueryValues() {
+    public ArrayList<String> getQueryValues() {
         return queryValues;
-    }
-
-    /**
-     * @param queryValues the queryValues to set
-     */
-    public void setQueryValues(String[] queryValues) {
-        this.queryValues = queryValues;
     }
 
     /**
      * @return the joiningArray
      */
-    public String[] getJoiningArray() {
+    public ArrayList<String> getJoiningArray() {
         return joiningArray;
     }
 
-    /**
-     * @param joiningArray the joiningArray to set
+     /**
+     * @return the updateFields
      */
-    public void setJoiningArray(String[] joiningArray) {
-        this.joiningArray = joiningArray;
+    public ArrayList<String> getUpdateFields() {
+        return updateFields;
     }
-
+     /**
+     * @return the createFieldsString
+     */
+    public String getCreateFieldsString() {
+        return createFieldsString;
+    }
+    
+     /**
+     * @return the createFieldsValues
+     */
+    public ArrayList<String> getCreateFieldsValues() {
+        return createFieldsValues;
+    }
     /**
+     * @return the createFields
+     */
+    public ArrayList<String> getCreateFields() {
+        return createFields;
+    }
+    /**
+     * @return the updateFieldsValues
+     */
+    public ArrayList<String> getUpdateFieldsValues() {
+        return updateFieldsValues;
+    }
+    
+     /**
      * @return the queryTypes
      */
     public int[] getQueryTypes() {
         return queryTypes;
     }
-
-    /**
-     * @param queryTypes the queryTypes to set
+     /**
+     * @return the createSQL
      */
-    public void setQueryTypes(int[] queryTypes) {
-        this.queryTypes = queryTypes;
+    public String getCreateSQL() {
+        return createSQL;
     }
-
-    /**
-     * @return the updateFields
+      /**
+     * @return the selectSQL
      */
-    public String[] getUpdateFields() {
-        return updateFields;
+    public String getSelectSQL() {
+        return selectSQL;
     }
-
-    /**
-     * @param updateFields the updateFields to set
+      /**
+     * @return the password
      */
-    public void setUpdateFields(String[] updateFields) {
-        this.updateFields = updateFields;
+    public String getPassword() {
+        return password;
     }
+    
+    //</editor-fold>
 
-    /**
-     * @return the updateFieldsValues
-     */
-    public String[] getUpdateFieldsValues() {
-        return updateFieldsValues;
-    }
-
-    /**
-     * @param updateFieldsValues the updateFieldsValues to set
-     */
-    public void setUpdateFieldsValues(String[] updateFieldsValues) {
-        this.updateFieldsValues = updateFieldsValues;
-    }
-
-    /**
-     * @return the createFields
-     */
-    public String[] getCreateFields() {
-        return createFields;
-    }
-
-    /**
-     * @param createFields the createFields to set
-     */
-    public void setCreateFields(String[] createFields) {
-        this.createFields = createFields;
-    }
-
-    /**
-     * @return the createFieldsValues
-     */
-    public String[] getCreateFieldsValues() {
-        return createFieldsValues;
-    }
-
+    //<editor-fold defaultstate="collapsed" desc="Setters">
+    
     /**
      * @param createFieldsValues the createFieldsValues to set
      */
@@ -1261,12 +1170,6 @@ public class DatabaseQuery extends DbInitalizer {
         this.createFieldsValues = createFieldsValues;
     }
 
-    /**
-     * @return the createFieldsString
-     */
-    public String getCreateFieldsString() {
-        return createFieldsString;
-    }
 
     /**
      * @param createFieldsString the createFieldsString to set
@@ -1276,18 +1179,184 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     /**
+     * @param createFieldsValuesString the createFieldsValuesString to set
+     */
+    public void setCreateFieldsValuesString(String createFieldsValuesString) {
+        this.createFieldsValuesString = createFieldsValuesString;
+    }
+    
+    
+    /**
+     * @param url the url to set
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
+    
+    /**
+     * @param user the user to set
+     */
+    public void setUser(String user) {
+        this.user = user;
+    }
+    
+    
+    
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    /**
+     * @param cnn the cnn to set
+     */
+    public void setCnn(Connection cnn) {
+        this.cnn = cnn;
+    }
+    
+    /**
+     * @param stmt the stmt to set
+     */
+    public void setStmt(Statement stmt) {
+        this.stmt = stmt;
+    }
+    
+    /**
+     * @param rs the rs to set
+     */
+    public void setRs(ResultSet rs) {
+        this.rs = rs;
+    }
+    
+    
+    
+    /**
+     * @param selectSQL the selectSQL to set
+     */
+    public void setSelectSQL(String selectSQL) {
+        this.selectSQL = selectSQL;
+    }
+    
+    /**
+     * @param updateSQL the updateSQL to set
+     */
+    public void setUpdateSQL(String updateSQL) {
+        this.updateSQL = updateSQL;
+    }
+    
+    /**
+     * @param deleteSQL the deleteSQL to set
+     */
+    public void setDeleteSQL(String deleteSQL) {
+        this.deleteSQL = deleteSQL;
+    }
+    
+    
+    
+    /**
+     * @param createSQL the createSQL to set
+     */
+    public void setCreateSQL(String createSQL) {
+        this.createSQL = createSQL;
+    }
+    
+    /**
+     * @param TableName the TableName to set
+     */
+    public void setTableName(String TableName) {
+//        TableName = TableName.replaceAll("_", " ").toLowerCase();
+//        TableName = strMore.EachWordUpperCase(TableName).replaceAll(" ", "");
+        this.TableName = TableName;
+    }
+    
+    /**
+     * @param openFieldsName the openFieldsName to set
+     */
+    public void setOpenFieldsName(String openFieldsName) {
+        this.openFieldsName = openFieldsName;
+    }
+    
+    /**
+     * @param QueryTypeInitalized the QueryTypeInitalized to set
+     */
+    public void setQueryTypeInitalized(Boolean QueryTypeInitalized) {
+        this.QueryTypeInitalized = QueryTypeInitalized;
+    }
+    
+    /**
+     * @param queryFieldNames the queryFieldNames to set
+     */
+    public void setQueryFieldNames(String[] queryFieldNames) {
+        addItemsToListNewly(this.queryFieldNames, queryFieldNames);
+    }
+    
+    /**
+     * @param queryValues the queryValues to set
+     */
+    public void setQueryValues(String[] queryValues) {
+        addItemsToListNewly(this.queryValues, queryValues);
+    }
+    
+    /**
+     * @param joiningArray the joiningArray to set
+     */
+    public void setJoiningArray(String[] joiningArray) {
+        
+        addItemsToListNewly(this.joiningArray, joiningArray);
+    }
+    
+    
+    
+    /**
+     * @param queryTypes the queryTypes to set
+     */
+    public void setQueryTypes(int[] queryTypes) {
+        this.queryTypes = queryTypes;
+    }
+    
+    
+    
+    /**
+     * @param updateFields the updateFields to set
+     */
+    public void setUpdateFields(String[] updateFields) {
+        addItemsToListNewly(this.updateFields, updateFields);
+    }
+    
+    
+    
+    /**
+     * @param updateFieldsValues the updateFieldsValues to set
+     */
+    public void setUpdateFieldsValues(String[] updateFieldsValues) {
+        addItemsToListNewly(this.updateFieldsValues, updateFieldsValues);
+    }
+    
+    
+    
+    /**
+     * @param createFields the createFields to set
+     */
+    public void setCreateFields(String[] createFields) {
+        addItemsToListNewly(this.createFields, createFields);
+    }
+//</editor-fold>
+    
+    
+
+   
+
+   
+    /**
      * @return the createFieldsValuesString
      */
     public String getCreateFieldsValuesString() {
         return createFieldsValuesString;
     }
 
-    /**
-     * @param createFieldsValuesString the createFieldsValuesString to set
-     */
-    public void setCreateFieldsValuesString(String createFieldsValuesString) {
-        this.createFieldsValuesString = createFieldsValuesString;
-    }
+    
 // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc=" How to use it comments ">
