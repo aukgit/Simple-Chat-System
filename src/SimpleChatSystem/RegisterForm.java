@@ -7,7 +7,6 @@ package SimpleChatSystem;
 
 import ComonCodes.ErrorHighLight;
 import Database.Components.DatabaseTextBinder;
-import Database.Components.ISoftwareInformation;
 import DesignPattern.InheritableJFrame;
 
 /**
@@ -231,11 +230,11 @@ public class RegisterForm extends InheritableJFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ConfirmPasswordLabel;
-    private javax.swing.JPasswordField ConfrimPasswordTextBox;
-    private javax.swing.JTextField EmailTextBox;
+    public javax.swing.JPasswordField ConfrimPasswordTextBox;
+    public javax.swing.JTextField EmailTextBox;
     public javax.swing.JPasswordField PasswordTextBox;
     private javax.swing.JLabel PasswrodLabel;
-    private javax.swing.JTextField UsernameTextBox;
+    public javax.swing.JTextField UsernameTextBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;

@@ -10,7 +10,6 @@ package ComonCodes;
 import java.awt.Component;
 import java.util.ArrayList;
 import javax.swing.JFrame;
-import javax.swing.JRootPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
@@ -25,8 +24,8 @@ public class JFrameRelatedCodes {
 
     public static ArrayList<JTextComponent> getAllTextBox(JFrame frame) {
         ArrayList<JTextComponent> list = new ArrayList<>(defaultListCreatingNumber);
-        JRootPane paneElements = (JRootPane) frame.getComponents()[0];
-        Component[] components = paneElements.getComponents();
+        Component[] components = frame.getRootPane().getComponents();
+        //Component[] components = paneElements.getComponents();
         
         for (Component component : components) {
             if (component instanceof JTextField) {
