@@ -5,6 +5,7 @@
  */
 package Database.Components;
 
+import ComonCodes.JFrameRelatedCodes;
 import Database.DatabaseQuery;
 import java.util.ArrayList;
 import javax.swing.JFrame;
@@ -16,20 +17,20 @@ import javax.swing.text.JTextComponent;
  */
 public class DatabaseTextBinder {
 
-
-    public static void DbBindTextBoxes(JFrame frame,DatabaseQuery db, boolean fieldNamesAppend, boolean read, boolean insert, boolean update) {
-        String[] fields =null;
+    public static void DbBindTextBoxes(JFrame frame, DatabaseQuery db, boolean fieldNamesAppend, boolean read, boolean insert, boolean update) {
+        String[] fields = null;
         ArrayList<JTextComponent> list = JFrameRelatedCodes.getAllTextBox(frame);
         for (JTextComponent textBox : list) {
             //binding property name
+            textBox.getAccessibleContext().setAccessibleName("helllo 2");
             String accessName = textBox.getAccessibleContext().getAccessibleName();
-
+            System.out.println(accessName);
         }
-
-        if (read) {
-            
-            db.setSpecialQueryFields_(fieldNamesAppend, fields);
-        }
+//
+//        if (read) {
+//
+//            db.setSpecialQueryFields_(fieldNamesAppend, fields);
+//        }
 
     }
 }
