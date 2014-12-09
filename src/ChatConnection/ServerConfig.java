@@ -1,5 +1,6 @@
 package ChatConnection;
 
+import CurrentDb.TableColumns.ServerSetting;
 import ChatConnection.*;
 import CurrentDb.*;
 import Database.DatabaseQuery;
@@ -47,8 +48,8 @@ public class ServerConfig implements Runnable {
         // executing the query
         server = query.ExecuteReadQuery(query.getSelectSQL());
         serverData.intialize(server, query.columnsNames());
-        port = Integer.parseInt(serverData.getRowValue(0, ServerSettingColumns.ServerPort));
-        isActive = serverData.getRowValue(0, ServerSettingColumns.IsActive).equals("1");
+        port = Integer.parseInt(serverData.getRowValue(0, ServerSetting.ServerPort));
+        isActive = serverData.getRowValue(0, ServerSetting.IsActive).equals("1");
     }
 
     @Override

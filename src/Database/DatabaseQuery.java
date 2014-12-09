@@ -292,7 +292,7 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     public void setSpecialCreateFields_(boolean append, String... values) {
-         addSpecialFieldsToList(append, getCreateFields(), values);
+        addSpecialFieldsToList(append, getCreateFields(), values);
 //        setCreateFields(new String[values.length]);
 //        for (int i = 0; i < values.length; i++) {
 //            getCreateFields()[i] = values[i];
@@ -423,6 +423,7 @@ public class DatabaseQuery extends DbInitalizer {
     /**
      *
      * @param sql :because it supports update , delete , insert
+     * @param showSQL
      */
     public void ExecuteUpdateQueries(String sql, boolean showSQL) {
         try {
@@ -438,7 +439,6 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>
-    
     // <editor-fold defaultstate="collapsed" desc="C - [Create] in CRUD">
     public String completeCreateQuery() {
         formulateCreateSQL(getCreateFields(), getCreateFieldsValues());
@@ -626,12 +626,51 @@ public class DatabaseQuery extends DbInitalizer {
         }
         return rs;
     }
+    /**
+     * at least one row returned.
+     * @param Columns : CSV
+     * @param valuesSearchInFields: CSV
+     * @return 
+     */
+    public boolean isExist(String Columns, String valuesSearchInFields) {
+        try {
+            if (Columns != null && valuesSearchInFields != null) {
+                
+                rs = readData(Columns,valuesSearchInFields );
+                return isResultValid(1);
+            }
+        } catch (Exception ex) {
+            ErrorMessage(ex, this.getSelectSQL(), "isExist(String Columns, String valuesSearchInFields)");
+        }
+        return false;
+    }
+    /**
+     * 
+     * @param Columns : CSV
+     * @param valuesSearchInFields: CSV
+     * @return 
+     */
+    public ResultSet readData(String Columns, String valuesSearchInFields) {
+        try {
+            if (Columns != null && valuesSearchInFields != null) {
+                String[] columns = Columns.split(",");
+                String[] values = valuesSearchInFields.split(",");
+                setQueryFieldNames(columns);
+                setQueryValues(values);
+                completeReadQuery(); // generated Select SQL
+                rs = ExecuteReadQuery(this.getSelectSQL());
+            }
+        } catch (Exception ex) {
+            ErrorMessage(ex, this.getSelectSQL(), "readData(String Columns, String valuesSearchInFields)");
+        }
+        return rs;
+    }
 
     public ResultSet readData(String Columns[], String ValuesToSearch[]) {
         try {
             setQueryFieldNames(Columns);
             setQueryValues(ValuesToSearch);
-            
+
 //            this.queryFieldNames = Columns;
 //            this.queryValues = ValuesToSearch;
             completeReadQuery(); // generated Select SQL
@@ -647,7 +686,7 @@ public class DatabaseQuery extends DbInitalizer {
             setQueryFieldNames(Columns);
             setQueryValues(ValuesToSearch);
             setJoiningArray(joingTypes);
-            
+
 //            this.queryFieldNames = Columns;
 //            this.queryValues = ValuesToSearch;
 //            this.joiningArray = joingTypes;
@@ -754,10 +793,11 @@ public class DatabaseQuery extends DbInitalizer {
 //            
 //        }
 //    }
-    
+
     /**
      * translate all conditions to sql statement
-     * @return 
+     *
+     * @return
      */
     public String formulateUpdateSQL() {
         String str = "", value = "";
@@ -786,6 +826,11 @@ public class DatabaseQuery extends DbInitalizer {
         return getUpdateSQL();
     }
 
+    /**
+     * use special field methods to initialize query for update.
+     *
+     * @return
+     */
     public ResultSet updateData() {
         try {
             completeUpdateQuery();
@@ -796,6 +841,11 @@ public class DatabaseQuery extends DbInitalizer {
         return getRs();
     }
 
+    /**
+     *
+     * @param setFieldsString : string "column1 = value, column2 = value"
+     * @return all table rows will be updated.
+     */
     public ResultSet updateData(String setFieldsString) {
         try {
             String q = formulateQuery();
@@ -807,9 +857,15 @@ public class DatabaseQuery extends DbInitalizer {
         return getRs();
     }
 
-    public ResultSet updateData(String setFieldsString, String query) {
+    /**
+     *
+     * @param setFieldsString : string "column1 = value, column2 = value"
+     * @param whereQuery : write only where query
+     * @return
+     */
+    public ResultSet updateData(String setFieldsString, String whereQuery) {
         try {
-            this.setUpdateSQL("UPDATE " + getTableName() + " \n SET " + setFieldsString + " WHERE " + query);
+            this.setUpdateSQL("UPDATE " + getTableName() + " \n SET " + setFieldsString + " WHERE " + whereQuery);
             ExecuteUpdateQueries(this.getUpdateSQL());
         } catch (Exception ex) {
             ErrorMessage(ex, this.getUpdateSQL(), "updateData(String setFieldsString, String query)");
@@ -817,10 +873,17 @@ public class DatabaseQuery extends DbInitalizer {
         return getRs();
     }
 
-    public ResultSet updateData(String table, String setFieldsString, String query) {
+    /**
+     *
+     * @param table : setting table name to default.
+     * @param setFieldsString : string "column1 = value, column2 = value"
+     * @param whereQuery : write only where query
+     * @return
+     */
+    public ResultSet updateData(String table, String setFieldsString, String whereQuery) {
         try {
             setTableName(table);
-            this.setUpdateSQL("UPDATE " + getTableName() + " \n SET " + setFieldsString + " WHERE " + query);
+            this.setUpdateSQL("UPDATE " + getTableName() + " \n SET " + setFieldsString + " WHERE " + whereQuery);
             ExecuteUpdateQueries(this.getUpdateSQL());
         } catch (Exception ex) {
             ErrorMessage(ex, this.getUpdateSQL(), "updateData(String table, String setFieldsString, String query)");
@@ -1036,11 +1099,10 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold>
-    
     // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
     /**
-     *
-     * @param rowNumberExist : if -1 then returns only if result set is not
+     * Zero based index.
+     * @param rowNumberExist : Zero based index : if -1 then returns only if result set is not
      * null.
      * @return
      */
@@ -1089,15 +1151,9 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold>    
-    
-   
-
     // <editor-fold defaultstate="collapsed" desc="Getters Setters Folder">
-    
     //<editor-fold defaultstate="collapsed" desc="Getters">
-    
     //<editor-fold defaultstate="collapsed" desc="Getters related to List">
-    
     /**
      * @return the queryFieldNames
      */
@@ -1155,7 +1211,6 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     //</editor-fold>
-    
     /**
      * @return the url
      */
@@ -1255,11 +1310,8 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     //</editor-fold>
-    
     //<editor-fold defaultstate="collapsed" desc="Setters">
-    
     //<editor-fold defaultstate="collapsed" desc="List related setters">
-    
     /**
      * @param createFieldsValues the createFieldsValues to set
      */
@@ -1267,8 +1319,8 @@ public class DatabaseQuery extends DbInitalizer {
         addItemsToListNewly(this.createFieldsValues, createFieldsValues);
     }
 
-    
     /**
+     * add fields newly.
      * @param queryFieldNames the queryFieldNames to set
      */
     public void setQueryFieldNames(String[] queryFieldNames) {

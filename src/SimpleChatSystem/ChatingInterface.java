@@ -5,6 +5,7 @@
  */
 package SimpleChatSystem;
 
+import CurrentDb.TableNames;
 import DesignPattern.InheritableJFrame;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -154,4 +155,9 @@ public class ChatingInterface extends InheritableJFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void initalizeTableName() {
+        this.getDb().setTableName(TableNames.MESSAGE);
+    }
 }
