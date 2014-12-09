@@ -3,14 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/Working/GitHub/Simple-Chat-System/src/ComonCodes/JFrameRelatedCodes.java</file>
             <file>file:/E:/Working/GitHub/Simple-Chat-System/src/SimpleChatSystem/RegisterForm.java</file>
             <file>file:/E:/Working/GitHub/Simple-Chat-System/src/SimpleChatSystem/ChatingInterface.java</file>
-            <file>file:/E:/Working/GitHub/Simple-Chat-System/src/ComonCodes/Picture.java</file>
-            <file>file:/E:/Working/GitHub/Simple-Chat-System/src/CurrentDb/TableNames.java</file>
-            <file>file:/E:/Working/GitHub/Simple-Chat-System/src/CurrentDb/ServerSettingColumns.java</file>
-            <file>file:/E:/Working/GitHub/Simple-Chat-System/src/ComonCodes/ErrorHighLight.java</file>
-            <file>file:/E:/Working/GitHub/Simple-Chat-System/src/Database/Components/DatabaseTextBinder.java</file>
+            <file>file:/E:/Working/GitHub/Simple-Chat-System/src/Hasher/Cryptography.java</file>
+            <file>file:/E:/Working/GitHub/Simple-Chat-System/src/Database/DatabaseQuery.java</file>
+            <file>file:/E:/Working/GitHub/Simple-Chat-System/src/DesignPattern/InheritableJFrame.java</file>
         </group>
     </open-files>
 </project-private>
