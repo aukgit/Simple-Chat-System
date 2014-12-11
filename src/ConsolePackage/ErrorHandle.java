@@ -8,11 +8,13 @@
  *------------------------------------------------
  *------------------------------------------------
  */
-package Database.Components;
+package ConsolePackage;
 
+import Database.Components.ISoftwareInformation;
+import Database.Components.MsgBox;
 import java.awt.Component;
 
-public class Err implements ISoftwareInformation {
+public class ErrorHandle implements ISoftwareInformation {
 
     private MsgBox Msg;
 
@@ -20,7 +22,7 @@ public class Err implements ISoftwareInformation {
         Msg = new MsgBox();
     }
 
-    public Err() {
+    public ErrorHandle() {
     }
 
     /**
@@ -28,7 +30,7 @@ public class Err implements ISoftwareInformation {
      * @param o
      * @param e 
      */
-    public Err(Component o, Exception e) {
+    public ErrorHandle(Component o, Exception e) {
         msgLoad();
         String errorDes = "Error :" + e.getMessage() + " \n"
                 + "Error Cause:" + e.getCause() + " \n"
@@ -45,7 +47,7 @@ public class Err implements ISoftwareInformation {
      * @param e
      * @param title 
      */
-    public Err(Component o, Exception e, String title) {
+    public ErrorHandle(Component o, Exception e, String title) {
         msgLoad();
         String errorDes = "Error :" + e.getMessage() + " \n"
                 + "Error Cause:" + e.getCause() + " \n"
@@ -63,7 +65,7 @@ public class Err implements ISoftwareInformation {
      * @param title
      * @param msg 
      */
-    public Err(Component o, Exception e, String title, String msg) {
+    public ErrorHandle(Component o, Exception e, String title, String msg) {
         msgLoad();
         String errorDes = "Error Msg:" + msg + " \n"
                 + "Error Base Message:" + e.getMessage() + " \n"

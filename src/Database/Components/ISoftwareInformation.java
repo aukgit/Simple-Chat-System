@@ -4,6 +4,7 @@
  */
 package Database.Components;
 
+import ConsolePackage.ErrorHandle;
 import Database.DatabaseQuery;
 
 /*------------------------------------------------
@@ -26,7 +27,7 @@ public interface ISoftwareInformation {
 
     public String DatabaseURL = "jdbc:mysql://localhost:3306/chatdatabase?zeroDateTimeBehavior=convertToNull";
     public ArrayMore arr = new ArrayMore(); //for getting or readding array in print
-    public Err err = new Err();    
+    public ErrorHandle err = new ErrorHandle();    
     public DatabaseQuery dbq = new DatabaseQuery();        
     
 
