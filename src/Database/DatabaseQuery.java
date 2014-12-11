@@ -10,6 +10,9 @@
  *------------------------------------------------
  *------------------------------------------------
  */
+/**
+ * Currently not SQL injection protected , future version it will be.
+ */
 package Database;
 
 import Database.Components.DbInitalizer;
@@ -495,78 +498,97 @@ public class DatabaseQuery extends DbInitalizer {
         return str;
     }
 
-    public void createData(String columns[], String values[]) {
+    public boolean createData(String columns[], String values[]) {
         try {
             setCreateFields(columns);
             setCreateFieldsValues(values);
             completeCreateQuery();
             ExecuteUpdateQueries(this.getCreateSQL());
+            return true;
         } catch (Exception ex) {
             ErrorMessage(ex, this.getCreateSQL(), "createData(String columns[], String values[])");
             //Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        return false;
     }
 
     /**
      *
      * @param columns
      * @param values
+     * @return
      */
-    public void createData(String columns, String values) {
+    public boolean createData(String columns, String values) {
         try {
             setCreateFields(columns.split(","));
             setCreateFieldsValues(values.split(","));
             completeCreateQuery();
             ExecuteUpdateQueries(this.getCreateSQL());
+            return true;
         } catch (Exception ex) {
             ErrorMessage(ex, this.getCreateSQL(), "createData(String columns, String values)");
             //Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        return false;
     }
 
-    public void createData() {
+    /**
+     * Execute SQL based on added fields by setSpecial methods.
+     *
+     * @return
+     */
+    public boolean createData() {
         try {
             completeCreateQuery();
             ExecuteUpdateQueries(this.getCreateSQL());
+            return true;
         } catch (Exception ex) {
             ErrorMessage(ex, this.getCreateSQL(), "createData()");
         }
+        return false;
     }
 
     /**
      *
      * @param columns : does the same as createData method
      * @param values : does the same as createData method
+     * @return
      */
-    public void insertData(String columns[], String values[]) {
+    public boolean insertData(String columns[], String values[]) {
         try {
             createData(columns, values);
+            return true;
         } catch (Exception ex) {
             ErrorMessage(ex, this.getCreateSQL(), "insertData(String columns[], String values[])");
         }
+        return false;
     }
 
     /**
      *
      * @param columns : does the same as createData method
      * @param values : does the same as createData method
+     * @return
      */
-    public void insertData(String columns, String values) {
+    public boolean insertData(String columns, String values) {
         try {
             createData(columns, values);
+            return true;
+
         } catch (Exception ex) {
             ErrorMessage(ex, this.getCreateSQL(), "insertData(String columns[], String values[])");
         }
+        return false;
     }
 
-    public void insertData() {
+    public boolean insertData() {
         try {
             createData();
+            return true;
         } catch (Exception ex) {
             ErrorMessage(ex, this.getCreateSQL(), "insertData()");
         }
+        return false;
     }
 
 // </editor-fold>
@@ -1372,12 +1394,13 @@ public class DatabaseQuery extends DbInitalizer {
      * @param createFieldsValues the createFieldsValues to set
      */
     public void setCreateFieldsValues(String[] createFieldsValues) {
-       this.createFieldsValues = addItemsToListNewly(this.createFieldsValues, createFieldsValues);
+        this.createFieldsValues = addItemsToListNewly(this.createFieldsValues, createFieldsValues);
     }
 
     public void setQueryFieldNamesCleanUp() {
         this.queryFieldNames = addItemsToListNewly(this.queryFieldNames, null);
     }
+
     /**
      * add fields newly.
      *
@@ -1395,7 +1418,7 @@ public class DatabaseQuery extends DbInitalizer {
      * @param queryValues the queryValues to set
      */
     public void setQueryValues(String[] queryValues) {
-       this.queryValues = addItemsToListNewly(this.queryValues, queryValues);
+        this.queryValues = addItemsToListNewly(this.queryValues, queryValues);
     }
 
     /**
@@ -1403,7 +1426,7 @@ public class DatabaseQuery extends DbInitalizer {
      */
     public void setJoiningArray(String[] joiningArray) {
 
-       this.joiningArray =  addItemsToListNewly(this.joiningArray, joiningArray);
+        this.joiningArray = addItemsToListNewly(this.joiningArray, joiningArray);
     }
 
     /**
@@ -1431,7 +1454,7 @@ public class DatabaseQuery extends DbInitalizer {
      * @param createFields the createFields to set
      */
     public void setCreateFields(String[] createFields) {
-       this.createFields =  addItemsToListNewly(this.createFields, createFields);
+        this.createFields = addItemsToListNewly(this.createFields, createFields);
     }
     //</editor-fold>
 

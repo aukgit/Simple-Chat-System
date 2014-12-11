@@ -1,4 +1,4 @@
-package ComonCodes;
+package ImageProcessing;
 
 import Database.Components.ISoftwareInformation;
 import java.awt.Color;

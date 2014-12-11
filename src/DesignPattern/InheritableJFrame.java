@@ -5,6 +5,8 @@
  */
 package DesignPattern;
 
+import Database.Components.MsgBox;
+
 
 
 /**
@@ -12,6 +14,11 @@ package DesignPattern;
  * @author Alim
  */
 public abstract class InheritableJFrame extends DatabaseRunnableComponents {
+    
+    //<editor-fold defaultstate="collapsed" desc="Fields">
+    private MsgBox messageBox;
+    //</editor-fold>
+    
     
     // <editor-fold defaultstate="collapsed" desc="Personal Methods added by Alim Ul Karim">
 
@@ -29,6 +36,7 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponents {
      * Creates new form InheritableJFrame
      */
     public InheritableJFrame() {
+        this.messageBox = new MsgBox();
         initalizeTableName();
         initComponents();
       
@@ -62,6 +70,28 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponents {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    //<editor-fold defaultstate="collapsed" desc="Getter seeters">
+   
+    // <editor-fold defaultstate="collapsed" desc="Getter">
+    /**
+     * @return the messageBox
+     */
+    public MsgBox getMessageBox() {
+        return messageBox;
+    }
+
+    // </editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Setter">
+    /**
+     * @param messageBox the messageBox to set
+     */
+    public void setMessageBox(MsgBox messageBox) {
+        this.messageBox = messageBox;
+    }
+//</editor-fold>
+    //</editor-fold>
 
     /**
      * @param args the command line arguments

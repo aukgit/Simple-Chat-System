@@ -21,22 +21,54 @@ public final class MsgBox implements Icon {
     public JOptionPane Msg = new JOptionPane();
     public ButtonsClass buttons = new ButtonsClass();
     public IconsClass icons = new IconsClass();
+    
+    //<editor-fold defaultstate="collapsed" desc="Constructors">
+    public MsgBox(Component oBaseObject, String Msg) {
+        JOptionPane.showMessageDialog(oBaseObject, Msg, "Message", JOptionPane.INFORMATION_MESSAGE);
+        
+    }
+    
+    public MsgBox() {
+    }
+    
+    /**
+     *
+     * @param oBaseObject
+     * @param Msg
+     * @param title
+     */
+    public MsgBox(Component oBaseObject, String Msg, String title) {
+        show(oBaseObject, Msg, title);
+    }
+    
+    /**
+     *
+     * @param oBaseObject
+     * @param Msg
+     * @param title
+     * @param buttonsInt : (use JOptionPane) JOptionPane.YES_NO_CANCEL_OPTION better use my ButtonsClass
+     */
+    public MsgBox(Component oBaseObject, String Msg, String title, int buttonsInt) {
+        JOptionPane.showMessageDialog(oBaseObject, Msg, title, buttonsInt);
+    }
+    //</editor-fold>
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Icons">
     public int getIconWidth() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
+    
     public int getIconHeight() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    void showError(Exception e, String errorDes, String toString) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+//</editor-fold>
+    
+    
 
     public class IconsClass {
 
@@ -57,35 +89,10 @@ public final class MsgBox implements Icon {
         public final int OkCancle = JOptionPane.OK_CANCEL_OPTION;
     }
 
-    public MsgBox(Component oBaseObject, String Msg) {
-        JOptionPane.showMessageDialog(oBaseObject, Msg, "Message", JOptionPane.INFORMATION_MESSAGE);
-
-    }
-
-    public MsgBox() {
-    }
-
-    /**
-     * 
-     * @param oBaseObject
-     * @param Msg
-     * @param title 
-     */
-    public MsgBox(Component oBaseObject, String Msg, String title) {
-        show(oBaseObject, Msg, title);
-    }
-
-    /**
-     * 
-     * @param oBaseObject
-     * @param Msg
-     * @param title
-     * @param buttonsInt 
-     */
-    public MsgBox(Component oBaseObject, String Msg, String title, int buttonsInt) {
-        JOptionPane.showMessageDialog(oBaseObject, Msg, title, buttonsInt);
-    }
-
+//    void showError(Exception e, String errorDes, String toString) {
+//        throw new UnsupportedOperationException("Not yet implemented");
+//    }
+    
     public int show(Component oBaseObject, String Msg) {
         JOptionPane.showMessageDialog(oBaseObject, Msg, "Message", JOptionPane.INFORMATION_MESSAGE);
         return 1;
@@ -104,7 +111,8 @@ public final class MsgBox implements Icon {
      * @param Msg
      * @param title
      * @param buttonsInt
-     * @param i 
+     * @param iconsInt 
+     * @return  
      */
     public int show(Component oBaseObject, String Msg, String title, int buttonsInt, int iconsInt) {
         if (buttonsInt == buttons.OkCancle || buttonsInt == buttons.YesNO || buttonsInt == buttons.YesNoCancel) {
@@ -115,24 +123,28 @@ public final class MsgBox implements Icon {
         }
     }
 
+    /**
+     *
+     * @param oBaseObject
+     * @param Msg
+     * @param title
+     * @return
+     */
     public boolean showYesNo(Component oBaseObject, String Msg, String title) {
         int i = JOptionPane.showConfirmDialog(oBaseObject, Msg, title, buttons.YesNO, icons.Question);
         //System.out.println("number" + i);
-        if (i == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return i == 0;
     }
 
+    /**
+     *
+     * @param oBaseObject
+     * @return
+     */
     public boolean showYesNoDataBaseFormClose(Component oBaseObject) {
         int i = JOptionPane.showConfirmDialog(oBaseObject, "Do you want to save the changes?", "SaveChanges", buttons.YesNO, icons.Question);
         //System.out.println("number" + i);
-        if (i == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return i == 0;
     }
 
     public int showYesNoCancel(Component oBaseObject, String Msg, String title) {
@@ -142,7 +154,23 @@ public final class MsgBox implements Icon {
     public int error(Component oBaseObject, String Msg, String title) {
         return this.showError(oBaseObject, Msg, title);
     }
-
+    
+    /**
+     * 
+     * @param oBaseObject
+     * @param Msg     
+     * @return 
+     */
+    public int showError(Component oBaseObject, String Msg) {
+        return JOptionPane.showConfirmDialog(oBaseObject, Msg, "Error", buttons.Default, icons.Error);
+    }
+    /**
+     * 
+     * @param oBaseObject
+     * @param Msg
+     * @param title
+     * @return 
+     */
     public int showError(Component oBaseObject, String Msg, String title) {
         return JOptionPane.showConfirmDialog(oBaseObject, Msg, title, buttons.Default, icons.Error);
     }
@@ -152,26 +180,14 @@ public final class MsgBox implements Icon {
     }
 
     public boolean isOk() {
-        if (JOptionPane.OK_OPTION == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return JOptionPane.OK_OPTION == 1;
     }
 
     public boolean isCancel() {
-        if (JOptionPane.CANCEL_OPTION == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return JOptionPane.CANCEL_OPTION == 1;
     }
 
     public boolean isClosed() {
-        if (JOptionPane.CLOSED_OPTION == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return JOptionPane.CLOSED_OPTION == 1;
     }
 }
