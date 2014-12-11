@@ -99,7 +99,7 @@ public class DatabaseQuery extends DbInitalizer {
     // <editor-fold defaultstate="collapsed" desc="Clean Ups">
 
     private void cleanQueryArrays() {
-        setQueryFieldNames(null);
+        setQueryFieldNamesCleanUp();
         setQueryValues(null);
         setJoiningArray(null);
         setQueryTypes(null);
@@ -129,16 +129,18 @@ public class DatabaseQuery extends DbInitalizer {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Intializing Array List if null">
-    private void initializeListIfNecessary(ArrayList<String> list) {
+    private ArrayList<String> initializeListIfNecessary(ArrayList<String> list) {
         if (list == null) {
             list = new ArrayList<>(defaultListCreatingNumber);
         }
+        return list;
     }
 
-    private void initializeListIntIfNecessary(ArrayList<Integer> list) {
+    private ArrayList<Integer> initializeListIntIfNecessary(ArrayList<Integer> list) {
         if (list == null) {
             list = new ArrayList<>(defaultListCreatingNumber);
         }
+        return list;
     }
     //</editor-fold>
 
@@ -182,7 +184,7 @@ public class DatabaseQuery extends DbInitalizer {
 
     //<editor-fold defaultstate="collapsed" desc="Adding or Appending items to the list<- from array">
     public void appendItemsToList(ArrayList<String> list, String[] items) {
-        initializeListIfNecessary(list);
+        list = initializeListIfNecessary(list);
         list.addAll(Arrays.asList(items));
     }
 
@@ -191,18 +193,22 @@ public class DatabaseQuery extends DbInitalizer {
      * @param list : pass the list
      * @param items : items that needed to be added to the list
      */
-    public void addItemsToListNewly(ArrayList<String> list, String[] items) {
-        initializeListIfNecessary(list);
+    public ArrayList<String> addItemsToListNewly(ArrayList<String> list, String[] items) {
+        list = initializeListIfNecessary(list);
         list.clear();
-        list.addAll(Arrays.asList(items));
+        if (items != null) {
+            list.addAll(Arrays.asList(items));
+        }
+        return list;
     }
 
-    public void appendItemsToIntList(ArrayList<Integer> list, int[] items) {
-        initializeListIntIfNecessary(list);
-
+    public ArrayList<Integer> appendItemsToIntList(ArrayList<Integer> list, int[] items) {
+        list = initializeListIntIfNecessary(list);
         for (int item : items) {
             list.add(item);
         }
+        return list;
+
     }
 
     /**
@@ -210,12 +216,13 @@ public class DatabaseQuery extends DbInitalizer {
      * @param list : pass the list
      * @param items : items that needed to be added to the list
      */
-    public void addItemsToIntListNewly(ArrayList<Integer> list, int[] items) {
-        initializeListIntIfNecessary(list);
+    public ArrayList<Integer> addItemsToIntListNewly(ArrayList<Integer> list, int[] items) {
+        list = initializeListIntIfNecessary(list);
         list.clear();
         for (int item : items) {
             list.add(item);
         }
+        return list;
     }
     //</editor-fold>
 
@@ -235,7 +242,7 @@ public class DatabaseQuery extends DbInitalizer {
      * @param fields :Query Fields ie.: where ... *column* = value
      */
     public void setSpecialQueryFields_(boolean append, int... fields) {
-        initializeListIfNecessary(getQueryFieldNames());
+        setQueryFieldNames(initializeListIfNecessary(getQueryFieldNames()));
         String col[] = columnsNames();
         if (append == false) {
             getQueryFieldNames().clear();
@@ -646,7 +653,6 @@ public class DatabaseQuery extends DbInitalizer {
     public boolean isExist(String Columns, String valuesSearchInFields) {
         try {
             if (Columns != null && valuesSearchInFields != null) {
-
                 rs = readData(Columns, valuesSearchInFields);
                 return isResultValid(1);
             }
@@ -1244,7 +1250,7 @@ public class DatabaseQuery extends DbInitalizer {
     public String getDateInMySQLFormat(java.util.Date date) {
         return getSimpleDateFormatter().format(date);
     }
-    
+
     public String getCurrentDateInMySQLFormat() {
         return getDateInMySQLFormat(getCurrentDate());
     }
@@ -1364,23 +1370,30 @@ public class DatabaseQuery extends DbInitalizer {
      * @param createFieldsValues the createFieldsValues to set
      */
     public void setCreateFieldsValues(String[] createFieldsValues) {
-        addItemsToListNewly(this.createFieldsValues, createFieldsValues);
+       this.createFieldsValues = addItemsToListNewly(this.createFieldsValues, createFieldsValues);
     }
 
+    public void setQueryFieldNamesCleanUp() {
+        this.queryFieldNames = addItemsToListNewly(this.queryFieldNames, null);
+    }
     /**
      * add fields newly.
      *
      * @param queryFieldNames the queryFieldNames to set
      */
     public void setQueryFieldNames(String[] queryFieldNames) {
-        addItemsToListNewly(this.queryFieldNames, queryFieldNames);
+        this.queryFieldNames = addItemsToListNewly(this.queryFieldNames, queryFieldNames);
+    }
+
+    public void setQueryFieldNames(ArrayList<String> queryFieldNames) {
+        this.queryFieldNames = queryFieldNames;
     }
 
     /**
      * @param queryValues the queryValues to set
      */
     public void setQueryValues(String[] queryValues) {
-        addItemsToListNewly(this.queryValues, queryValues);
+       this.queryValues = addItemsToListNewly(this.queryValues, queryValues);
     }
 
     /**
@@ -1388,35 +1401,35 @@ public class DatabaseQuery extends DbInitalizer {
      */
     public void setJoiningArray(String[] joiningArray) {
 
-        addItemsToListNewly(this.joiningArray, joiningArray);
+       this.joiningArray =  addItemsToListNewly(this.joiningArray, joiningArray);
     }
 
     /**
      * @param queryTypes the queryTypes to set
      */
     public void setQueryTypes(int[] queryTypes) {
-        addItemsToIntListNewly(this.queryTypes, queryTypes);
+        this.queryTypes = addItemsToIntListNewly(this.queryTypes, queryTypes);
     }
 
     /**
      * @param updateFields the updateFields to set
      */
     public void setUpdateFields(String[] updateFields) {
-        addItemsToListNewly(this.updateFields, updateFields);
+        this.updateFields = addItemsToListNewly(this.updateFields, updateFields);
     }
 
     /**
      * @param updateFieldsValues the updateFieldsValues to set
      */
     public void setUpdateFieldsValues(String[] updateFieldsValues) {
-        addItemsToListNewly(this.updateFieldsValues, updateFieldsValues);
+        this.updateFieldsValues = addItemsToListNewly(this.updateFieldsValues, updateFieldsValues);
     }
 
     /**
      * @param createFields the createFields to set
      */
     public void setCreateFields(String[] createFields) {
-        addItemsToListNewly(this.createFields, createFields);
+       this.createFields =  addItemsToListNewly(this.createFields, createFields);
     }
     //</editor-fold>
 
