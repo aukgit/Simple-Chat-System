@@ -166,7 +166,7 @@ public class RegisterForm extends InheritableJFrame {
         String Values[] = new String[numberOfFields];
         int i = 0;
         @SuppressWarnings("deprecation")
-        boolean passwordMatch = this.PasswordTextBox.getText().equals(this.ConfrimPasswordTextBox.getText());
+        boolean passwordNotMatch = !this.PasswordTextBox.getText().equals(this.ConfrimPasswordTextBox.getText());
 
         boolean isNotEmailExist = false;
         boolean isNotUsernameExist = false;
@@ -176,7 +176,6 @@ public class RegisterForm extends InheritableJFrame {
         boolean isPasswordSatisfyMinMax;
         int passwordMin = 3, passwordMax = 20;
 
-        
         if (isEmailValid) {
             isNotEmailExist = !this.getDb().isExist(User.Email, this.EmailTextBox.getText());
             ErrorHighLight.ErrorValidate(isNotEmailExist, this.emailLabel, this.EmailTextBox, "Email already exist.", "Email doesn't exist.");
@@ -188,14 +187,14 @@ public class RegisterForm extends InheritableJFrame {
             ErrorHighLight.ErrorValidate(isNotUsernameExist, this.usernameLabel, this.UsernameTextBox, "Username already exist.", "Username is fine.");
 
         }
-        
+
         isPasswordSatisfyMinMax = Validate.minMaxCheck(this.PasswordTextBox, PasswrodLabel, passwordMin, passwordMax, false, passwordNormal, "(Min,Max) = (3,20)");
         if (isPasswordSatisfyMinMax) {
-            ErrorHighLight.ErrorValidate(passwordMatch, this.PasswrodLabel, this.PasswordTextBox, passwordError, passwordNormal);
-            ErrorHighLight.ErrorValidate(passwordMatch, this.ConfirmPasswordLabel, this.ConfrimPasswordTextBox, passwordError, passwordNormal);
+            ErrorHighLight.ErrorValidate(passwordNotMatch, this.PasswrodLabel, this.PasswordTextBox, passwordError, passwordNormal);
         }
+        ErrorHighLight.ErrorValidate(passwordNotMatch, this.ConfirmPasswordLabel, this.ConfrimPasswordTextBox, passwordError, passwordNormal);
 
-        if (passwordMatch && isNotEmailExist && isNotUsernameExist && isUsernameValid && isEmailValid) {
+        if (passwordNotMatch && isPasswordSatisfyMinMax && isNotEmailExist && isNotUsernameExist && isUsernameValid && isEmailValid) {
             String hashSh1Password = Hasher.getShA1Hash(User.Password);
             //0
             Columns[i] = User.Username;
