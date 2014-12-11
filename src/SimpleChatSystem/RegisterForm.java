@@ -179,13 +179,13 @@ public class RegisterForm extends InheritableJFrame {
 
         if (isEmailValid) {
             isNotEmailExist = !this.getDb().isExist(User.Email, this.EmailTextBox.getText());
-            ErrorHighLight.ErrorValidate(isNotEmailExist, this.emailLabel, this.EmailTextBox, "Email already exist.", "Email doesn't exist.");
+            ErrorHighLight.ErrorValidate(!isNotEmailExist, this.emailLabel, this.EmailTextBox, "Email already exist.", "Email doesn't exist.");
 
         }
 
         if (isUsernameValid) {
             isNotUsernameExist = !this.getDb().isExist(User.Username, this.UsernameTextBox.getText());
-            ErrorHighLight.ErrorValidate(isNotUsernameExist, this.usernameLabel, this.UsernameTextBox, "Username already exist.", "Username is fine.");
+            ErrorHighLight.ErrorValidate(!isNotUsernameExist, this.usernameLabel, this.UsernameTextBox, "Username already exist.", "Username is fine.");
 
         }
 

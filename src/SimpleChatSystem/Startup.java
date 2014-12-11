@@ -131,6 +131,7 @@ public class Startup extends javax.swing.JFrame {
         frm.show(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    @SuppressWarnings("deprecation")
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         RegisterForm reg = new RegisterForm();

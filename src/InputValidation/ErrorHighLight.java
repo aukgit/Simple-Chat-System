@@ -15,6 +15,9 @@ import javax.swing.JTextField;
  * @author Alim
  */
 public class ErrorHighLight {
+    
+    public final static String Green = "009900";
+    
 
     //<editor-fold defaultstate="collapsed" desc="Error Validate">
     /**
@@ -38,7 +41,7 @@ public class ErrorHighLight {
     @SuppressWarnings("null")
     public static void ErrorLabel(JLabel label, JTextField textbox, String errorMsg) {
         if (label != null) {
-            label.setForeground(Color.red);
+            label.setForeground(Color.getColor(Green));
             if (errorMsg != null) {
                 label.setToolTipText("Invalid : " + errorMsg);
             }
@@ -70,14 +73,14 @@ public class ErrorHighLight {
 
     public static void ResumeErrorLabelGreen(JLabel label, JTextField textbox, String regularTooltip) {
         if (label != null) {
-            label.setForeground(Color.GREEN);
+            label.setForeground(Color.getColor(Green));
             if (regularTooltip != null) {
                 label.setToolTipText(regularTooltip);
             }
         }
 
         if (textbox != null) {
-            textbox.setForeground(Color.GREEN);
+            label.setForeground(Color.getColor(Green));
             if (regularTooltip != null) {
                 textbox.setToolTipText(regularTooltip);
             }
