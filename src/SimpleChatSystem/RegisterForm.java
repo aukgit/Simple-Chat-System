@@ -162,7 +162,7 @@ public class RegisterForm extends InheritableJFrame {
         String passwordNormal = "Password is fine.";
         String Columns[] = new String[8];
         String Values[] = new String[8];
-        int i =0;
+        int i = 0;
         boolean passwordMatch = this.PasswordTextBox.getText().equals(this.ConfrimPasswordTextBox.getText());
         boolean isNotEmailExist = !this.getDb().isExist(User.Email, this.EmailTextBox.getText());
         boolean isNotUsernameExist = !this.getDb().isExist(User.Username, this.UsernameTextBox.getText());
@@ -182,9 +182,12 @@ public class RegisterForm extends InheritableJFrame {
             
             Columns[i] = User.Password;
             Values[i++] = hashSh1Password;
+            
+            Columns[i] = User.LastLogin;
+            Values[i++] = hashSh1Password;
             //this.getDb().insertData(, passwordError);
         }
-        Sysout("confirmPass", this.ConfrimPasswordTextBox.getAccessibleContext().getAccessibleName());
+        
 
     }//GEN-LAST:event_jButton1ActionPerformed
 

@@ -14,6 +14,7 @@ import Database.Components.DbInitalizer;
 import Database.Components.StringMore;
 import DesignPattern.DatabaseRunnableComponents;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -24,6 +25,12 @@ public class DatabaseQuery extends DbInitalizer {
 
     StringMore strMore = new StringMore();
     // <editor-fold defaultstate="collapsed" desc="Intializers & Configarations">
+
+    //<editor-fold defaultstate="collapsed" desc="Constants">
+    private final String MYSQL_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    //</editor-fold>
+    private SimpleDateFormat simpleDateFormatter;
+
     //Configaration
     private String url = DatabaseURL;
     private String user = "root", password = "";
@@ -58,6 +65,7 @@ public class DatabaseQuery extends DbInitalizer {
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     public DatabaseQuery() {
+        this.simpleDateFormatter = new java.text.SimpleDateFormat(MYSQL_DATE_FORMAT);
         try {
 
             cnn = DriverManager.getConnection(url, user, password);
@@ -72,6 +80,7 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     public DatabaseQuery(String url, String user, String password) {
+        this.simpleDateFormatter = new java.text.SimpleDateFormat(MYSQL_DATE_FORMAT);
         try {
             this.url = url;
             this.password = password;
@@ -626,17 +635,19 @@ public class DatabaseQuery extends DbInitalizer {
         }
         return rs;
     }
+
     /**
      * at least one row returned.
+     *
      * @param Columns : CSV
      * @param valuesSearchInFields: CSV
-     * @return 
+     * @return
      */
     public boolean isExist(String Columns, String valuesSearchInFields) {
         try {
             if (Columns != null && valuesSearchInFields != null) {
-                
-                rs = readData(Columns,valuesSearchInFields );
+
+                rs = readData(Columns, valuesSearchInFields);
                 return isResultValid(1);
             }
         } catch (Exception ex) {
@@ -644,11 +655,12 @@ public class DatabaseQuery extends DbInitalizer {
         }
         return false;
     }
+
     /**
-     * 
+     *
      * @param Columns : CSV
      * @param valuesSearchInFields: CSV
-     * @return 
+     * @return
      */
     public ResultSet readData(String Columns, String valuesSearchInFields) {
         try {
@@ -1102,8 +1114,9 @@ public class DatabaseQuery extends DbInitalizer {
     // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
     /**
      * Zero based index.
-     * @param rowNumberExist : Zero based index : if -1 then returns only if result set is not
-     * null.
+     *
+     * @param rowNumberExist : Zero based index : if -1 then returns only if
+     * result set is not null.
      * @return
      */
     public boolean isResultValid(int rowNumberExist) {
@@ -1211,6 +1224,31 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     //</editor-fold>
+    /**
+     * @return the simpleDateFormatter
+     */
+    public SimpleDateFormat getSimpleDateFormatter() {
+        return simpleDateFormatter;
+    }
+
+    /**
+     *
+     * @param date
+     * @return
+     */
+    public String getDateInMySQLFormat(Date date) {
+        return getSimpleDateFormatter().format(date);
+    }
+
+    /**
+     * use this by SimpleDateFormat.format(Date date)
+     * @param format: yyyy-MM-dd HH:mm:ss
+     * @return SimpleDateFormat
+     */
+    public SimpleDateFormat getDateFormatter(String format) {
+        return new SimpleDateFormat(format);
+    }
+
     /**
      * @return the url
      */
@@ -1321,6 +1359,7 @@ public class DatabaseQuery extends DbInitalizer {
 
     /**
      * add fields newly.
+     *
      * @param queryFieldNames the queryFieldNames to set
      */
     public void setQueryFieldNames(String[] queryFieldNames) {
@@ -1477,6 +1516,13 @@ public class DatabaseQuery extends DbInitalizer {
      */
     public void setQueryTypeInitalized(Boolean QueryTypeInitalized) {
         this.queryTypeInitalized = QueryTypeInitalized;
+    }
+
+    /**
+     * @param simpleDateFormatter the simpleDateFormatter to set
+     */
+    public void setSimpleDateFormatter(SimpleDateFormat simpleDateFormatter) {
+        this.simpleDateFormatter = simpleDateFormatter;
     }
     //</editor-fold>
 

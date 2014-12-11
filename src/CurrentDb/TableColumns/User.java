@@ -16,10 +16,9 @@ public interface User {
     public String Username = "Username";
     public String Email = "Email";
     public String Password = "Password";
-    public String PasswordHash = "PasswordHash";
+
     public String LastLogin = "LastLogin";
     public String IsBlocked = "IsBlocked";
-        public String IsActive = "IsActive";
-
+    public String IsActive = "IsActive";
 
 }
