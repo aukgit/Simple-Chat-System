@@ -6,6 +6,7 @@
 package SimpleChatSystem;
 
 import ComonCodes.ErrorHighLight;
+import Cryptography.Hasher;
 import CurrentDb.TableColumns.Message;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
@@ -170,8 +171,9 @@ public class RegisterForm extends InheritableJFrame {
 
         ErrorHighLight.ErrorValidate(isNotEmailExist, this.emailLabel, this.EmailTextBox, "Email already exist.", "Email doesn't exist.");
         ErrorHighLight.ErrorValidate(isNotUsernameExist, this.usernameLabel, this.UsernameTextBox, "Username already exist.", "Username is fine.");
-//String password = 
+        
         if (passwordMatch && isNotEmailExist && isNotUsernameExist) {
+            String hashSh1Password = Hasher.getSh1Hash(User.Password);
             Columns[i] = User.Username;
             Values[i++] = this.UsernameTextBox.getText();
             
@@ -179,7 +181,7 @@ public class RegisterForm extends InheritableJFrame {
             Values[i++] = this.EmailTextBox.getText();
             
             Columns[i] = User.Password;
-            Values[i++] = this.EmailTextBox.getText();
+            Values[i++] = hashSh1Password;
             //this.getDb().insertData(, passwordError);
         }
         Sysout("confirmPass", this.ConfrimPasswordTextBox.getAccessibleContext().getAccessibleName());

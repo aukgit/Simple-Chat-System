@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50614
 File Encoding         : 65001
 
-Date: 2014-12-07 01:18:41
+Date: 2014-12-11 20:06:23
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -60,6 +60,8 @@ CREATE TABLE `message` (
   `SendToUserID` int(11) NOT NULL,
   `IsReceivedByUser` tinyint(1) NOT NULL,
   `Message` varchar(2000) NOT NULL,
+  `IsFileExit` tinyint(1) NOT NULL,
+  `FileLocation` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`MessageID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -93,10 +95,9 @@ CREATE TABLE `user` (
   `Username` varchar(50) NOT NULL,
   `Email` varchar(256) NOT NULL,
   `Password` varchar(45) NOT NULL,
-  `PasswordHash` varchar(45) NOT NULL,
   `LastLogin` datetime DEFAULT NULL,
-  `IsBlocked` tinyint(1) NOT NULL,
-  `IsActive` tinyint(1) NOT NULL,
+  `IsBlocked` tinyint(1) NOT NULL DEFAULT '0',
+  `IsActive` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`UserID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

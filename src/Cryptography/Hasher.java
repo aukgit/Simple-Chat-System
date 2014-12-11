@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Hasher;
+package Cryptography;
 
 import java.security.*;
 import java.util.logging.Level;
@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  *
  * @author Alim
  */
-public class Cryptography {
+public class Hasher {
 
     public static String getSh1Hash(String input) {
         MessageDigest md = null;
@@ -23,7 +23,7 @@ public class Cryptography {
             md.update(input.getBytes());
             output = md.digest();
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(Cryptography.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Hasher.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         String hash = bytesToHex(output);
