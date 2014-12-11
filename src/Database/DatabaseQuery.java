@@ -197,6 +197,7 @@ public class DatabaseQuery extends DbInitalizer {
      *
      * @param list : pass the list
      * @param items : items that needed to be added to the list
+     * @return 
      */
     public ArrayList<String> addItemsToListNewly(ArrayList<String> list, String[] items) {
         list = initializeListIfNecessary(list);
@@ -209,8 +210,10 @@ public class DatabaseQuery extends DbInitalizer {
 
     public ArrayList<Integer> appendItemsToIntList(ArrayList<Integer> list, int[] items) {
         list = initializeListIntIfNecessary(list);
-        for (int item : items) {
-            list.add(item);
+        if (items != null) {
+            for (int item : items) {
+                list.add(item);
+            }
         }
         return list;
 
@@ -220,12 +223,15 @@ public class DatabaseQuery extends DbInitalizer {
      *
      * @param list : pass the list
      * @param items : items that needed to be added to the list
+     * @return 
      */
     public ArrayList<Integer> addItemsToIntListNewly(ArrayList<Integer> list, int[] items) {
         list = initializeListIntIfNecessary(list);
         list.clear();
-        for (int item : items) {
-            list.add(item);
+        if (items != null) {
+            for (int item : items) {
+                list.add(item);
+            }
         }
         return list;
     }
@@ -1145,7 +1151,7 @@ public class DatabaseQuery extends DbInitalizer {
     /**
      * Zero based index.
      *
-     * @param rowNumberExist : Zero based index : if -1 then returns only if
+     * @param rowNumberExist : One based index : if -1 then returns only if
      * result set is not null.
      * @return
      */
@@ -1158,19 +1164,24 @@ public class DatabaseQuery extends DbInitalizer {
                 int currentPos = rs.getRow();
                 rs.last();
                 int count = rs.getRow();
-                int existingIndex = count - 1;
+                int existingIndex = count; // -1 represents , zero based index, count represents one based index
                 if (rowNumberExist <= existingIndex) {
-                    rs.absolute(currentPos);
+                    rs.absolute(rowNumberExist);
                     return true;
                 }
                 rs.absolute(currentPos);
             } catch (SQLException ex) {
-                Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+                 ErrorMessage(ex, this.getSelectSQL(), "isResultValid(int rowNumberExist)");
             }
         }
         return false;
     }
-
+    /**
+     * 
+     * @param _rs
+     * @param rowNumberExist: One based index
+     * @return 
+     */
     public boolean isResultValid(ResultSet _rs, int rowNumberExist) {
         if (_rs != null) {
             try {
@@ -1180,9 +1191,9 @@ public class DatabaseQuery extends DbInitalizer {
                 int currentPos = _rs.getRow();
                 _rs.last();
                 int count = _rs.getRow();
-                int existingIndex = count - 1;
+                int existingIndex = count;
                 if (rowNumberExist <= existingIndex) {
-                    _rs.absolute(currentPos);
+                    _rs.absolute(rowNumberExist);
                     return true;
                 }
                 _rs.absolute(currentPos);
@@ -1418,22 +1429,33 @@ public class DatabaseQuery extends DbInitalizer {
      * @param queryValues the queryValues to set
      */
     public void setQueryValues(String[] queryValues) {
-        this.queryValues = addItemsToListNewly(this.queryValues, queryValues);
+        if (queryValues == null) {
+            this.queryValues = null;
+        } else {
+            this.queryValues = addItemsToListNewly(this.queryValues, queryValues);
+        }
     }
 
     /**
      * @param joiningArray the joiningArray to set
      */
     public void setJoiningArray(String[] joiningArray) {
-
-        this.joiningArray = addItemsToListNewly(this.joiningArray, joiningArray);
+        if (joiningArray == null) {
+            this.joiningArray = null;
+        } else {
+            this.joiningArray = addItemsToListNewly(this.joiningArray, joiningArray);
+        }
     }
 
     /**
      * @param queryTypes the queryTypes to set
      */
     public void setQueryTypes(int[] queryTypes) {
-        this.queryTypes = addItemsToIntListNewly(this.queryTypes, queryTypes);
+        if (queryTypes == null) {
+            this.queryTypes = null;
+        } else {
+            this.queryTypes = addItemsToIntListNewly(this.queryTypes, queryTypes);
+        }
     }
 
     /**

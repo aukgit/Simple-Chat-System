@@ -11,6 +11,7 @@ import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
 import Database.Components.MsgBox;
 import DesignPattern.InheritableJFrame;
+import InputValidation.Validate;
 
 /**
  *
@@ -164,16 +165,37 @@ public class RegisterForm extends InheritableJFrame {
         String Columns[] = new String[numberOfFields];
         String Values[] = new String[numberOfFields];
         int i = 0;
+        @SuppressWarnings("deprecation")
         boolean passwordMatch = this.PasswordTextBox.getText().equals(this.ConfrimPasswordTextBox.getText());
-        boolean isNotEmailExist = !this.getDb().isExist(User.Email, this.EmailTextBox.getText());
-        boolean isNotUsernameExist = !this.getDb().isExist(User.Username, this.UsernameTextBox.getText());
-        ErrorHighLight.ErrorValidate(passwordMatch, this.PasswrodLabel, this.PasswordTextBox, passwordError, passwordNormal);
-        ErrorHighLight.ErrorValidate(passwordMatch, this.ConfirmPasswordLabel, this.ConfrimPasswordTextBox, passwordError, passwordNormal);
 
-        ErrorHighLight.ErrorValidate(isNotEmailExist, this.emailLabel, this.EmailTextBox, "Email already exist.", "Email doesn't exist.");
-        ErrorHighLight.ErrorValidate(isNotUsernameExist, this.usernameLabel, this.UsernameTextBox, "Username already exist.", "Username is fine.");
+        boolean isNotEmailExist = false;
+        boolean isNotUsernameExist = false;
 
-        if (passwordMatch && isNotEmailExist && isNotUsernameExist) {
+        boolean isUsernameValid = Validate.userName(this.UsernameTextBox, usernameLabel, 3, 30, false);
+        boolean isEmailValid = Validate.email(this.EmailTextBox, emailLabel, 5, 256, false);
+        boolean isPasswordSatisfyMinMax;
+        int passwordMin = 3, passwordMax = 20;
+
+        
+        if (isEmailValid) {
+            isNotEmailExist = !this.getDb().isExist(User.Email, this.EmailTextBox.getText());
+            ErrorHighLight.ErrorValidate(isNotEmailExist, this.emailLabel, this.EmailTextBox, "Email already exist.", "Email doesn't exist.");
+
+        }
+
+        if (isUsernameValid) {
+            isNotUsernameExist = !this.getDb().isExist(User.Username, this.UsernameTextBox.getText());
+            ErrorHighLight.ErrorValidate(isNotUsernameExist, this.usernameLabel, this.UsernameTextBox, "Username already exist.", "Username is fine.");
+
+        }
+        
+        isPasswordSatisfyMinMax = Validate.minMaxCheck(this.PasswordTextBox, PasswrodLabel, passwordMin, passwordMax, false, passwordNormal, "(Min,Max) = (3,20)");
+        if (isPasswordSatisfyMinMax) {
+            ErrorHighLight.ErrorValidate(passwordMatch, this.PasswrodLabel, this.PasswordTextBox, passwordError, passwordNormal);
+            ErrorHighLight.ErrorValidate(passwordMatch, this.ConfirmPasswordLabel, this.ConfrimPasswordTextBox, passwordError, passwordNormal);
+        }
+
+        if (passwordMatch && isNotEmailExist && isNotUsernameExist && isUsernameValid && isEmailValid) {
             String hashSh1Password = Hasher.getShA1Hash(User.Password);
             //0
             Columns[i] = User.Username;
@@ -198,8 +220,8 @@ public class RegisterForm extends InheritableJFrame {
             //5
             Columns[i] = User.IsBlocked;
             Values[i++] = "0";
-            if(this.getDb().insertData(Columns, Values)){                
-                this.getMessageBox().show(this, "User created successfully.");                
+            if (this.getDb().insertData(Columns, Values)) {
+                this.getMessageBox().show(this, "User created successfully.");
             } else {
                 this.getMessageBox().showError(this, "User account creation failed. Please take a look at those errors.");
             }

@@ -21,9 +21,8 @@ public class Validate {
     static final RegEx _NumberValidator = new RegEx(InputRegularExpressions.NUMBER);
     static final RegEx _CharactersValidator = new RegEx(InputRegularExpressions.CHARACTERS_ONLY);
 //</editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Min , Max Constrains Logic">
 
+    // <editor-fold defaultstate="collapsed" desc="Min , Max Constrains Logic">
     /**
      *
      * @param input
@@ -51,7 +50,14 @@ public class Validate {
         return false;
     }
 
-// </editor-fold>
+    public static boolean minMaxCheck(JTextField input, JLabel label, int min, int max, boolean nullAllow, String validTooltip, String invalidTooltip) {
+        String userInput = input.getText();
+        boolean minMax = minMaxCheck(userInput, min, max, nullAllow);
+        ErrorHighLight.ErrorValidate(!minMax, label, input, invalidTooltip, validTooltip );
+        return minMax;
+    }
+
+    // </editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Validation Logics: Username, Email , number, characters only">
     /**
@@ -66,6 +72,7 @@ public class Validate {
 
         return minMaxCheck(input, min, max, nullAllow) && _UsernameValidator.validate(input);
     }
+
     /**
      *
      * @param input
@@ -76,10 +83,10 @@ public class Validate {
      * @return
      */
     public static boolean userName(JTextField input, JLabel label, int min, int max, boolean nullAllow) {
-        String userInput = input.getText();        
+        String userInput = input.getText();
         boolean minMax = minMaxCheck(userInput, min, max, nullAllow);
-        boolean isValid =  minMax && _UsernameValidator.validate(userInput);
-        ErrorHighLight.ErrorValidate(!isValid, label,input, "Username(it should not contain any space or any number or any puncution)", "Username");
+        boolean isValid = minMax && _UsernameValidator.validate(userInput);
+        ErrorHighLight.ErrorValidate(!isValid, label, input, "Username(it should not contain any space or any number or any puncution)", "Username");
         return isValid;
     }
 
@@ -94,7 +101,7 @@ public class Validate {
     public static boolean email(String input, int min, int max, boolean nullAllow) {
         return minMaxCheck(input, min, max, nullAllow) && _EmailValidator.validate(input);
     }
-    
+
     /**
      *
      * @param input
@@ -105,10 +112,10 @@ public class Validate {
      * @return
      */
     public static boolean email(JTextField input, JLabel label, int min, int max, boolean nullAllow) {
-        String userInput = input.getText();        
+        String userInput = input.getText();
         boolean minMax = minMaxCheck(userInput, min, max, nullAllow);
-        boolean isValid =  minMax && _EmailValidator.validate(userInput);
-        ErrorHighLight.ErrorValidate(!isValid, label,input, "Email(it should not contain any space or any other irregular character that an email shouldn't have according to RFC 822)", "Email");
+        boolean isValid = minMax && _EmailValidator.validate(userInput);
+        ErrorHighLight.ErrorValidate(!isValid, label, input, "Email(it should not contain any space or any other irregular character that an email shouldn't have according to RFC 822)", "Email");
         return isValid;
     }
 
@@ -123,7 +130,7 @@ public class Validate {
     public static boolean number(String input, int min, int max, boolean nullAllow) {
         return minMaxCheck(input, min, max, nullAllow) && _NumberValidator.validate(input);
     }
- 
+
     /**
      *
      * @param input
@@ -135,12 +142,13 @@ public class Validate {
      * @return
      */
     public static boolean number(JTextField input, JLabel label, int min, int max, boolean nullAllow, String nameOfField) {
-        String userInput = input.getText();        
+        String userInput = input.getText();
         boolean minMax = minMaxCheck(userInput, min, max, nullAllow);
-        boolean isValid =  minMax && _NumberValidator.validate(userInput);
-        ErrorHighLight.ErrorValidate(!isValid, label,input, nameOfField, nameOfField);
+        boolean isValid = minMax && _NumberValidator.validate(userInput);
+        ErrorHighLight.ErrorValidate(!isValid, label, input, nameOfField, nameOfField);
         return isValid;
     }
+
     /**
      *
      * @param input
@@ -152,7 +160,7 @@ public class Validate {
     public static boolean charactersOnly(String input, int min, int max, boolean nullAllow) {
         return minMaxCheck(input, min, max, nullAllow) && _CharactersValidator.validate(input);
     }
-    
+
     /**
      *
      * @param input
@@ -164,10 +172,10 @@ public class Validate {
      * @return
      */
     public static boolean charactersOnly(JTextField input, JLabel label, int min, int max, boolean nullAllow, String nameOfField) {
-        String userInput = input.getText();        
+        String userInput = input.getText();
         boolean minMax = minMaxCheck(userInput, min, max, nullAllow);
-        boolean isValid =  minMax && _NumberValidator.validate(userInput);
-        ErrorHighLight.ErrorValidate(!isValid, label,input, nameOfField, nameOfField);
+        boolean isValid = minMax && _NumberValidator.validate(userInput);
+        ErrorHighLight.ErrorValidate(!isValid, label, input, nameOfField, nameOfField);
         return isValid;
     }
     //</editor-fold>
