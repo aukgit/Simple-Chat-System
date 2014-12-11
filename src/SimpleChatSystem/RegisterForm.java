@@ -9,7 +9,7 @@ import InputValidation.ErrorHighLight;
 import Cryptography.Hasher;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
-import Database.Components.MsgBox;
+
 import DesignPattern.InheritableJFrame;
 import InputValidation.Validate;
 
@@ -18,6 +18,7 @@ import InputValidation.Validate;
  * @author Alim
  */
 public class RegisterForm extends InheritableJFrame {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates new form RegisterForm
