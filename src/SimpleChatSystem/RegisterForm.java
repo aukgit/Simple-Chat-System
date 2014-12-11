@@ -11,6 +11,7 @@ import CurrentDb.TableColumns.Message;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
 import DesignPattern.InheritableJFrame;
+import java.util.Date;
 
 /**
  *
@@ -171,23 +172,29 @@ public class RegisterForm extends InheritableJFrame {
 
         ErrorHighLight.ErrorValidate(isNotEmailExist, this.emailLabel, this.EmailTextBox, "Email already exist.", "Email doesn't exist.");
         ErrorHighLight.ErrorValidate(isNotUsernameExist, this.usernameLabel, this.UsernameTextBox, "Username already exist.", "Username is fine.");
-        
+
         if (passwordMatch && isNotEmailExist && isNotUsernameExist) {
             String hashSh1Password = Hasher.getSh1Hash(User.Password);
             Columns[i] = User.Username;
             Values[i++] = this.UsernameTextBox.getText();
-            
+
             Columns[i] = User.Email;
             Values[i++] = this.EmailTextBox.getText();
-            
+
             Columns[i] = User.Password;
             Values[i++] = hashSh1Password;
-            
+
             Columns[i] = User.LastLogin;
-            Values[i++] = hashSh1Password;
+            Values[i++] = getDb().getCurrentDateInMySQLFormat(); // returns current date.
+
+            Columns[i] = User.IsActive;
+            Values[i++] = "1";
+
+            Columns[i] = User.IsBlocked;
+            Values[i++] = "0";
             //this.getDb().insertData(, passwordError);
         }
-        
+
 
     }//GEN-LAST:event_jButton1ActionPerformed
 

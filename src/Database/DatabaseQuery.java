@@ -17,7 +17,7 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -1224,6 +1224,11 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     //</editor-fold>
+    public java.util.Date getCurrentDate() {
+        java.util.Date date = (java.util.Date) new Date();
+        return date;
+    }
+
     /**
      * @return the simpleDateFormatter
      */
@@ -1236,12 +1241,17 @@ public class DatabaseQuery extends DbInitalizer {
      * @param date
      * @return
      */
-    public String getDateInMySQLFormat(Date date) {
+    public String getDateInMySQLFormat(java.util.Date date) {
         return getSimpleDateFormatter().format(date);
+    }
+    
+    public String getCurrentDateInMySQLFormat() {
+        return getDateInMySQLFormat(getCurrentDate());
     }
 
     /**
      * use this by SimpleDateFormat.format(Date date)
+     *
      * @param format: yyyy-MM-dd HH:mm:ss
      * @return SimpleDateFormat
      */
