@@ -2,7 +2,7 @@
 
 It's a simple chat system written in java. Completly written by Alim Ul Karim. All codes are modular. 
 
-If you are looking for an open source java base chat client, look no further. You are in the right place. Take a look at our code.
+If you are looking for an open source java base chat client, look no further. You are in the right place. Take a look at my code.
 
 ###Instructions : How to make it ready on your environment. 
 
