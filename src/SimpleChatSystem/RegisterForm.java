@@ -7,11 +7,10 @@ package SimpleChatSystem;
 
 import ComonCodes.ErrorHighLight;
 import Cryptography.Hasher;
-import CurrentDb.TableColumns.Message;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
+import Database.Components.MsgBox;
 import DesignPattern.InheritableJFrame;
-import java.util.Date;
 
 /**
  *
@@ -199,7 +198,11 @@ public class RegisterForm extends InheritableJFrame {
             //5
             Columns[i] = User.IsBlocked;
             Values[i++] = "0";
-            this.getDb().insertData(Columns, Values);
+            if(this.getDb().insertData(Columns, Values)){                
+                this.getMessageBox().show(this, "User created successfully.");                
+            } else {
+                this.getMessageBox().showError(this, "User account creation failed. Please take a look at those errors.");
+            }
         }
 
 
