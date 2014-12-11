@@ -161,8 +161,9 @@ public class RegisterForm extends InheritableJFrame {
 
         String passwordError = "Password doesn't match.";
         String passwordNormal = "Password is fine.";
-        String Columns[] = new String[8];
-        String Values[] = new String[8];
+        int numberOfFields = 6;
+        String Columns[] = new String[numberOfFields];
+        String Values[] = new String[numberOfFields];
         int i = 0;
         boolean passwordMatch = this.PasswordTextBox.getText().equals(this.ConfrimPasswordTextBox.getText());
         boolean isNotEmailExist = !this.getDb().isExist(User.Email, this.EmailTextBox.getText());
@@ -174,25 +175,31 @@ public class RegisterForm extends InheritableJFrame {
         ErrorHighLight.ErrorValidate(isNotUsernameExist, this.usernameLabel, this.UsernameTextBox, "Username already exist.", "Username is fine.");
 
         if (passwordMatch && isNotEmailExist && isNotUsernameExist) {
-            String hashSh1Password = Hasher.getSh1Hash(User.Password);
+            String hashSh1Password = Hasher.getShA1Hash(User.Password);
+            //0
             Columns[i] = User.Username;
             Values[i++] = this.UsernameTextBox.getText();
 
+            //1
             Columns[i] = User.Email;
             Values[i++] = this.EmailTextBox.getText();
 
+            //2
             Columns[i] = User.Password;
             Values[i++] = hashSh1Password;
 
+            //3
             Columns[i] = User.LastLogin;
             Values[i++] = getDb().getCurrentDateInMySQLFormat(); // returns current date.
 
+            //4
             Columns[i] = User.IsActive;
             Values[i++] = "1";
 
+            //5
             Columns[i] = User.IsBlocked;
             Values[i++] = "0";
-            //this.getDb().insertData(, passwordError);
+            this.getDb().insertData(Columns, Values);
         }
 
 

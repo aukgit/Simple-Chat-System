@@ -5,6 +5,7 @@
  */
 package Cryptography;
 
+import ConsolePackage.Console;
 import java.security.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,7 +16,7 @@ import java.util.logging.Logger;
  */
 public class Hasher {
 
-    public static String getSh1Hash(String input) {
+    public static String getShA1Hash(String input) {
         MessageDigest md = null;
         byte[] output = null;
         try {
@@ -41,8 +42,10 @@ public class Hasher {
         return buf.toString();
     }
     
-    public static void main(String args[]){
-        
-        System.out.println();
-    }
+//    public static void main(String args[]){
+//        Console.writeLine("Input for SH1: ");
+//        String s = Console.readLine();
+//        
+//        Console.writeLine("SHA1 : (original) " + s + " (sha1) " + getShA1Hash(s) );
+//    }
 }
