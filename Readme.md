@@ -1,5 +1,5 @@
 ##Simple Chat System in Java (CSE 338 Networking Course - North South University)
-
+[Not complete yet, in the process of developing]
 It's a simple chat system written in java. Completly written by Alim Ul Karim. All codes are modular. 
 
 If you are looking for an open source java base chat client, look no further. You are in the right place. Take a look at my code.
