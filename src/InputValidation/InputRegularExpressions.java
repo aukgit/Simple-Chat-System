@@ -100,5 +100,9 @@ public final class InputRegularExpressions {
 "?:\\r\\n)?[ \\t])*))*)?;\\s*)";
     //</editor-fold>
     
+    public static final String NUMBER = "\\d+";
+    
+    public static final String CHARACTERS_ONLY = "[aA-zZ]";
+    
     
 }
