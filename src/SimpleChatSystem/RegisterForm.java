@@ -5,7 +5,7 @@
  */
 package SimpleChatSystem;
 
-import ComonCodes.ErrorHighLight;
+import InputValidation.ErrorHighLight;
 import Cryptography.Hasher;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
