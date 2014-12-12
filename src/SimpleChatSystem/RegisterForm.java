@@ -191,7 +191,7 @@ public class RegisterForm extends InheritableJFrame {
         }
         ErrorHighLight.ErrorValidate(passwordNotMatch, this.ConfirmPasswordLabel, this.ConfrimPasswordTextBox, passwordError, passwordNormal);
 
-        if (passwordNotMatch && isPasswordSatisfyMinMax && isNotEmailExist && isNotUsernameExist && isUsernameValid && isEmailValid) {
+        if (!passwordNotMatch && isPasswordSatisfyMinMax && isNotEmailExist && isNotUsernameExist && isUsernameValid && isEmailValid) {
             String hashSh1Password = Hasher.getShA1Hash(User.Password);
             //0
             Columns[i] = User.Username;
