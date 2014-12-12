@@ -5,10 +5,13 @@
  */
 package SimpleChatSystem;
 
+import ComonCodes.JFrameRelatedCodes;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.text.JTextComponent;
 
 /**
  *
@@ -78,6 +81,11 @@ public class Startup extends javax.swing.JFrame {
         jLabel2.setName("PasswordLabel"); // NOI18N
 
         jButton4.setText("Login");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -134,13 +142,22 @@ public class Startup extends javax.swing.JFrame {
     @SuppressWarnings("deprecation")
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        RegisterForm reg = new RegisterForm();
-        reg.show(true);
+        
+//        BehaviorDialog dialog = new BehaviorDialog(new javax.swing.JFrame(), true);
+//        RegisterForm reg = new RegisterForm();
+//        reg.show(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+
+        ArrayList<JTextComponent> allTextBox;
+        allTextBox = JFrameRelatedCodes.getAllTextBox(this);
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -187,6 +204,7 @@ public class Startup extends javax.swing.JFrame {
         } catch (UnsupportedLookAndFeelException ex) {
             Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

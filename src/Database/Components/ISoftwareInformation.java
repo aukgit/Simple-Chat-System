@@ -4,7 +4,7 @@
  */
 package Database.Components;
 
-import ConsolePackage.ErrorHandle;
+import CShap.ErrorHandle;
 import Database.DatabaseQuery;
 
 /*------------------------------------------------
