@@ -16,7 +16,7 @@ import javax.swing.JTextField;
  */
 public class ErrorHighLight {
     
-    public final static Color Green = new Color(41,157,41);
+    public final static Color Green = new Color(0,153,0);
     public final static Color Red = Color.RED;
     
 
@@ -85,7 +85,7 @@ public class ErrorHighLight {
         }
 
         if (textbox != null) {
-            label.setForeground(pickingColor);
+            textbox.setForeground(pickingColor);
             if (regularTooltip != null) {
                 textbox.setToolTipText(regularTooltip);
             }
