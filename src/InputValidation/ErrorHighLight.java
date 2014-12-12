@@ -16,7 +16,8 @@ import javax.swing.JTextField;
  */
 public class ErrorHighLight {
     
-    public final static String Green = "009900";
+    public final static Color Green = new Color(41,157,41);
+    public final static Color Red = Color.RED;
     
 
     //<editor-fold defaultstate="collapsed" desc="Error Validate">
@@ -40,15 +41,17 @@ public class ErrorHighLight {
     // <editor-fold defaultstate="collapsed" desc=" Error Labeling and coloring ">
     @SuppressWarnings("null")
     public static void ErrorLabel(JLabel label, JTextField textbox, String errorMsg) {
+        Color pickingColor = Red;
+        
         if (label != null) {
-            label.setForeground(Color.getColor(Green));
+            label.setForeground(pickingColor);
             if (errorMsg != null) {
                 label.setToolTipText("Invalid : " + errorMsg);
             }
         }
 
         if (textbox != null) {
-            textbox.setForeground(Color.red);
+            textbox.setForeground(pickingColor);
             if (errorMsg != null) {
                 textbox.setToolTipText("Invalid : " + errorMsg);
             }
@@ -56,15 +59,16 @@ public class ErrorHighLight {
     }
 
     public static void ResumeErrorLabelNormal(JLabel label, JTextField textbox, String regularTooltip) {
+        Color pickingColor = Color.black;
         if (label != null) {
-            label.setForeground(Color.black);
+            label.setForeground(pickingColor);
             if (regularTooltip != null) {
                 label.setToolTipText(regularTooltip);
             }
         }
 
         if (textbox != null) {
-            textbox.setForeground(Color.black);
+            textbox.setForeground(pickingColor);
             if (regularTooltip != null) {
                 textbox.setToolTipText(regularTooltip);
             }
@@ -72,15 +76,16 @@ public class ErrorHighLight {
     }
 
     public static void ResumeErrorLabelGreen(JLabel label, JTextField textbox, String regularTooltip) {
+       Color pickingColor = Green;
         if (label != null) {
-            label.setForeground(Color.getColor(Green));
+            label.setForeground(pickingColor);
             if (regularTooltip != null) {
                 label.setToolTipText(regularTooltip);
             }
         }
 
         if (textbox != null) {
-            label.setForeground(Color.getColor(Green));
+            label.setForeground(pickingColor);
             if (regularTooltip != null) {
                 textbox.setToolTipText(regularTooltip);
             }
