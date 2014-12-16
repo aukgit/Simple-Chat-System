@@ -255,7 +255,7 @@ public class DatabaseQuery extends DbInitalizer {
      */
     public void setSpecialQueryFields_(boolean append, int... fields) {
         setQueryFieldNames(initializeListIfNecessary(getQueryFieldNames()));
-        String col[] = columnsNames();
+        String col[] = getColumnsNames();
         if (append == false) {
             getQueryFieldNames().clear();
         }
@@ -1002,7 +1002,7 @@ public class DatabaseQuery extends DbInitalizer {
     // <editor-fold defaultstate="collapsed" desc="Others + Showing Data in Console">
     public void showData() {
         try {
-            String columns[] = columnsNames();
+            String columns[] = getColumnsNames();
             while (getRs().next()) {
                 String printline = "";
                 for (String f : columns) {
@@ -1021,7 +1021,7 @@ public class DatabaseQuery extends DbInitalizer {
 
     public void showDataSmartFormat() {
         try {
-            String columns[] = columnsNames();
+            String columns[] = getColumnsNames();
             long row = 1;
             while (getRs().next()) {
                 String printline = "row(" + row++ + "): ";
@@ -1057,8 +1057,12 @@ public class DatabaseQuery extends DbInitalizer {
         }
         return names.split(",");
     }
-
-    public String[] columnsNames() {
+    
+    /**
+     * 
+     * @return column names for this table
+     */
+    public String[] getColumnsNames() {
         String names = "";
         //int i = 1;
         String query = "SHOW COLUMNS FROM " + getTableName();

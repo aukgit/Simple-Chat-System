@@ -191,22 +191,27 @@ public class Startup extends InheritableJFrame {
 
             boolean isUserExistByEmail = this.getDb().isExist(Columns, Values);
             if (isUserExistByEmail) {
-                OnSuccessLogin();
+                OnSuccessLogin(false);
             } else {
                 OnLoginFailed();
             }
 
         } else {
-            OnSuccessLogin();
+            OnSuccessLogin(true);
         }
         loginCounter++;
 
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    public void OnSuccessLogin() {
+    public void OnSuccessLogin(boolean foundByUserName) {
 
         ListOfFriends friendsForm = new ListOfFriends();
         getMessageBox().show(this, "Congratulations, you have successfully logged in.");
+        if (foundByUserName) {
+            this.getDb().readData(User.Username, UsernameTextBox.getText()); // get user
+            
+            this.getDbData().intialize(this.getDb().getRs(), this.getDb().getColumnsNames());
+        }
         JFrameRelatedCodes.displayRightMiddle(friendsForm);
         NextForm = friendsForm;
         friendsForm.PreviousForm = this;

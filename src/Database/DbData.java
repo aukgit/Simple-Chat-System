@@ -147,9 +147,9 @@ public class DbData extends SQLError {
         return "";
     }
 
-    public ArrayList<String[]> getData(int index) {
+    public String[] getData(int index) {
         if (isInitialized) {
-            return _data;
+            return _data.get(index);
         }
         return null;
     }

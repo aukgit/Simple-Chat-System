@@ -49,7 +49,7 @@ public class ServerConfig implements Runnable {
     public void reReadDataFromServer() {
         // executing the query
         server = query.ExecuteReadQuery(query.getSelectSQL());
-        serverData.intialize(server, query.columnsNames());
+        serverData.intialize(server, query.getColumnsNames());
         port = Integer.parseInt(serverData.getRowValue(0, ServerSetting.ServerPort));
         isActive = serverData.getRowValue(0, ServerSetting.IsActive).equals("1");
     }

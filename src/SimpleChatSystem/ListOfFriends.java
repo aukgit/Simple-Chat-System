@@ -5,7 +5,9 @@
  */
 package SimpleChatSystem;
 
+import CurrentDb.Tables.UserTable;
 import DesignPattern.InheritableJFrame;
+import java.sql.ResultSet;
 
 /**
  *
@@ -14,7 +16,14 @@ import DesignPattern.InheritableJFrame;
 public class ListOfFriends extends InheritableJFrame {
 //    private static ListOfFriends Form = new ListOfFriends();
     private static final long serialVersionUID = 1L;
+    private boolean _isAdmin;
+    private UserTable _user;
     
+    public void initalizeUser(ResultSet _rs2){
+        _user = new UserTable();
+   
+        
+    }
     /**
      * Creates new form ListOfFriends
      */
@@ -141,5 +150,19 @@ public class ListOfFriends extends InheritableJFrame {
     @Override
     public void initalizeTableName() {
         
+    }
+
+    /**
+     * @return the _isAdmin
+     */
+    public boolean isAdmin() {
+        return _isAdmin;
+    }
+
+    /**
+     * @param isAdmin the _isAdmin to set
+     */
+    public void setIsAdmin(boolean isAdmin) {
+        this._isAdmin = isAdmin;
     }
 }

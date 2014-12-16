@@ -11,6 +11,7 @@ import java.awt.Component;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
@@ -66,6 +67,11 @@ public class JFrameRelatedCodes {
         int y = (int) rect.getMaxY() - f.getHeight();
         f.setLocation(x, y/2);
         f.setVisible(true);
+    }
+    
+    public static <T> Field[] getAllFields(Class<T> classType){
+        Field[] fs =classType.getClass().getSuperclass().getDeclaredFields();
+        return fs;
     }
 
 }
