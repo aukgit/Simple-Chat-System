@@ -6,7 +6,7 @@
 package DesignPattern;
 
 import Database.Components.MsgBox;
-import SimpleChatSystem.ServerConfigForm;
+import EntityGeneratedForms.ServerConfigForm;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
