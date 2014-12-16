@@ -36,7 +36,6 @@ public class DatabaseQuery extends DbInitalizer {
     private final String MYSQL_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     //</editor-fold>
     private SimpleDateFormat simpleDateFormatter;
-    private static final String SQL_COUNT = "SELECT Count(*) AS COUNT FROM ";
 
     //Configaration
     private String url = DatabaseURL;
@@ -654,9 +653,12 @@ public class DatabaseQuery extends DbInitalizer {
     //R - Read
 
     public String completeReadQuery() {
-        String whereClause = GetSQLWhereClauseFromFields();
+        String q = formulateQuery();
 
-        this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName() + whereClause);
+        if (q.equals("") == false) {
+            q = "\n WHERE \n" + q;
+        }
+        this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName() + q);
         //this.setSelectSQL("SELECT f FROM " + getTableName() + " f "+ q);
         return this.getSelectSQL();
 
@@ -687,21 +689,6 @@ public class DatabaseQuery extends DbInitalizer {
             }
         } catch (Exception ex) {
             ErrorMessage(ex, this.getSelectSQL(), "isExist(String [] Columns, String [] valuesSearchInFields)");
-        }
-        return false;
-    }
-
-    /**
-     * @return true if table contains any row. Under the hood SELECT Count(*)
-     * executed.
-     */
-    public boolean isAnyRowExist() {
-        try {
-
-            int rowsFoundInDb = rowsExistInTable();
-            return rowsFoundInDb > 0;
-        } catch (Exception ex) {
-            ErrorMessage(ex, this.getSelectSQL(), "isExistAny()");
         }
         return false;
     }
@@ -831,9 +818,7 @@ public class DatabaseQuery extends DbInitalizer {
 
     public ResultSet readDataAll() {
         try {
-            String sql = "SELECT " + getOpenFieldsName() + " FROM " + getTableName();
-
-            this.setSelectSQL(sql);
+            this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName());
             rs = ExecuteReadQuery(this.getSelectSQL());
         } catch (Exception ex) {
             ErrorMessage(ex, this.getSelectSQL(), "readDataAll");
@@ -1125,11 +1110,6 @@ public class DatabaseQuery extends DbInitalizer {
 // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Move to row ">
-    /**
-     *
-     * @param rowNumber: 1 based index. First row is 1
-     * @return
-     */
     public ResultSet moveToRow(int rowNumber) {
         if (isResultValid(rowNumber)) {
             try {
@@ -1143,12 +1123,6 @@ public class DatabaseQuery extends DbInitalizer {
 
     }
 
-    /**
-     *
-     * @param _rs
-     * @param rowNumber: 1 based index. First row is 1
-     * @return
-     */
     public ResultSet moveToRow(ResultSet _rs, int rowNumber) {
         if (isResultValid(_rs, rowNumber)) {
             try {
@@ -1192,6 +1166,16 @@ public class DatabaseQuery extends DbInitalizer {
         return rowCount();
     }
 
+    public int rowsExistInTable(String Where) {
+        readDataFullSQL("Select Count(*) as COUNT FROM " + this.getTableName() + " WHERE " + Where);
+        try {
+            return getRs().getInt(0);
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
     /**
      *
      * @param columns:CSV
@@ -1200,7 +1184,7 @@ public class DatabaseQuery extends DbInitalizer {
      */
     public int rowsExistInTable(String columns, String values) {
         String[] _columns = columns.split(",");
-        String[] _values = values.split(",");
+        String[] _values = columns.split(",");
 
         return rowsExistInTable(_columns, _values);
     }
@@ -1211,32 +1195,23 @@ public class DatabaseQuery extends DbInitalizer {
         return rowsExistInTable();
     }
 
-    public int rowsExistInTable(String Where) {
-        String sql = SQL_COUNT + this.getTableName() + " WHERE " + Where;
-
-        rs = readDataFullSQL(sql);
-        moveToRow(1);
-        try {
-            return getRs().getInt(1);
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return 0;
-    }
-
     public int rowsExistInTable() {
-        String whereClause = GetSQLWhereClauseFromFields();
+        String q = formulateQuery();
 
-        String sql = SQL_COUNT + this.getTableName() + " " + whereClause;
-        rs = readDataFullSQL(sql);
-        moveToRow(1);
+        if (q.equals("") == false) {
+            q = "\n WHERE \n" + q;
+        }
+String sql = SQL_COUNT + this.getTableName() + " " + q;
+
+        setRs(readDataFullSQL(sql));
         try {
-            return getRs().getInt(1);
+            return getRs().getInt(0);
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
         }
         return 0;
     }
+    private static final String SQL_COUNT = "SELECT Count(*) AS COUNT FROM ";
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
@@ -1306,20 +1281,6 @@ public class DatabaseQuery extends DbInitalizer {
      */
     public ArrayList<String> getQueryFieldNames() {
         return queryFieldNames;
-    }
-
-    /**
-     *
-     * @return the where clause based on special fields. If no fields there
-     * empty string "" not null.
-     */
-    public String GetSQLWhereClauseFromFields() {
-        String q = formulateQuery();
-
-        if (q.equals("") == false) {
-            q = "\n WHERE \n" + q;
-        }
-        return q;
     }
 
     /**
@@ -1713,17 +1674,17 @@ public class DatabaseQuery extends DbInitalizer {
 
 // </editor-fold>    
     // <editor-fold defaultstate="collapsed" desc="How to use it comments ">
-    //<editor-fold defaultstate="collapsed" desc="row count from db successful">
-//    public static void main(String args[]) {
-//        
-//        DatabaseQuery q = new DatabaseQuery();
-//        q.setTableName("user");
-//        int rowsFound = q.rowsExistInTable("username","alim");
-//        Console.writeLine(q.getSelectSQL());
-//        Console.writeLine(rowsFound);
-//        
-//    }
-//</editor-fold>
+    public static void main(String args[]) {
+
+        DatabaseQuery q = new DatabaseQuery();
+        q.setTableName("user");
+        int rowsFound = q.rowsExistInTable();
+        
+        Console.writeLine(rowsFound);
+
+
+
+    }
 //
 //    public static void main(String args[]) {
 //

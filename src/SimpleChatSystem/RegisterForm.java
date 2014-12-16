@@ -159,9 +159,7 @@ public class RegisterForm extends InheritableJFrame {
 
         String passwordError = "Password doesn't match.";
         String passwordNormal = "Password is fine.";
-        String isAdmin = this.getDb().isAnyRowExist() == false ? "1" : "0";
-        
-        int numberOfFields = 7;
+        int numberOfFields = 6;
         String Columns[] = new String[numberOfFields];
         String Values[] = new String[numberOfFields];
         int i = 0;
@@ -219,11 +217,6 @@ public class RegisterForm extends InheritableJFrame {
             //5
             Columns[i] = User.IsBlocked;
             Values[i++] = "0";
-            
-            //6
-            Columns[i] = User.IsAdmin;
-            Values[i++] = isAdmin;
-            
             if (this.getDb().insertData(Columns, Values)) {
                 OnSuccess();
             } else {
