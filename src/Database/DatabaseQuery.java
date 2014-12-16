@@ -15,15 +15,19 @@
  */
 package Database;
 
+import Comon.Codes;
 import ConsolePackage.Console;
+import CurrentDb.Tables.UserTable;
 import Database.Components.DbInitalizer;
 import Database.Components.StringMore;
 import DesignPattern.DatabaseRunnableComponents;
+import java.lang.reflect.Field;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -597,7 +601,7 @@ public class DatabaseQuery extends DbInitalizer {
         }
         return false;
     }
- 
+
 // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="R - [Read/Select] in CRUD">
     public String formulateQuery() {
@@ -1057,9 +1061,9 @@ public class DatabaseQuery extends DbInitalizer {
         }
         return names.split(",");
     }
-    
+
     /**
-     * 
+     *
      * @return column names for this table
      */
     public String[] getColumnsNames() {
@@ -1141,6 +1145,29 @@ public class DatabaseQuery extends DbInitalizer {
     }
     // </editor-fold>
 
+    /**
+     *
+     * @param classNative
+     * @param row : 1 based index
+     * @param obj
+     */
+    public void getResultsAsObject(Class<?> classNative, int row, Object obj) {
+
+        Field[] fieldsInClass = Codes.getAllFields(classNative);
+        List<String> Columns = Arrays.asList(getColumnsNames());
+        moveToRow(row);
+        try {
+            for (Field field : fieldsInClass) {
+                if (Columns.indexOf(field.getName()) > -1) {
+                    // field exist in the class then populate the value
+                    field.set(obj, getRs().getString(field.getName()));
+                }
+            }
+        } catch (SQLException | IllegalArgumentException | IllegalAccessException ex) {
+            Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     // <editor-fold defaultstate="collapsed" desc="row counts of result set">
     /**
      *
@@ -1205,7 +1232,7 @@ public class DatabaseQuery extends DbInitalizer {
         if (q.equals("") == false) {
             q = "\n WHERE \n" + q;
         }
-String sql = SQL_COUNT + this.getTableName() + " " + q;
+        String sql = SQL_COUNT + this.getTableName() + " " + q;
 
         setRs(readDataFullSQL(sql));
         try {
@@ -1679,14 +1706,14 @@ String sql = SQL_COUNT + this.getTableName() + " " + q;
 // </editor-fold>    
     // <editor-fold defaultstate="collapsed" desc="How to use it comments ">
     public static void main(String args[]) {
-
+        UserTable _user = new UserTable();
         DatabaseQuery q = new DatabaseQuery();
         q.setTableName("user");
-        int rowsFound = q.rowsExistInTable();
-        
-        Console.writeLine(rowsFound);
+//        int rowsFound = q.rowsExistInTable();
+        q.readData();
+        q.getResultsAsObject(_user.getClass(), 1, _user);
 
-
+        Console.writeLine(_user.toString());
 
     }
 //

@@ -68,12 +68,22 @@ public class Codes {
         f.setLocation(x, y / 2);
         f.setVisible(true);
     }
-
-    public static Field[] getAllFields(Class<?> classType) {
+    
+    /**
+     * Before sending the class : call class.getClass() method
+     * @param classType
+     * @return 
+     */
+    public static Field[] getAllFields(Class classType) {
         return classType.getFields();
     }
-
-    public static ArrayList<String> getAllFieldNames(Class<?> classType) {
+    
+    /**
+     * Before sending the class : call class.getClass() method
+     * @param classType
+     * @return 
+     */
+    public static ArrayList<String> getAllFieldNames(Class classType) {
         Field[] fs = classType.getFields();
         if (fs != null) {
             ArrayList<String> list = new ArrayList<>(30);
