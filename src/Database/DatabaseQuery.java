@@ -597,7 +597,7 @@ public class DatabaseQuery extends DbInitalizer {
         }
         return false;
     }
-
+ 
 // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="R - [Read/Select] in CRUD">
     public String formulateQuery() {
