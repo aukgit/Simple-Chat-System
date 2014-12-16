@@ -5,6 +5,8 @@
  */
 package CurrentDb.Tables;
 
+import java.util.Date;
+
 
 
 /**
@@ -12,13 +14,13 @@ package CurrentDb.Tables;
  * @author Alim
  */
 public class UserTable {
-    public String UserID;
+    public int UserID;
     public String Username;
     public String Email;
     public String Password;
 
-    public String LastLogin;
-    public String IsBlocked;
-    public String IsActive;
-    public String IsAdmin;
+    public Date LastLogin;
+    public boolean IsBlocked;
+    public boolean IsActive;
+    public boolean IsAdmin;
 }

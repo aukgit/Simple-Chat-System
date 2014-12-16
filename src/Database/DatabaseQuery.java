@@ -16,6 +16,8 @@
 package Database;
 
 import Comon.Codes;
+import ConsolePackage.Console;
+import CurrentDb.Tables.UserTable;
 import Database.Components.DbInitalizer;
 import Database.Components.StringMore;
 import DesignPattern.DatabaseRunnableComponents;
@@ -1163,19 +1165,19 @@ public class DatabaseQuery extends DbInitalizer {
                     // field exist in the class then populate the value
                     field.setAccessible(true);
 
-                    if (field.getType().getClass().equals(Double.class)) {
+                    if (field.getType().equals(Double.class)) {
                         field.setDouble(obj, getRs().getDouble(field.getName()));
-                    } else if (field.getType().getClass().equals(Integer.class)) {
+                    } else if (field.getType().equals(Integer.class)) {
                         field.setInt(obj, getRs().getInt(field.getName()));
-                    } else if (field.getType().getClass().equals(Long.class)) {
+                    } else if (field.getType().equals(Long.class)) {
                         field.setLong(obj, getRs().getLong(field.getName()));
-                    } else if (field.getType().getClass().equals(Date.class)) {
+                    } else if (field.getType().equals(Date.class)) {
                         field.set(obj, getRs().getDate(field.getName()));
-                    } else if (field.getType().getClass().equals(Float.class)) {
+                    } else if (field.getType().equals(Float.class)) {
                         field.setFloat(obj, getRs().getFloat(field.getName()));
-                    } else if (field.getType().getClass().equals(Boolean.class)) {
+                    } else if (field.getType().equals(Boolean.class)) {
                         field.setBoolean(obj, getRs().getBoolean(field.getName()));
-                    } else if (field.getType().getClass().equals(Short.class)) {
+                    } else if (field.getType().equals(Short.class)) {
                         field.setShort(obj, getRs().getShort(field.getName()));
                     } else {
                         field.set(obj, getRs().getString(field.getName()));
@@ -1736,17 +1738,17 @@ public class DatabaseQuery extends DbInitalizer {
 
 // </editor-fold>    
     // <editor-fold defaultstate="collapsed" desc="How to use it comments ">
-//    public static void main(String args[]) {
-//        UserTable _user = new UserTable();
-//        DatabaseQuery q = new DatabaseQuery();
-//        q.setTableName("user");
-////        int rowsFound = q.rowsExistInTable();
-//        q.readData();
-//        q.getResultsAsObject(_user.getClass(), 1, _user);
-//
-//        Console.writeLine(_user.toString());
-//
-//    }
+    public static void main(String args[]) {
+        UserTable _user = new UserTable();
+        DatabaseQuery q = new DatabaseQuery();
+        q.setTableName("user");
+//        int rowsFound = q.rowsExistInTable();
+        q.readData();
+        q.getResultsAsObject(_user.getClass(), 1, _user);
+
+        Console.writeLine(_user.toString());
+
+    }
 //
 //    public static void main(String args[]) {
 //
