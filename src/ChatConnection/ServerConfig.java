@@ -1,7 +1,6 @@
 package ChatConnection;
 
 import CurrentDb.TableColumns.ServerSetting;
-import ChatConnection.*;
 import CurrentDb.*;
 import Database.DatabaseQuery;
 import Database.DbData;
@@ -14,7 +13,6 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,10 +39,14 @@ public class ServerConfig implements Runnable {
         // setting table name
         query.setTableName(TableNames.SERVERSETTING);
     }
+    
+    /**
+     * Refreshing Server ResultSet
+     * refresh port
+     * 
+     */
 
-    /// Refreshing Server ResultSet
-    /// refresh port
-    private void reReadDataFromServer() {
+    public void reReadDataFromServer() {
         // executing the query
         server = query.ExecuteReadQuery(query.getSelectSQL());
         serverData.intialize(server, query.columnsNames());

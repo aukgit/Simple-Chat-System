@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50614
 File Encoding         : 65001
 
-Date: 2014-12-11 20:06:23
+Date: 2014-12-16 21:04:59
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -98,9 +98,25 @@ CREATE TABLE `user` (
   `LastLogin` datetime DEFAULT NULL,
   `IsBlocked` tinyint(1) NOT NULL DEFAULT '0',
   `IsActive` tinyint(1) NOT NULL DEFAULT '1',
+  `IsAdmin` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`UserID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
+INSERT INTO `user` VALUES ('1', 'alim', 'alim@gmail.com', '3DA541559918A808C2402BBA5012F6C60B27661C', '2014-12-16 20:24:20', '0', '1', '0');
+
+-- ----------------------------
+-- Procedure structure for `EmptyUserTable`
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `EmptyUserTable`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `EmptyUserTable`()
+BEGIN
+	#Routine body goes here...
+	DELETE from `user`;
+	TRUNCATE TABLE `user`;
+END
+;;
+DELIMITER ;

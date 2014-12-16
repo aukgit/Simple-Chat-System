@@ -22,23 +22,38 @@ public class AppConfig {
      * returns path like this E:\Working\GitHub\Simple-Chat-System (without
      * slash)
      */
-    private static String APP_PATH;
+    
     public static String DIRECTORY_SEPERATOR = File.separator;
 
+    private static String _appPath;
+    private static String _pictureUploadPath;
+    
+    
+    
     /**
      * @return path like this E:\Working\GitHub\Simple-Chat-System (without
      * slash)
      * 
      */
     public static String getAppPath() {
-        if (AppConfig.APP_PATH == null) {
+        if (AppConfig._appPath == null) {
             try {
-                AppConfig.APP_PATH = new File(".").getCanonicalPath();
+                AppConfig._appPath = new File(".").getCanonicalPath();
             } catch (IOException ex) {
                 Logger.getLogger(AppConfig.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return APP_PATH;
+        return _appPath;
+    }
+    /**
+     * E:\Working\GitHub\Simple-Chat-System\PictureUpload
+     * @return getAppPath() + DIRECTORY_SEPERATOR + "PictureUpload"
+     */
+     public static String getPictureUploadPath() {
+        if (AppConfig._pictureUploadPath == null) {
+            _pictureUploadPath = getAppPath() + DIRECTORY_SEPERATOR + "PictureUpload";
+        }
+        return _pictureUploadPath;
     }
 
     public AppConfig() {
