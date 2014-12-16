@@ -5,11 +5,15 @@
  */
 package SimpleChatSystem;
 
+import ComonCodes.JFrameRelatedCodes;
+import ConsolePackage.Console;
 import Cryptography.Hasher;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
 import DesignPattern.InheritableJFrame;
 import Global.AppConfig;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
@@ -203,7 +207,10 @@ public class Startup extends InheritableJFrame {
 
         ListOfFriends friendsForm = new ListOfFriends();
         getMessageBox().show(this, "Congratulations, you have successfully logged in.");
-        friendsForm.show(true);
+        JFrameRelatedCodes.displayRightMiddle(friendsForm);
+        NextForm = friendsForm;
+        friendsForm.PreviousForm = this;
+
         this.hide();
     }
 
@@ -215,8 +222,9 @@ public class Startup extends InheritableJFrame {
 
     /**
      * @param args the command line arguments
+     * @throws java.io.IOException
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws IOException {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -242,6 +250,7 @@ public class Startup extends InheritableJFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new Startup().setVisible(true);
             }
@@ -249,13 +258,7 @@ public class Startup extends InheritableJFrame {
         try {
             UIManager.setLookAndFeel(
                     UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

@@ -5,36 +5,50 @@
  */
 package Database.Components;
 
+import Global.AppConfig;
+
 /**
  *
  * @author Alim
  */
 public class SQLError {
+
     // <editor-fold defaultstate="collapsed" desc="Error Message">
     public void ErrorMessage(String QueryText, String methodName) {
-        System.out.println("{Error : " + QueryText + " \nMethod Name: [" + methodName + "]");
-        System.out.println("}");
+        if (AppConfig.IS_TESTING) {
+            System.out.println("{Error : " + QueryText + " \nMethod Name: [" + methodName + "]");
+            System.out.println("}");
+        }
     }
+
     public void ErrorMessage(Exception e, String QueryText) {
-        System.out.println("{SQL Syntax: " + QueryText);
-        System.err.println(e);
-        System.out.println("}");
+        if (AppConfig.IS_TESTING) {
+            System.out.println("{SQL Syntax: " + QueryText);
+            System.err.println(e);
+            System.out.println("}");
+        }
     }
 
     public void ErrorMessage(Exception e, String QueryText, String MethodName) {
-        System.out.println("{SQL Syntax: " + QueryText + " \nMethod Name: [" + MethodName + "]");
-        System.err.println(e);
-        System.out.println("}");
+        if (AppConfig.IS_TESTING) {
+            System.out.println("{SQL Syntax: " + QueryText + " \nMethod Name: [" + MethodName + "]");
+            System.err.println(e);
+            System.out.println("}");
+        }
 
     }
 
     public void ErrorMessage(String QueryText) {
-        System.out.println("{SQL Syntax: " + QueryText);
-        System.out.println("}");
+        if (AppConfig.IS_TESTING) {
+            System.out.println("{SQL Syntax: " + QueryText);
+            System.out.println("}");
+        }
     }
 
     public void ErrorMessage(Exception e) {
-        System.err.println("{" + e + "}");
+        if (AppConfig.IS_TESTING) {
+            System.err.println("{" + e + "}");
+        }
     }
     // </editor-fold>
 }

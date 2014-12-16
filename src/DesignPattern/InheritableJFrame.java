@@ -15,6 +15,7 @@ import javax.swing.JFrame;
  * @author Alim
  */
 public abstract class InheritableJFrame extends DatabaseRunnableComponents {
+    private static final long serialVersionUID = 1L;
     
     //<editor-fold defaultstate="collapsed" desc="Fields">
     private MsgBox messageBox;
@@ -31,6 +32,9 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponents {
     
     public void Sysout(String title, String msg) {
         this.Println(title, msg);
+    }
+    public void Sysout(String msg) {
+        System.out.println(msg);
     }
 
     // </editor-fold>
