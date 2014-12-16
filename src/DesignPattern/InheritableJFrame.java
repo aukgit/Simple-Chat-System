@@ -99,6 +99,16 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponents {
     }
 //</editor-fold>
     //</editor-fold>
+    /**
+     * Also points to previous form
+     * @param frame
+     */
+    public void loadNewForm(InheritableJFrame frame){
+        
+        frame.show(true);
+        frame.PreviousForm = this;
+        this.NextForm= frame;
+    }
 
     /**
      * @param args the command line arguments

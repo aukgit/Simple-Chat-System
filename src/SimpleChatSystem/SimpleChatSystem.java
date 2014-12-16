@@ -11,6 +11,12 @@ package SimpleChatSystem;
  */
 public class SimpleChatSystem {
 
+    static class Serversetting {
+
+        public Serversetting() {
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
