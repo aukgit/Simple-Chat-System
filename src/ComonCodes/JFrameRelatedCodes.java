@@ -8,6 +8,9 @@ package ComonCodes;
 
 
 import java.awt.Component;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
@@ -39,6 +42,33 @@ public class JFrameRelatedCodes {
         
         return list;
     }
+    
 
+
+    public static void displayRightBottom(JFrame f) {
+      
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
+        Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
+        int x = (int) rect.getMaxX() - f.getWidth();
+        int y = (int) rect.getMaxY() - f.getHeight();
+        f.setLocation(x, y);
+        f.setVisible(true);
+    }
+    public static void displayRightMiddle(JFrame f) {
+      
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
+        Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
+        int x = (int) rect.getMaxX() - f.getWidth();
+        int y = (int) rect.getMaxY() - f.getHeight();
+        f.setLocation(x, y/2);
+        f.setVisible(true);
+    }
 
 }
+
+
+

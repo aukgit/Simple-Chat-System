@@ -10,7 +10,6 @@ import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
 import DesignPattern.InheritableJFrame;
 import Global.AppConfig;
-import InputValidation.Validate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
@@ -21,6 +20,8 @@ import javax.swing.UnsupportedLookAndFeelException;
  * @author Alim
  */
 public class Startup extends InheritableJFrame {
+
+    private static final long serialVersionUID = 1L;
 
     private int loginCounter = 0;
 
@@ -149,6 +150,7 @@ public class Startup extends InheritableJFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         RegisterForm reg = new RegisterForm();
+        reg.PreviousForm = this;
         reg.show(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -156,6 +158,7 @@ public class Startup extends InheritableJFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    @SuppressWarnings("deprecation")
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
         if (loginCounter >= AppConfig.MAX_TRY_LOGIN) {
@@ -174,7 +177,7 @@ public class Startup extends InheritableJFrame {
         Values[i++] = usernameOrEmail;
 
         Columns[i] = User.Password;
-        Values[i++] = usernameOrEmail;
+        Values[i++] = hashedPassword;
 
         boolean isUserExistByUsername = this.getDb().isExist(Columns, Values);
         if (isUserExistByUsername == false) {
@@ -184,17 +187,31 @@ public class Startup extends InheritableJFrame {
 
             boolean isUserExistByEmail = this.getDb().isExist(Columns, Values);
             if (isUserExistByEmail) {
-
+                OnSuccessLogin();
             } else {
-                // no found in any where
-                // user doesn't exist with this user name and password
-                getMessageBox().show(this, "User doesn't exist in the database.");
+                OnLoginFailed();
             }
 
+        } else {
+            OnSuccessLogin();
         }
         loginCounter++;
 
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    public void OnSuccessLogin() {
+
+        ListOfFriends friendsForm = new ListOfFriends();
+        getMessageBox().show(this, "Congratulations, you have successfully logged in.");
+        friendsForm.show(true);
+        this.hide();
+    }
+
+    public void OnLoginFailed() {
+        // no found in any where
+        // user doesn't exist with this user name and password
+        getMessageBox().show(this, "User doesn't exist in the database.");
+    }
 
     /**
      * @param args the command line arguments

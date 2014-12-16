@@ -18,6 +18,7 @@ import InputValidation.Validate;
  * @author Alim
  */
 public class RegisterForm extends InheritableJFrame {
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -192,7 +193,7 @@ public class RegisterForm extends InheritableJFrame {
         ErrorHighLight.ErrorValidate(passwordNotMatch, this.ConfirmPasswordLabel, this.ConfrimPasswordTextBox, passwordError, passwordNormal);
 
         if (!passwordNotMatch && isPasswordSatisfyMinMax && isNotEmailExist && isNotUsernameExist && isUsernameValid && isEmailValid) {
-            String hashSh1Password = Hasher.getShA1Hash(User.Password);
+            String hashSh1Password = Hasher.getShA1Hash(this.ConfrimPasswordTextBox.getText());
             //0
             Columns[i] = User.Username;
             Values[i++] = this.UsernameTextBox.getText();
@@ -217,14 +218,23 @@ public class RegisterForm extends InheritableJFrame {
             Columns[i] = User.IsBlocked;
             Values[i++] = "0";
             if (this.getDb().insertData(Columns, Values)) {
-                this.getMessageBox().show(this, "User created successfully.");
+                OnSuccess();
             } else {
-                this.getMessageBox().showError(this, "User account creation failed. Please take a look at those errors.");
+                OnFail();
             }
         }
 
 
     }//GEN-LAST:event_jButton1ActionPerformed
+    public void OnSuccess() {
+        this.getMessageBox().show(this, "User created successfully.");
+        this.hide();
+        this.PreviousForm.show(true);
+    }
+
+    public void OnFail() {
+        this.getMessageBox().showError(this, "User account creation failed. Please take a look at those errors.");
+    }
 
     /**
      * @param args the command line arguments

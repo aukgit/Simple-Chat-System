@@ -6,6 +6,7 @@
 package DesignPattern;
 
 import Database.Components.MsgBox;
+import javax.swing.JFrame;
 
 
 
@@ -17,6 +18,8 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponents {
     
     //<editor-fold defaultstate="collapsed" desc="Fields">
     private MsgBox messageBox;
+    public JFrame PreviousForm;
+    public JFrame NextForm;
     //</editor-fold>
     
     
