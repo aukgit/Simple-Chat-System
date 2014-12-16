@@ -7,16 +7,13 @@ package SimpleChatSystem;
 
 import CurrentDb.TableNames;
 import DesignPattern.InheritableJFrame;
-import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Alim
  */
 public class ChatingInterface extends InheritableJFrame {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates new form ChatingInterface

@@ -5,8 +5,10 @@
  */
 package EntityGeneratedForms;
 
+import CurrentDb.TableNames;
 import Database.DatabaseQuery;
 import java.awt.EventQueue;
+import java.awt.event.KeyEvent;
 import java.beans.Beans;
 import java.util.ArrayList;
 
@@ -20,13 +22,17 @@ import javax.swing.JPanel;
  * @author Alim
  */
 public class UserManage extends JPanel {
+
     private static final long serialVersionUID = 1L;
-    
+    DatabaseQuery db = new DatabaseQuery();
+
     public UserManage() {
         initComponents();
         if (!Beans.isDesignTime()) {
             entityManager.getTransaction().begin();
         }
+        
+        db.setTableName(TableNames.USER);
     }
 
     /**
@@ -61,6 +67,8 @@ public class UserManage extends JPanel {
 
         FormListener formListener = new FormListener();
 
+        masterScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+
         org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, list, masterTable);
         org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${userID}"));
         columnBinding.setColumnName("ID");
@@ -92,7 +100,7 @@ public class UserManage extends JPanel {
         masterScrollPane.setViewportView(masterTable);
         if (masterTable.getColumnModel().getColumnCount() > 0) {
             masterTable.getColumnModel().getColumn(1).setMinWidth(250);
-            masterTable.getColumnModel().getColumn(2).setMinWidth(350);
+            masterTable.getColumnModel().getColumn(2).setMinWidth(200);
             masterTable.getColumnModel().getColumn(3).setMinWidth(250);
             masterTable.getColumnModel().getColumn(4).setMinWidth(200);
             masterTable.getColumnModel().getColumn(5).setMinWidth(200);
@@ -147,6 +155,7 @@ public class UserManage extends JPanel {
 
         deleteButton.addActionListener(formListener);
 
+        jTextField1.addActionListener(formListener);
         jTextField1.addKeyListener(formListener);
 
         jLabel1.setText("Search");
@@ -243,6 +252,9 @@ public class UserManage extends JPanel {
             else if (evt.getSource() == deleteButton) {
                 UserManage.this.deleteButtonActionPerformed(evt);
             }
+            else if (evt.getSource() == jTextField1) {
+                UserManage.this.jTextField1ActionPerformed(evt);
+            }
         }
 
         public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -257,8 +269,6 @@ public class UserManage extends JPanel {
         public void keyTyped(java.awt.event.KeyEvent evt) {
         }
     }// </editor-fold>//GEN-END:initComponents
-
-    
 
     @SuppressWarnings("unchecked")
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
@@ -291,7 +301,7 @@ public class UserManage extends JPanel {
         masterTable.setRowSelectionInterval(row, row);
         masterTable.scrollRectToVisible(masterTable.getCellRect(row, 0, true));
     }//GEN-LAST:event_newButtonActionPerformed
-    
+
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         try {
             entityManager.getTransaction().commit();
@@ -310,10 +320,15 @@ public class UserManage extends JPanel {
 
     private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
         // TODO add your handling code here:
-        DatabaseQuery db = new DatabaseQuery();
-        //db.getSmart(TOOL_TIP_TEXT_KEY)
-        
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            db.searchInEntity("Username", this.jTextField1.getText(), entityManager, list, query);
+        }
+
     }//GEN-LAST:event_jTextField1KeyReleased
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -373,5 +388,5 @@ public class UserManage extends JPanel {
             }
         });
     }
-    
+
 }

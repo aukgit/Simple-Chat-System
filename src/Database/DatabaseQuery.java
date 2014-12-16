@@ -1006,14 +1006,28 @@ public class DatabaseQuery extends DbInitalizer {
     }
     // </editor-fold>
 
-    public void searchInEntity(String columns[], String values[], EntityManager em, List<Object> list, Query queryQ) {
+    /**
+     *
+     * @param columns:CSV
+     * @param values:CSV
+     * @param em
+     * @param list
+     * @param queryQ
+     */
+    public <T> void searchInEntity(String columns, String values, EntityManager em, List<T> list, Query queryQ) {
+        String[] cols = columns.split(",");
+        String[] vals = values.split(",");
+        searchInEntity(cols, vals, em, list, queryQ);
+    }
+
+    public <T> void searchInEntity(String columns[], String values[], EntityManager em, List<T> list, Query queryQ) {
         setSpecialQueryFields_(false, columns);
         setSpecialQueryValues_(false, values);
         String sql = completeReadQuery();
         searchInEntity(sql, em, list, queryQ);
     }
 
-    public void searchInEntity(String sql, EntityManager em, List<Object> list, Query queryQ) {
+    public <T> void searchInEntity(String sql, EntityManager em, List<T> list, Query queryQ) {
         try {
             Collection data;
             em.getTransaction().rollback();
