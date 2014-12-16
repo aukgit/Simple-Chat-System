@@ -1161,16 +1161,24 @@ public class DatabaseQuery extends DbInitalizer {
                 if (Columns.indexOf(field.getName()) > -1) {
 
                     // field exist in the class then populate the value
-   
                     field.setAccessible(true);
 
                     if (field.getType().getClass().equals(Double.class)) {
                         field.setDouble(obj, getRs().getDouble(field.getName()));
                     } else if (field.getType().getClass().equals(Integer.class)) {
                         field.setInt(obj, getRs().getInt(field.getName()));
-                        
+                    } else if (field.getType().getClass().equals(Long.class)) {
+                        field.setLong(obj, getRs().getLong(field.getName()));
+                    } else if (field.getType().getClass().equals(Date.class)) {
+                        field.set(obj, getRs().getDate(field.getName()));
+                    } else if (field.getType().getClass().equals(Float.class)) {
+                        field.setFloat(obj, getRs().getFloat(field.getName()));
+                    } else if (field.getType().getClass().equals(Boolean.class)) {
+                        field.setBoolean(obj, getRs().getBoolean(field.getName()));
+                    } else if (field.getType().getClass().equals(Short.class)) {
+                        field.setShort(obj, getRs().getShort(field.getName()));
                     } else {
-                        field.set(obj, valueToSet);
+                        field.set(obj, getRs().getString(field.getName()));
                     }
                 }
             }
