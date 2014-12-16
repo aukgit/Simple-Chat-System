@@ -5,7 +5,7 @@
  */
 package Database.Components;
 
-import ComonCodes.JFrameRelatedCodes;
+import Comon.Codes;
 import Database.DatabaseQuery;
 import java.util.ArrayList;
 import javax.swing.JFrame;
@@ -19,7 +19,7 @@ public class DatabaseTextBinder {
 
     public static void DbBindTextBoxes(JFrame frame, DatabaseQuery db, boolean fieldNamesAppend, boolean read, boolean insert, boolean update) {
         String[] fields = null;
-        ArrayList<JTextComponent> list = JFrameRelatedCodes.getAllTextBox(frame);
+        ArrayList<JTextComponent> list = Codes.getAllTextBox(frame);
         for (JTextComponent textBox : list) {
             //binding property name
             textBox.getAccessibleContext().setAccessibleName("helllo 2");

@@ -5,7 +5,7 @@
  */
 package SimpleChatSystem;
 
-import ComonCodes.JFrameRelatedCodes;
+import Comon.Codes;
 import ConsolePackage.Console;
 import Cryptography.Hasher;
 import CurrentDb.TableColumns.User;
@@ -212,7 +212,7 @@ public class Startup extends InheritableJFrame {
             
             this.getDbData().intialize(this.getDb().getRs(), this.getDb().getColumnsNames());
         }
-        JFrameRelatedCodes.displayRightMiddle(friendsForm);
+        Codes.displayRightMiddle(friendsForm);
         NextForm = friendsForm;
         friendsForm.PreviousForm = this;
 

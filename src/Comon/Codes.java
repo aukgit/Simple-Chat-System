@@ -1,4 +1,4 @@
-package ComonCodes;
+package Comon;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -22,7 +22,7 @@ import javax.swing.text.JTextComponent;
  *
  * @author Alim
  */
-public class JFrameRelatedCodes {
+public class Codes {
 
     private static final int defaultListCreatingNumber = 50;
 
