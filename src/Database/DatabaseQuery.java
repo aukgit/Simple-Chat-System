@@ -1151,7 +1151,7 @@ public class DatabaseQuery extends DbInitalizer {
      * @param row : 1 based index
      * @param obj
      */
-    public void getResultsAsObject(Class<?> classNative, int row, Object obj) {
+    public <T> void getResultsAsObject(Class<?> classNative, int row, T obj) {
 
         Field[] fieldsInClass = Codes.getAllFields(classNative);
         List<String> Columns = Arrays.asList(getColumnsNames());
@@ -1160,7 +1160,8 @@ public class DatabaseQuery extends DbInitalizer {
             for (Field field : fieldsInClass) {
                 if (Columns.indexOf(field.getName()) > -1) {
                     // field exist in the class then populate the value
-                    field.set(obj, getRs().getString(field.getName()));
+                    String valueToSet = getRs().getString(field.getName());
+                    field.set(obj, valueToSet);
                 }
             }
         } catch (SQLException | IllegalArgumentException | IllegalAccessException ex) {
