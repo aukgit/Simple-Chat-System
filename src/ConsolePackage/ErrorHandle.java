@@ -8,7 +8,7 @@
  *------------------------------------------------
  *------------------------------------------------
  */
-package CShap;
+package ConsolePackage;
 
 import Database.Components.ISoftwareInformation;
 import Database.Components.MsgBox;

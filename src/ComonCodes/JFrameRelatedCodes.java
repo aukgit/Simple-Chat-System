@@ -24,7 +24,7 @@ public class JFrameRelatedCodes {
 
     public static ArrayList<JTextComponent> getAllTextBox(JFrame frame) {
         ArrayList<JTextComponent> list = new ArrayList<>(defaultListCreatingNumber);
-        Component[] components = frame.getContentPane().getComponents();
+        Component[] components = frame.getRootPane().getComponents();
         //Component[] components = paneElements.getComponents();
         
         for (Component component : components) {

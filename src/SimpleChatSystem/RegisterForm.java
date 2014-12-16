@@ -191,7 +191,7 @@ public class RegisterForm extends InheritableJFrame {
         }
         ErrorHighLight.ErrorValidate(passwordNotMatch, this.ConfirmPasswordLabel, this.ConfrimPasswordTextBox, passwordError, passwordNormal);
 
-        if (passwordNotMatch == false && isPasswordSatisfyMinMax && isNotEmailExist && isNotUsernameExist && isUsernameValid && isEmailValid) {
+        if (!passwordNotMatch && isPasswordSatisfyMinMax && isNotEmailExist && isNotUsernameExist && isUsernameValid && isEmailValid) {
             String hashSh1Password = Hasher.getShA1Hash(User.Password);
             //0
             Columns[i] = User.Username;
@@ -216,7 +216,6 @@ public class RegisterForm extends InheritableJFrame {
             //5
             Columns[i] = User.IsBlocked;
             Values[i++] = "0";
-            
             if (this.getDb().insertData(Columns, Values)) {
                 this.getMessageBox().show(this, "User created successfully.");
             } else {

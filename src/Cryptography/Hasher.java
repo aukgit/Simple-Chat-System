@@ -5,7 +5,7 @@
  */
 package Cryptography;
 
-import CShap.Console;
+import ConsolePackage.Console;
 import java.security.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
