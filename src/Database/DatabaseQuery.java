@@ -197,7 +197,7 @@ public class DatabaseQuery extends DbInitalizer {
      *
      * @param list : pass the list
      * @param items : items that needed to be added to the list
-     * @return 
+     * @return
      */
     public ArrayList<String> addItemsToListNewly(ArrayList<String> list, String[] items) {
         list = initializeListIfNecessary(list);
@@ -223,7 +223,7 @@ public class DatabaseQuery extends DbInitalizer {
      *
      * @param list : pass the list
      * @param items : items that needed to be added to the list
-     * @return 
+     * @return
      */
     public ArrayList<Integer> addItemsToIntListNewly(ArrayList<Integer> list, int[] items) {
         list = initializeListIntIfNecessary(list);
@@ -672,8 +672,7 @@ public class DatabaseQuery extends DbInitalizer {
         }
         return rs;
     }
-    
-    
+
     /**
      * at least one row returned.
      *
@@ -681,7 +680,7 @@ public class DatabaseQuery extends DbInitalizer {
      * @param valuesSearchInFields: CSV
      * @return
      */
-    public boolean isExist(String [] Columns, String [] valuesSearchInFields) {
+    public boolean isExist(String[] Columns, String[] valuesSearchInFields) {
         try {
             if (Columns != null && valuesSearchInFields != null) {
                 rs = readData(Columns, valuesSearchInFields);
@@ -692,7 +691,7 @@ public class DatabaseQuery extends DbInitalizer {
         }
         return false;
     }
-    
+
     /**
      * at least one row returned.
      *
@@ -1166,6 +1165,51 @@ public class DatabaseQuery extends DbInitalizer {
         return rowCount();
     }
 
+    public int rowsExistInTable(String Where) {
+        readDataFullSQL("Select Count(*) as COUNT FROM " + this.getTableName() + " WHERE " + Where);
+        try {
+            return getRs().getInt(0);
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    /**
+     *
+     * @param columns:CSV
+     * @param values:CSV
+     * @return
+     */
+    public int rowsExistInTable(String columns, String values) {
+        String[] _columns = columns.split(",");
+        String[] _values = columns.split(",");
+
+        return rowsExistInTable(_columns, _values);
+    }
+
+    public int rowsExistInTable(String columns[], String values[]) {
+        setQueryFieldNames(columns);
+        setQueryValues(values);
+        return rowsExistInTable();
+    }
+
+    public int rowsExistInTable() {
+        String q = formulateQuery();
+
+        if (q.equals("") == false) {
+            q = "\n WHERE \n" + q;
+        }
+
+        readDataFullSQL("Select Count(*) as COUNT FROM " + this.getTableName() + " " + q);
+        try {
+            return getRs().getInt(0);
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
     /**
@@ -1191,16 +1235,17 @@ public class DatabaseQuery extends DbInitalizer {
                 }
                 rs.absolute(currentPos);
             } catch (SQLException ex) {
-                 ErrorMessage(ex, this.getSelectSQL(), "isResultValid(int rowNumberExist)");
+                ErrorMessage(ex, this.getSelectSQL(), "isResultValid(int rowNumberExist)");
             }
         }
         return false;
     }
+
     /**
-     * 
+     *
      * @param _rs
      * @param rowNumberExist: One based index
-     * @return 
+     * @return
      */
     public boolean isResultValid(ResultSet _rs, int rowNumberExist) {
         if (_rs != null) {
