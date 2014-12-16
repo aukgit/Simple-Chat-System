@@ -24,6 +24,12 @@ public class ListOfFriends extends InheritableJFrame {
      */
     public ListOfFriends() {
         initComponents();
+        
+    }
+    
+    public ListOfFriends(UserTable u){
+        initComponents();
+        setUser(u);
         if (getUser().IsAdmin) {
             adminConfigBtn.setVisible(true);
         } else {
@@ -59,6 +65,12 @@ public class ListOfFriends extends InheritableJFrame {
         jLabel3.setText("Status");
 
         adminConfigBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IconsCollections/settings_32.png"))); // NOI18N
+        adminConfigBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        adminConfigBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                adminConfigBtnMouseReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -129,6 +141,11 @@ public class ListOfFriends extends InheritableJFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void adminConfigBtnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_adminConfigBtnMouseReleased
+        // TODO add your handling code here:
+        loadNewForm(new Admin(), true);
+    }//GEN-LAST:event_adminConfigBtnMouseReleased
 
     /**
      * @param args the command line arguments

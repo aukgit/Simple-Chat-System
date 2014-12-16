@@ -5,8 +5,6 @@ package Comon;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import ConsolePackage.Console;
-import CurrentDb.Tables.UserTable;
 import java.awt.Component;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;

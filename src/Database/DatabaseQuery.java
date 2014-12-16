@@ -20,7 +20,7 @@ import ConsolePackage.Console;
 import CurrentDb.Tables.UserTable;
 import Database.Components.DbInitalizer;
 import Database.Components.StringMore;
-import DesignPattern.DatabaseRunnableComponents;
+import DesignPattern.DatabaseRunnableComponentsJFrame;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -1124,7 +1124,7 @@ public class DatabaseQuery extends DbInitalizer {
                 rs.absolute(rowNumber);
                 return rs;
             } catch (SQLException ex) {
-                Logger.getLogger(DatabaseRunnableComponents.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DatabaseRunnableComponentsJFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -1137,7 +1137,7 @@ public class DatabaseQuery extends DbInitalizer {
                 _rs.absolute(rowNumber);
                 return _rs;
             } catch (SQLException ex) {
-                Logger.getLogger(DatabaseRunnableComponents.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DatabaseRunnableComponentsJFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;

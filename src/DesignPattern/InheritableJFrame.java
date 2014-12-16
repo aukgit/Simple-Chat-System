@@ -8,37 +8,34 @@ package DesignPattern;
 import Database.Components.MsgBox;
 import javax.swing.JFrame;
 
-
-
 /**
  *
  * @author Alim
  */
-public abstract class InheritableJFrame extends DatabaseRunnableComponents {
+public abstract class InheritableJFrame extends DatabaseRunnableComponentsJFrame {
+
     private static final long serialVersionUID = 1L;
-    
+
     //<editor-fold defaultstate="collapsed" desc="Fields">
     private MsgBox messageBox;
     public JFrame PreviousForm;
     public JFrame NextForm;
     //</editor-fold>
-    
-    
-    // <editor-fold defaultstate="collapsed" desc="Personal Methods added by Alim Ul Karim">
 
+    // <editor-fold defaultstate="collapsed" desc="Personal Methods added by Alim Ul Karim">
     public void Println(String title, String msg) {
         System.out.println(title + " : " + msg);
     }
-    
+
     public void Sysout(String title, String msg) {
         this.Println(title, msg);
     }
+
     public void Sysout(String msg) {
         System.out.println(msg);
     }
 
     // </editor-fold>
-
     /**
      * Creates new form InheritableJFrame
      */
@@ -46,9 +43,9 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponents {
         this.messageBox = new MsgBox();
         initalizeTableName();
         initComponents();
-      
+
     }
-    
+
     public abstract void initalizeTableName();
 
     /**
@@ -79,7 +76,6 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponents {
     }// </editor-fold>//GEN-END:initComponents
 
     //<editor-fold defaultstate="collapsed" desc="Getter seeters">
-   
     // <editor-fold defaultstate="collapsed" desc="Getter">
     /**
      * @return the messageBox
@@ -89,7 +85,6 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponents {
     }
 
     // </editor-fold>
-    
     //<editor-fold defaultstate="collapsed" desc="Setter">
     /**
      * @param messageBox the messageBox to set
@@ -99,21 +94,34 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponents {
     }
 //</editor-fold>
     //</editor-fold>
+
     /**
      * Also points to previous form
+     *
      * @param frame
      */
-    public void loadNewForm(InheritableJFrame frame){
-        
+    public void loadNewForm(InheritableJFrame frame, boolean onTop) {
+        loadNewForm(frame);
+        frame.setAlwaysOnTop(true);
+    }
+
+    public void loadNewForm(InheritableJFrame frame, boolean onTop, boolean hideCurrentOne) {
+        loadNewForm(frame, onTop);
+        if (hideCurrentOne) {
+            this.hide();
+        }
+    }
+
+    public void loadNewForm(InheritableJFrame frame) {
+
         frame.show(true);
         frame.PreviousForm = this;
-        this.NextForm= frame;
+        this.NextForm = frame;
     }
 
     /**
      * @param args the command line arguments
      */
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

@@ -202,18 +202,20 @@ public class Startup extends InheritableJFrame {
 
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    @SuppressWarnings("deprecation")
     public void OnSuccessLogin(boolean foundByUserName) {
         UserTable _user = new UserTable();
-        ListOfFriends listOfFriendsForm = new ListOfFriends();
+
         getMessageBox().show(this, "Congratulations, you have successfully logged in.");
         if (foundByUserName) {
             this.getDb().readData(User.Username, UsernameTextBox.getText()); // get user
         } else {
             this.getDb().readData(User.Email, UsernameTextBox.getText()); // get user
         }
-        
+
         this.getDb().getResultsAsObject(_user.getClass(), _user);
-        listOfFriendsForm.setUser(_user);
+
+        ListOfFriends listOfFriendsForm = new ListOfFriends(_user);
         Codes.displayRightMiddle(listOfFriendsForm);
         loadNewForm(listOfFriendsForm);
 

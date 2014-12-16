@@ -14,14 +14,14 @@ import javax.swing.JFrame;
  *
  * @author Alim
  */
-public class DatabaseRunnableComponents extends JFrame {
+public class DatabaseRunnableComponentsJFrame extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private DatabaseQuery _db;
     private DbData _dbData;
     private ResultSet _rs;
 
-    public DatabaseRunnableComponents() {
+    public DatabaseRunnableComponentsJFrame() {
         _db = new DatabaseQuery();
         _dbData = new DbData();
         _rs = null;
