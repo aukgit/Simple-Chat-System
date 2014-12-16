@@ -45,8 +45,7 @@ public class ErrorHighLight {
         Color pickingColor = Red;
 
         if (label != null) {
-            label.setForeground(White);
-            label.setBackground(pickingColor);
+            label.setForeground(pickingColor);
             if (errorMsg != null) {
                 label.setToolTipText("Invalid : " + errorMsg);
             }
@@ -81,8 +80,7 @@ public class ErrorHighLight {
     public static void ResumeErrorLabelGreen(JLabel label, JTextField textbox, String regularTooltip) {
         Color pickingColor = Green;
         if (label != null) {
-            label.setForeground(White);
-            label.setBackground(pickingColor);
+            label.setForeground(pickingColor);
             if (regularTooltip != null) {
                 label.setToolTipText(regularTooltip);
             }

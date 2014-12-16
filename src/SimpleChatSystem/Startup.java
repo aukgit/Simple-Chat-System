@@ -46,8 +46,8 @@ public class Startup extends InheritableJFrame {
         UsernameTextBox = new javax.swing.JTextField();
         UsernameLabel = new javax.swing.JLabel();
         PasswordLabel = new javax.swing.JLabel();
-        PasswordTextBox = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
+        PasswordTextBox = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Simple Chat by Alim Ul Karim\n");
@@ -92,25 +92,26 @@ public class Startup extends InheritableJFrame {
             }
         });
 
+        PasswordTextBox.setToolTipText("Please write your password");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButton4)
                     .addComponent(UsernameLabel)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jButton1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton3)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton2))
-                        .addComponent(UsernameTextBox)
-                        .addComponent(PasswordLabel)
-                        .addComponent(PasswordTextBox)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2))
+                    .addComponent(UsernameTextBox)
+                    .addComponent(PasswordLabel)
+                    .addComponent(PasswordTextBox))
                 .addContainerGap(42, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -244,7 +245,7 @@ public class Startup extends InheritableJFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel PasswordLabel;
-    private javax.swing.JTextField PasswordTextBox;
+    private javax.swing.JPasswordField PasswordTextBox;
     private javax.swing.JLabel UsernameLabel;
     private javax.swing.JTextField UsernameTextBox;
     private javax.swing.JButton jButton1;
