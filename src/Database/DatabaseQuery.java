@@ -1145,14 +1145,16 @@ public class DatabaseQuery extends DbInitalizer {
     }
     // </editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Get Results as Object Type like EntityFramework">
     /**
      *
+     * @param <T>
      * @param classNative
      * @param row : 1 based index
      * @param obj
      */
     public <T> void getResultsAsObject(Class<?> classNative, int row, T obj) {
-
+        
         Field[] fieldsInClass = Codes.getAllFields(classNative);
         List<String> Columns = Arrays.asList(getColumnsNames());
         moveToRow(row);
@@ -1161,6 +1163,7 @@ public class DatabaseQuery extends DbInitalizer {
                 if (Columns.indexOf(field.getName()) > -1) {
                     // field exist in the class then populate the value
                     String valueToSet = getRs().getString(field.getName());
+                    field.setAccessible(true);
                     field.set(obj, valueToSet);
                 }
             }
@@ -1168,6 +1171,7 @@ public class DatabaseQuery extends DbInitalizer {
             Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+//</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="row counts of result set">
     /**

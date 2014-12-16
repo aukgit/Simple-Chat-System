@@ -5,12 +5,19 @@
  */
 package CurrentDb.Tables;
 
-import CurrentDb.TableColumns.User;
+
 
 /**
  *
  * @author Alim
  */
-public class UserTable implements User{
-    
+public class UserTable {
+    public String UserID;
+    public String Username;
+    public String Email;
+    public String Password;
+
+    public String LastLogin;
+    public String IsBlocked;
+    public String IsActive;
 }
