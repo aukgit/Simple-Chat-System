@@ -31,7 +31,7 @@
         <Property name="observable" type="boolean" value="true"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;SimpleChatSystem.Serversetting&gt;"/>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;EntityClass.Serversetting&gt;"/>
         <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="false"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="2"/>
       </AuxValues>
@@ -89,7 +89,7 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -116,7 +116,7 @@
                   <Component id="saveButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="refreshButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="92" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -143,36 +143,12 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="serverSettingIDField">
-      <BindingProperties>
-        <BindingProperty name="text" source="masterTable" sourcePath="${selectedElement.serverSettingID}" target="serverSettingIDField" targetPath="text" updateStrategy="0" immediately="false">
-          <Property name="incompletePathValue" type="java.lang.String" value="null"/>
-        </BindingProperty>
-        <BindingProperty name="enabled" source="masterTable" sourcePath="${selectedElement != null}" target="serverSettingIDField" targetPath="enabled" updateStrategy="1" immediately="false"/>
-      </BindingProperties>
     </Component>
     <Component class="javax.swing.JTextField" name="serverIPField">
-      <BindingProperties>
-        <BindingProperty name="text" source="masterTable" sourcePath="${selectedElement.serverIP}" target="serverIPField" targetPath="text" updateStrategy="0" immediately="false">
-          <Property name="incompletePathValue" type="java.lang.String" value="null"/>
-        </BindingProperty>
-        <BindingProperty name="enabled" source="masterTable" sourcePath="${selectedElement != null}" target="serverIPField" targetPath="enabled" updateStrategy="1" immediately="false"/>
-      </BindingProperties>
     </Component>
     <Component class="javax.swing.JTextField" name="serverPortField">
-      <BindingProperties>
-        <BindingProperty name="text" source="masterTable" sourcePath="${selectedElement.serverPort}" target="serverPortField" targetPath="text" updateStrategy="0" immediately="false">
-          <Property name="incompletePathValue" type="java.lang.String" value="null"/>
-        </BindingProperty>
-        <BindingProperty name="enabled" source="masterTable" sourcePath="${selectedElement != null}" target="serverPortField" targetPath="enabled" updateStrategy="1" immediately="false"/>
-      </BindingProperties>
     </Component>
     <Component class="javax.swing.JTextField" name="isActiveField">
-      <BindingProperties>
-        <BindingProperty name="text" source="masterTable" sourcePath="${selectedElement.isActive}" target="isActiveField" targetPath="text" updateStrategy="0" immediately="false">
-          <Property name="incompletePathValue" type="java.lang.String" value="null"/>
-        </BindingProperty>
-        <BindingProperty name="enabled" source="masterTable" sourcePath="${selectedElement != null}" target="isActiveField" targetPath="enabled" updateStrategy="1" immediately="false"/>
-      </BindingProperties>
     </Component>
     <Component class="javax.swing.JButton" name="saveButton">
       <Properties>

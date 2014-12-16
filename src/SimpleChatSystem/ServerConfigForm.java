@@ -5,6 +5,7 @@
  */
 package SimpleChatSystem;
 
+import DesignPattern.InheritableJFrame;
 import java.awt.EventQueue;
 import java.beans.Beans;
 import java.util.ArrayList;
@@ -12,20 +13,23 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.RollbackException;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+
 
 /**
  *
  * @author Alim
  */
-public class ServerConfigForm2 extends JPanel {
+public class ServerConfigForm extends InheritableJFrame {
+    private static final long serialVersionUID = 1L;
     
-    public ServerConfigForm2() {
+    public ServerConfigForm() {
         initComponents();
         if (!Beans.isDesignTime()) {
             entityManager.getTransaction().begin();
         }
     }
+
+  
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -131,7 +135,7 @@ public class ServerConfigForm2 extends JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
+                .addGap(13, 13, 13)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -153,7 +157,7 @@ public class ServerConfigForm2 extends JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(saveButton)
                     .addComponent(refreshButton))
-                .addContainerGap(92, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         bindingGroup.bind();
@@ -165,10 +169,10 @@ public class ServerConfigForm2 extends JPanel {
         FormListener() {}
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             if (evt.getSource() == saveButton) {
-                ServerConfigForm2.this.saveButtonActionPerformed(evt);
+                ServerConfigForm.this.saveButtonActionPerformed(evt);
             }
             else if (evt.getSource() == refreshButton) {
-                ServerConfigForm2.this.refreshButtonActionPerformed(evt);
+                ServerConfigForm.this.refreshButtonActionPerformed(evt);
             }
         }
     }// </editor-fold>//GEN-END:initComponents
@@ -194,8 +198,8 @@ public class ServerConfigForm2 extends JPanel {
         } catch (RollbackException rex) {
             rex.printStackTrace();
             entityManager.getTransaction().begin();
-            List<SimpleChatSystem.Serversetting> merged = new ArrayList<SimpleChatSystem.Serversetting>(list.size());
-            for (SimpleChatSystem.Serversetting s : list) {
+            List<EntityClass.Serversetting> merged = new ArrayList<EntityClass.Serversetting>(list.size());
+            for (EntityClass.Serversetting s : list) {
                 merged.add(entityManager.merge(s));
             }
             list.clear();
@@ -209,7 +213,7 @@ public class ServerConfigForm2 extends JPanel {
     private javax.swing.JTextField isActiveField;
     private javax.swing.JLabel isActiveLabel;
     private javax.swing.JLabel jLabel1;
-    private java.util.List<SimpleChatSystem.Serversetting> list;
+    private java.util.List<EntityClass.Serversetting> list;
     private javax.persistence.Query query;
     private javax.swing.JButton refreshButton;
     private javax.swing.JButton saveButton;
@@ -235,13 +239,13 @@ public class ServerConfigForm2 extends JPanel {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ServerConfigForm2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerConfigForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ServerConfigForm2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerConfigForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ServerConfigForm2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerConfigForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ServerConfigForm2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServerConfigForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -249,12 +253,17 @@ public class ServerConfigForm2 extends JPanel {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 JFrame frame = new JFrame();
-                frame.setContentPane(new ServerConfigForm2());
+                frame.setContentPane(new ServerConfigForm());
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.pack();
                 frame.setVisible(true);
             }
         });
+    }
+
+    @Override
+    public void initalizeTableName() {
+        
     }
     
 }

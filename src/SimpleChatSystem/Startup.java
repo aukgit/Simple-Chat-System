@@ -204,7 +204,7 @@ public class Startup extends InheritableJFrame {
 
     public void OnSuccessLogin(boolean foundByUserName) {
         UserTable _user = new UserTable();
-        ListOfFriends friendsForm = new ListOfFriends();
+        ListOfFriends listOfFriendsForm = new ListOfFriends();
         getMessageBox().show(this, "Congratulations, you have successfully logged in.");
         if (foundByUserName) {
             this.getDb().readData(User.Username, UsernameTextBox.getText()); // get user
@@ -213,10 +213,9 @@ public class Startup extends InheritableJFrame {
         }
         
         this.getDb().getResultsAsObject(_user.getClass(), _user);
-        friendsForm.setUser(_user);
-        Codes.displayRightMiddle(friendsForm);
-        NextForm = friendsForm;
-        friendsForm.PreviousForm = this;
+        listOfFriendsForm.setUser(_user);
+        Codes.displayRightMiddle(listOfFriendsForm);
+        loadNewForm(listOfFriendsForm);
 
         this.hide();
     }
