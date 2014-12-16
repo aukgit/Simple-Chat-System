@@ -20,5 +20,6 @@ public interface User {
     public String LastLogin = "LastLogin";
     public String IsBlocked = "IsBlocked";
     public String IsActive = "IsActive";
+    public String IsAdmin = "IsAdmin";
 
 }
