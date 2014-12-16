@@ -672,7 +672,27 @@ public class DatabaseQuery extends DbInitalizer {
         }
         return rs;
     }
-
+    
+    
+    /**
+     * at least one row returned.
+     *
+     * @param Columns : CSV
+     * @param valuesSearchInFields: CSV
+     * @return
+     */
+    public boolean isExist(String [] Columns, String [] valuesSearchInFields) {
+        try {
+            if (Columns != null && valuesSearchInFields != null) {
+                rs = readData(Columns, valuesSearchInFields);
+                return isResultValid(1);
+            }
+        } catch (Exception ex) {
+            ErrorMessage(ex, this.getSelectSQL(), "isExist(String [] Columns, String [] valuesSearchInFields)");
+        }
+        return false;
+    }
+    
     /**
      * at least one row returned.
      *

@@ -15,6 +15,7 @@ import javax.swing.JFrame;
  * @author Alim
  */
 public class DatabaseRunnableComponents extends JFrame {
+    private static final long serialVersionUID = 1L;
 
     private DatabaseQuery _db;
     private DbData _dbData;
