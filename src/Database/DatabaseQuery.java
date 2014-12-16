@@ -15,6 +15,7 @@
  */
 package Database;
 
+import ConsolePackage.Console;
 import Database.Components.DbInitalizer;
 import Database.Components.StringMore;
 import DesignPattern.DatabaseRunnableComponents;
@@ -1200,8 +1201,9 @@ public class DatabaseQuery extends DbInitalizer {
         if (q.equals("") == false) {
             q = "\n WHERE \n" + q;
         }
+String sql = SQL_COUNT + this.getTableName() + " " + q;
 
-        readDataFullSQL("Select Count(*) as COUNT FROM " + this.getTableName() + " " + q);
+        setRs(readDataFullSQL(sql));
         try {
             return getRs().getInt(0);
         } catch (SQLException ex) {
@@ -1209,6 +1211,7 @@ public class DatabaseQuery extends DbInitalizer {
         }
         return 0;
     }
+    private static final String SQL_COUNT = "SELECT Count(*) AS COUNT FROM ";
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
@@ -1671,6 +1674,17 @@ public class DatabaseQuery extends DbInitalizer {
 
 // </editor-fold>    
     // <editor-fold defaultstate="collapsed" desc="How to use it comments ">
+    public static void main(String args[]) {
+
+        DatabaseQuery q = new DatabaseQuery();
+        q.setTableName("user");
+        int rowsFound = q.rowsExistInTable();
+        
+        Console.writeLine(rowsFound);
+
+
+
+    }
 //
 //    public static void main(String args[]) {
 //
