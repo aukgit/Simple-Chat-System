@@ -15,7 +15,7 @@
  */
 package Database;
 
-import Comon.Codes;
+import Common.Codes;
 import ConsolePackage.Console;
 import CurrentDb.Tables.UserTable;
 import Database.Components.DbInitalizer;
@@ -26,10 +26,13 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 public class DatabaseQuery extends DbInitalizer {
 
@@ -1003,6 +1006,35 @@ public class DatabaseQuery extends DbInitalizer {
     }
     // </editor-fold>
 
+    public void searchInEntity(String columns[], String values[], EntityManager em, List<Object> list, Query queryQ) {
+        setSpecialQueryFields_(false, columns);
+        setSpecialQueryValues_(false, values);
+        String sql = completeReadQuery();
+        searchInEntity(sql, em, list, queryQ);
+    }
+
+    public void searchInEntity(String sql, EntityManager em, List<Object> list, Query queryQ) {
+        try {
+            Collection data;
+            em.getTransaction().rollback();
+            em.getTransaction().begin();
+            //queryQ = em.createNamedQuery(sql);
+            queryQ = em.createQuery(sql);
+            //queryQ.setParameter("foodCategoryIdx", search);
+            //data = org.jdesktop.observablecollections.ObservableCollections.observableList(queryQ.getResultList());
+            data = queryQ.getResultList();
+            for (Object entity : data) {
+                em.refresh(entity);
+                em.flush();
+            }
+            list.clear();
+            list.addAll(data);
+        } catch (Exception e) {
+            ErrorMessage(e, sql, "searchInEntity(String sql, EntityManager em, List<Object> list, Query queryQ)");
+        }
+
+    }
+
     // <editor-fold defaultstate="collapsed" desc="Others + Showing Data in Console">
     public void showData() {
         try {
@@ -1165,7 +1197,7 @@ public class DatabaseQuery extends DbInitalizer {
                     // field exist in the class then populate the value
                     field.setAccessible(true);
                     String fieldName = field.getName();
-                    
+
                     if (field.getType().equals(Double.TYPE) || field.getType().equals(Double.class)) {
                         field.setDouble(obj, rs.getDouble(fieldName));
                     } else if (field.getType() == Integer.TYPE || field.getType() == Integer.class) {

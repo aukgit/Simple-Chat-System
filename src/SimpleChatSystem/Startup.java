@@ -5,7 +5,7 @@
  */
 package SimpleChatSystem;
 
-import Comon.Codes;
+import Common.Codes;
 import Cryptography.Hasher;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
@@ -172,7 +172,7 @@ public class Startup extends InheritableJFrame {
         String password = PasswordTextBox.getText();
         String hashedPassword = Hasher.getShA1Hash(password);
 
-        int numberOfFields = 2;
+        int numberOfFields = 4;
         String Columns[] = new String[numberOfFields];
         String Values[] = new String[numberOfFields];
         int i = 0;
@@ -182,6 +182,11 @@ public class Startup extends InheritableJFrame {
         Columns[i] = User.Password;
         Values[i++] = hashedPassword;
 
+        Columns[i] = User.IsActive;
+        Values[i++] = "1";
+
+        Columns[i] = User.IsBlocked;
+        Values[i++] = "0";
         boolean isUserExistByUsername = this.getDb().isExist(Columns, Values);
         if (isUserExistByUsername == false) {
             // user name is not found with this password.. 
@@ -225,7 +230,7 @@ public class Startup extends InheritableJFrame {
     public void OnLoginFailed() {
         // no found in any where
         // user doesn't exist with this user name and password
-        getMessageBox().show(this, "User doesn't exist in the database.");
+        getMessageBox().show(this, "Either user doesn't exist in the database or user is not active.");
     }
 
     /**

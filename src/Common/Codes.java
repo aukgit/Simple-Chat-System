@@ -1,4 +1,4 @@
-package Comon;
+package Common;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -6,9 +6,11 @@ package Comon;
  * and open the template in the editor.
  */
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import javax.swing.JFrame;
@@ -66,20 +68,31 @@ public class Codes {
         f.setLocation(x, y / 2);
         f.setVisible(true);
     }
-    
+
+    public static void displayCenter(JFrame f) {
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+        //Following three lines make the form centered
+        int x = (screenSize.width - f.getWidth()) / 2;
+        int y = (screenSize.height - f.getHeight()) / 2;
+        f.setLocation(x, y);
+    }
+
     /**
      * Before sending the class : call class.getClass() method
+     *
      * @param classType
-     * @return 
+     * @return
      */
     public static Field[] getAllFields(Class classType) {
         return classType.getFields();
     }
-    
+
     /**
      * Before sending the class : call class.getClass() method
+     *
      * @param classType
-     * @return 
+     * @return
      */
     public static ArrayList<String> getAllFieldNames(Class classType) {
         Field[] fs = classType.getFields();
@@ -103,5 +116,4 @@ public class Codes {
 //        }
 //    }
     //</editor-fold>
-
 }

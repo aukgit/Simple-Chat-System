@@ -51,8 +51,6 @@ public class ServerConfigForm extends JPanel {
         isActiveField = new javax.swing.JTextField();
         saveButton = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
-        newButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
 
         FormListener formListener = new FormListener();
 
@@ -103,16 +101,6 @@ public class ServerConfigForm extends JPanel {
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(formListener);
 
-        newButton.setText("New");
-        newButton.addActionListener(formListener);
-
-        deleteButton.setText("Delete");
-
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), deleteButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
-        bindingGroup.addBinding(binding);
-
-        deleteButton.addActionListener(formListener);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -120,10 +108,7 @@ public class ServerConfigForm extends JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(newButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deleteButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(refreshButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(saveButton))
@@ -144,7 +129,7 @@ public class ServerConfigForm extends JPanel {
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {deleteButton, newButton, refreshButton, saveButton});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {refreshButton, saveButton});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -166,9 +151,7 @@ public class ServerConfigForm extends JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(saveButton)
-                    .addComponent(refreshButton)
-                    .addComponent(deleteButton)
-                    .addComponent(newButton))
+                    .addComponent(refreshButton))
                 .addContainerGap())
         );
 
@@ -186,12 +169,6 @@ public class ServerConfigForm extends JPanel {
             else if (evt.getSource() == refreshButton) {
                 ServerConfigForm.this.refreshButtonActionPerformed(evt);
             }
-            else if (evt.getSource() == newButton) {
-                ServerConfigForm.this.newButtonActionPerformed(evt);
-            }
-            else if (evt.getSource() == deleteButton) {
-                ServerConfigForm.this.deleteButtonActionPerformed(evt);
-            }
         }
     }// </editor-fold>//GEN-END:initComponents
 
@@ -208,26 +185,6 @@ public class ServerConfigForm extends JPanel {
         list.clear();
         list.addAll(data);
     }//GEN-LAST:event_refreshButtonActionPerformed
-
-    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        int[] selected = masterTable.getSelectedRows();
-        List<EntityClass.Serversetting> toRemove = new ArrayList<EntityClass.Serversetting>(selected.length);
-        for (int idx = 0; idx < selected.length; idx++) {
-            EntityClass.Serversetting s = list.get(masterTable.convertRowIndexToModel(selected[idx]));
-            toRemove.add(s);
-            entityManager.remove(s);
-        }
-        list.removeAll(toRemove);
-    }//GEN-LAST:event_deleteButtonActionPerformed
-
-    private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
-        EntityClass.Serversetting s = new EntityClass.Serversetting();
-        entityManager.persist(s);
-        list.add(s);
-        int row = list.size() - 1;
-        masterTable.setRowSelectionInterval(row, row);
-        masterTable.scrollRectToVisible(masterTable.getCellRect(row, 0, true));
-    }//GEN-LAST:event_newButtonActionPerformed
     
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         try {
@@ -247,14 +204,12 @@ public class ServerConfigForm extends JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton deleteButton;
     private javax.persistence.EntityManager entityManager;
     private javax.swing.JTextField isActiveField;
     private javax.swing.JLabel isActiveLabel;
     private java.util.List<EntityClass.Serversetting> list;
     private javax.swing.JScrollPane masterScrollPane;
     private javax.swing.JTable masterTable;
-    private javax.swing.JButton newButton;
     private javax.persistence.Query query;
     private javax.swing.JButton refreshButton;
     private javax.swing.JButton saveButton;

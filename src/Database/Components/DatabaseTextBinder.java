@@ -5,7 +5,7 @@
  */
 package Database.Components;
 
-import Comon.Codes;
+import Common.Codes;
 import Database.DatabaseQuery;
 import java.util.ArrayList;
 import javax.swing.JFrame;
