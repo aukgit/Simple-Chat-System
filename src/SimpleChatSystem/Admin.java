@@ -12,6 +12,7 @@ import DesignPattern.InheritableJFrame;
  * @author Alim
  */
 public class Admin extends InheritableJFrame {
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -77,7 +78,10 @@ public class Admin extends InheritableJFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        loadNewForm(new ServerConfigForm());
+        ServerConfigForm panel = new ServerConfigForm();
+        InheritableJFrame frame = getFrame(panel);
+        //form.show(true);
+        loadNewForm(frame, true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
@@ -123,6 +127,6 @@ public class Admin extends InheritableJFrame {
 
     @Override
     public void initalizeTableName() {
-        
+
     }
 }

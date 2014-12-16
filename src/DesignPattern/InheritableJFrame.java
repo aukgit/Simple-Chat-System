@@ -6,7 +6,9 @@
 package DesignPattern;
 
 import Database.Components.MsgBox;
+import SimpleChatSystem.ServerConfigForm;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  *
@@ -117,6 +119,19 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponentsJFrame
         frame.show(true);
         frame.PreviousForm = this;
         this.NextForm = frame;
+    }
+
+    public InheritableJFrame getFrame(JPanel panel) {
+        InheritableJFrame frame = new InheritableJFrame() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void initalizeTableName() {
+                
+            }
+        };
+        frame.setContentPane(panel);
+        return frame;
     }
 
     /**

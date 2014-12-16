@@ -18,13 +18,15 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Alim
  */
 @Entity
-@Table(name = "serversetting", catalog = "chatdatabase", schema = "")
+@Table(name = "serversetting")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Serversetting.findAll", query = "SELECT s FROM Serversetting s"),
     @NamedQuery(name = "Serversetting.findByServerSettingID", query = "SELECT s FROM Serversetting s WHERE s.serverSettingID = :serverSettingID"),
@@ -126,7 +128,7 @@ public class Serversetting implements Serializable {
 
     @Override
     public String toString() {
-        return "SimpleChatSystem.Serversetting[ serverSettingID=" + serverSettingID + " ]";
+        return "EntityClass.Serversetting[ serverSettingID=" + serverSettingID + " ]";
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
