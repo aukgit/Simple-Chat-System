@@ -16,8 +16,6 @@
 package Database;
 
 import Comon.Codes;
-import ConsolePackage.Console;
-import CurrentDb.Tables.UserTable;
 import Database.Components.DbInitalizer;
 import Database.Components.StringMore;
 import DesignPattern.DatabaseRunnableComponents;
@@ -1149,27 +1147,47 @@ public class DatabaseQuery extends DbInitalizer {
     /**
      *
      * @param <T>
-     * @param classNative
+     * @param classNative : class.getClass()
      * @param row : 1 based index
-     * @param obj
+     * @param obj: class itself
      */
     public <T> void getResultsAsObject(Class<?> classNative, int row, T obj) {
-        
+
         Field[] fieldsInClass = Codes.getAllFields(classNative);
         List<String> Columns = Arrays.asList(getColumnsNames());
         moveToRow(row);
         try {
             for (Field field : fieldsInClass) {
                 if (Columns.indexOf(field.getName()) > -1) {
+
                     // field exist in the class then populate the value
-                    String valueToSet = getRs().getString(field.getName());
+   
                     field.setAccessible(true);
-                    field.set(obj, valueToSet);
+
+                    if (field.getType().getClass().equals(Double.class)) {
+                        field.setDouble(obj, getRs().getDouble(field.getName()));
+                    } else if (field.getType().getClass().equals(Integer.class)) {
+                        field.setInt(obj, getRs().getInt(field.getName()));
+                        
+                    } else {
+                        field.set(obj, valueToSet);
+                    }
                 }
             }
         } catch (SQLException | IllegalArgumentException | IllegalAccessException ex) {
             Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    /**
+     * row default first
+     *
+     * @param <T>
+     * @param classNative : class.getClass()
+     * @param obj: class itself
+     */
+    public <T> void getResultsAsObject(Class<?> classNative, T obj) {
+        getResultsAsObject(classNative, 1, obj);
     }
 //</editor-fold>
 
@@ -1710,17 +1728,17 @@ public class DatabaseQuery extends DbInitalizer {
 
 // </editor-fold>    
     // <editor-fold defaultstate="collapsed" desc="How to use it comments ">
-    public static void main(String args[]) {
-        UserTable _user = new UserTable();
-        DatabaseQuery q = new DatabaseQuery();
-        q.setTableName("user");
-//        int rowsFound = q.rowsExistInTable();
-        q.readData();
-        q.getResultsAsObject(_user.getClass(), 1, _user);
-
-        Console.writeLine(_user.toString());
-
-    }
+//    public static void main(String args[]) {
+//        UserTable _user = new UserTable();
+//        DatabaseQuery q = new DatabaseQuery();
+//        q.setTableName("user");
+////        int rowsFound = q.rowsExistInTable();
+//        q.readData();
+//        q.getResultsAsObject(_user.getClass(), 1, _user);
+//
+//        Console.writeLine(_user.toString());
+//
+//    }
 //
 //    public static void main(String args[]) {
 //

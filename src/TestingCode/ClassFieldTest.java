@@ -5,6 +5,7 @@
  */
 package TestingCode;
 
+import ConsolePackage.Console;
 import java.lang.reflect.Field;
 
 /**
@@ -23,6 +24,7 @@ public class ClassFieldTest {
         System.out.println("pub field: " + str1);
 
         Field f2 = ftClass.getField("parentPub");
+        Console.writeLine(f2.getType().getName());
         f2.set(ft, "again");
         String str2 = (String) f2.get(ft);
         System.out.println("\nparentPub field: " + str2);

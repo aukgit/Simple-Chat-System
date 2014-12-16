@@ -6,13 +6,12 @@
 package SimpleChatSystem;
 
 import Comon.Codes;
-import ConsolePackage.Console;
 import Cryptography.Hasher;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
+import CurrentDb.Tables.UserTable;
 import DesignPattern.InheritableJFrame;
 import Global.AppConfig;
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -204,14 +203,17 @@ public class Startup extends InheritableJFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     public void OnSuccessLogin(boolean foundByUserName) {
-
+        UserTable _user = new UserTable();
         ListOfFriends friendsForm = new ListOfFriends();
         getMessageBox().show(this, "Congratulations, you have successfully logged in.");
         if (foundByUserName) {
             this.getDb().readData(User.Username, UsernameTextBox.getText()); // get user
-            
-            this.getDbData().intialize(this.getDb().getRs(), this.getDb().getColumnsNames());
+        } else {
+            this.getDb().readData(User.Email, UsernameTextBox.getText()); // get user
         }
+        
+        this.getDb().getResultsAsObject(_user.getClass(), _user);
+        friendsForm.setUser(_user);
         Codes.displayRightMiddle(friendsForm);
         NextForm = friendsForm;
         friendsForm.PreviousForm = this;

@@ -20,4 +20,5 @@ public class UserTable {
     public String LastLogin;
     public String IsBlocked;
     public String IsActive;
+    public String IsAdmin;
 }
