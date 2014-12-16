@@ -1164,23 +1164,24 @@ public class DatabaseQuery extends DbInitalizer {
 
                     // field exist in the class then populate the value
                     field.setAccessible(true);
-
-                    if (field.getType().equals(Double.class)) {
-                        field.setDouble(obj, getRs().getDouble(field.getName()));
-                    } else if (field.getType().equals(Integer.class)) {
-                        field.setInt(obj, getRs().getInt(field.getName()));
-                    } else if (field.getType().equals(Long.class)) {
-                        field.setLong(obj, getRs().getLong(field.getName()));
+                    String fieldName = field.getName();
+                    
+                    if (field.getType().equals(Double.TYPE) || field.getType().equals(Double.class)) {
+                        field.setDouble(obj, rs.getDouble(fieldName));
+                    } else if (field.getType() == Integer.TYPE || field.getType() == Integer.class) {
+                        field.setInt(obj, rs.getInt(fieldName));
+                    } else if (field.getType().equals(Long.TYPE) || field.getType().equals(Long.class)) {
+                        field.setLong(obj, getRs().getLong(fieldName));
                     } else if (field.getType().equals(Date.class)) {
-                        field.set(obj, getRs().getDate(field.getName()));
-                    } else if (field.getType().equals(Float.class)) {
-                        field.setFloat(obj, getRs().getFloat(field.getName()));
-                    } else if (field.getType().equals(Boolean.class)) {
-                        field.setBoolean(obj, getRs().getBoolean(field.getName()));
-                    } else if (field.getType().equals(Short.class)) {
-                        field.setShort(obj, getRs().getShort(field.getName()));
+                        field.set(obj, getRs().getDate(fieldName));
+                    } else if (field.getType().equals(Float.TYPE) || field.getType().equals(Float.class)) {
+                        field.setFloat(obj, getRs().getFloat(fieldName));
+                    } else if (field.getType().equals(Boolean.TYPE) || field.getType().equals(Boolean.class)) {
+                        field.setBoolean(obj, getRs().getBoolean(fieldName));
+                    } else if (field.getType().equals(Short.TYPE) || field.getType().equals(Short.class)) {
+                        field.setShort(obj, getRs().getShort(fieldName));
                     } else {
-                        field.set(obj, getRs().getString(field.getName()));
+                        field.set(obj, rs.getString(fieldName));
                     }
                 }
             }
