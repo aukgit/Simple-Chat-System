@@ -99,7 +99,7 @@ public class AppConfig {
      * @param aConnectionString the _connectionString to set
      */
     public static void setConnectionString(String aConnectionString) {
-        _connectionString = aConnectionString;
+        ServerConfig.ConnectionString = aConnectionString;
     }
 
     public AppConfig() {
