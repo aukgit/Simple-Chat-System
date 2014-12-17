@@ -14,7 +14,7 @@ package Database.Components;
  *
  * @author Alim
  */
-public interface IQueryTypes {
+public interface IQueryType {
     public int EXACT = 0;
     public int EXACT_FROM_FRIST = 1;
     public int ANYWHERE = 2;

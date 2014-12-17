@@ -18,7 +18,10 @@ package Database;
 import Common.Codes;
 import ConsolePackage.Console;
 import CurrentDb.Tables.UserTable;
+import Database.Attributes.DbAttribute;
+import Database.Attributes.MySQL;
 import Database.Components.DbInitalizer;
+import Database.Components.IQueryType;
 import Database.Components.StringMore;
 import DesignPattern.DatabaseRunnableComponentsJFrame;
 import java.lang.reflect.Field;
@@ -34,7 +37,7 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-public class DatabaseQuery extends DbInitalizer {
+public final class DatabaseQuery extends DbInitalizer {
 
     StringMore strMore = new StringMore();
     // <editor-fold defaultstate="collapsed" desc="Intializers & Configarations">
@@ -50,15 +53,18 @@ public class DatabaseQuery extends DbInitalizer {
     private Connection cnn;
     private Statement stmt, tempStatement;
     private ResultSet rs;
-    //SQLS
-    private String selectSQL = "", updateSQL = "", deleteSQL = "", createSQL = "";
+    private String selectSQL, updateSQL, deleteSQL, createSQL;
+
+    public DbAttribute dbAttr;
+
     public String LastSQL = ""; //last executed SQL Query
     //table
     String TableName = "";
     private String openFieldsName = "*";
+
     //Boleans
     /**
-     * make sure if we need to look for complex quires than equals
+     * make sure if we need to look for complex quries than equals
      */
     private Boolean queryTypeInitalized = false;
     // default value to initalize lists
@@ -77,22 +83,41 @@ public class DatabaseQuery extends DbInitalizer {
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Constructors">
+    /**
+     * By default loads for mysql
+     */
     public DatabaseQuery() {
-        this.simpleDateFormatter = new java.text.SimpleDateFormat(MYSQL_DATE_FORMAT);
-        try {
-
-            cnn = DriverManager.getConnection(url, user, password);
-            stmt = cnn.createStatement();
-            tempStatement = cnn.createStatement();
-        } catch (Exception e) {
-            System.err.println("Sorry can not connect with MySQL database URL: " + url);
-            System.err.println("Error : " + e);
-            System.out.println("Please make sure password and user name is correct and your MySQL server is running.");
-            System.out.println("In addition, please if check mysql-connector is included in this project.");
-        }
+        initialize(this.url, this.user, this.password, new MySQL());
     }
 
+    /**
+     * By default loads for mysql
+     *
+     * @param url : database url or connection string
+     * @param user : user name in database
+     * @param password : database user password
+     */
     public DatabaseQuery(String url, String user, String password) {
+        initialize(url, user, password, new MySQL());
+    }
+
+    /**
+     *
+     * @param url : database url or connection string
+     * @param user : user name in database
+     * @param password : database user password
+     * @param dbAttribute
+     */
+    public DatabaseQuery(String url, String user, String password, DbAttribute dbAttribute) {
+        initialize(url, user, password, dbAttribute);
+    }
+
+    public void initialize(String url, String user, String password, DbAttribute dbAttribute) {
+        this.createSQL = "";
+        this.deleteSQL = "";
+        this.updateSQL = "";
+        this.selectSQL = "";
+        dbAttr = dbAttribute;
         this.simpleDateFormatter = new java.text.SimpleDateFormat(MYSQL_DATE_FORMAT);
         try {
             this.url = url;
@@ -116,6 +141,7 @@ public class DatabaseQuery extends DbInitalizer {
         setQueryValues(null);
         setJoiningArray(null);
         setQueryTypes(null);
+        setQueryTypeInitalized(false);
     }
 
     private void cleanUpdateArrays() {
@@ -358,28 +384,28 @@ public class DatabaseQuery extends DbInitalizer {
     //1
 
     private String Exact_From_Begining_Query(String Field, String Search) {
-        return "(" + protectField(Field) + " LIKE '" + Search + "*') ";
+        return "(" + protectField(Field) + " LIKE '" + Search + this.dbAttr.getWildCard() + "') ";
     }
     //2 
 
     private String Anywhere_Query(String Field, String Search) {
-        return "(" + protectField(Field) + " LIKE '*" + Search + "*') ";
+        return "(" + protectField(Field) + " LIKE '" + this.dbAttr.getWildCard() + Search + this.dbAttr.getWildCard() + "') ";
     }
     //3
 
     private String Word_Based_Query(String Field, String Search) {
         String q = "";
-        if (Search.trim() == "") {
+        if (Search == null || Search.trim() == "") {
             return "";
         }
-        for (String s : Search.split("[ .,?!]+")) {
-            if (s.equals("")) {
+        for (String value : Search.split("[ .,?!]+")) {
+            if (value.equals("")) {
                 continue;
             }
             if (q.equals("") == false) {
                 q += " AND ";
             }
-            q += protectField(Field) + " LIKE '*" + s + "*' ";
+            q += protectField(Field) + " LIKE '" + this.dbAttr.getWildCard() + value + this.dbAttr.getWildCard() + "' ";
 
         }
         return "( " + q + " )";
@@ -399,10 +425,10 @@ public class DatabaseQuery extends DbInitalizer {
     }
 
     public String protectField(String Field) {
-        if (Field.charAt(0) == '`' && Field.charAt(Field.length() - 1) == '`') {
+        if (Field.charAt(0) == this.dbAttr.getTableOpenerLeft() && Field.charAt(Field.length() - 1) == this.dbAttr.getTableOpenerRight()) {
             return Field;
         } else {
-            return "`" + Field + "`";
+            return this.dbAttr.getTableOpenerLeft() + Field + this.dbAttr.getTableOpenerRight();
         }
     }
 
@@ -1007,7 +1033,9 @@ public class DatabaseQuery extends DbInitalizer {
     // </editor-fold>
 
     /**
+     * by default searching for exact from first
      *
+     * @param <T>
      * @param columns:CSV
      * @param values:CSV
      * @param em
@@ -1017,26 +1045,47 @@ public class DatabaseQuery extends DbInitalizer {
     public <T> void searchInEntity(String columns, String values, EntityManager em, List<T> list, Query queryQ) {
         String[] cols = columns.split(",");
         String[] vals = values.split(",");
-        searchInEntity(cols, vals, em, list, queryQ);
+        searchInEntity(cols, vals, null, em, list, queryQ);
     }
 
-    public <T> void searchInEntity(String columns[], String values[], EntityManager em, List<T> list, Query queryQ) {
-        setSpecialQueryFields_(false, columns);
-        setSpecialQueryValues_(false, values);
+    /**
+     * by default searching for exact from first
+     *
+     * @param <T>
+     * @param columns
+     * @param values
+     * @param queryTypes : if null then by default searching for exact from
+     * first
+     * @param em
+     * @param list
+     * @param queryQ
+     */
+    public <T> void searchInEntity(String columns[], String values[], int queryTypes[], EntityManager em, List<T> list, Query queryQ) {
+        setQueryFieldNames(columns);
+        setQueryValues(values);
+
+        if (queryTypes == null) {
+            queryTypes = new int[columns.length];
+            for (int i = 0; i < columns.length; i++) {
+                queryTypes[i] = IQueryType.EXACT_FROM_FRIST;
+            }
+        }
+        setQueryTypes(queryTypes);
         String sql = completeReadQuery();
         searchInEntity(sql, em, list, queryQ);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> void searchInEntity(String sql, EntityManager em, List<T> list, Query queryQ) {
         try {
-            Collection data;
+
             em.getTransaction().rollback();
             em.getTransaction().begin();
             //queryQ = em.createNamedQuery(sql);
             queryQ = em.createQuery(sql);
             //queryQ.setParameter("foodCategoryIdx", search);
             //data = org.jdesktop.observablecollections.ObservableCollections.observableList(queryQ.getResultList());
-            data = queryQ.getResultList();
+            Collection data = queryQ.getResultList();
             for (Object entity : data) {
                 em.refresh(entity);
                 em.flush();
@@ -1632,8 +1681,10 @@ public class DatabaseQuery extends DbInitalizer {
     public void setQueryTypes(int[] queryTypes) {
         if (queryTypes == null) {
             this.queryTypes = null;
+            setQueryTypeInitalized(false);
         } else {
             this.queryTypes = addItemsToIntListNewly(this.queryTypes, queryTypes);
+            setQueryTypeInitalized(true);
         }
     }
 
@@ -1820,4 +1871,5 @@ public class DatabaseQuery extends DbInitalizer {
 //  }
     // */
 // </editor-fold>
+
 }

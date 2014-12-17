@@ -6,13 +6,13 @@
 package Database.Components;
 
 import Database.Components.SQLError;
-import Database.Components.IQueryTypes;
+import Database.Components.IQueryType;
 import Database.Components.ISoftwareInformation;
 
 /**
  *
  * @author Alim
  */
-public class DbInitalizer extends SQLError implements ISoftwareInformation, IQueryTypes   {
+public class DbInitalizer extends SQLError implements ISoftwareInformation, IQueryType   {
     
 }
