@@ -7,6 +7,7 @@ package SimpleChatSystem;
 
 import EntityGeneratedForms.ServerConfigForm;
 import DesignPattern.InheritableJFrame;
+import EntityGeneratedForms.UserManage;
 
 /**
  *
@@ -42,6 +43,11 @@ public class Admin extends InheritableJFrame {
         jLabel1.setText("Welcome to admin!");
 
         jButton1.setText("Manage Users");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Server Config");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -84,6 +90,14 @@ public class Admin extends InheritableJFrame {
         //form.show(true);
         loadNewForm(frame, true);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        UserManage panel = new UserManage();
+        InheritableJFrame frame = getFrame(panel);
+        //form.show(true);
+        loadNewForm(frame, true);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments

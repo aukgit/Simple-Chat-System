@@ -45,6 +45,7 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponentsJFrame
         this.messageBox = new MsgBox();
         initalizeTableName();
         initComponents();
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     }
 
@@ -127,10 +128,12 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponentsJFrame
 
             @Override
             public void initalizeTableName() {
-                
+
             }
         };
         frame.setContentPane(panel);
+        frame.pack();
+        frame.setVisible(true);
         return frame;
     }
 
