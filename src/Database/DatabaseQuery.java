@@ -376,26 +376,26 @@ public final class DatabaseQuery extends DbInitalizer {
 
     // <editor-fold defaultstate="collapsed" desc="Smart Query Type & Field Protector">
     //0
-    private String Exact_Query(String Field, String Search) {
-        String q = "(" + protectField(Field) + " = '" + Search + "') ";
+    private String exactQuery(String Field, String Search) {
+        String q = "(" + getDbField(Field) + " = '" + Search + "') ";
         //System.out.println(q);
         return q;
     }
     //1
 
-    private String Exact_From_Begining_Query(String Field, String Search) {
-        return "(" + protectField(Field) + " LIKE '" + Search + this.dbAttr.getWildCard() + "') ";
+    private String exactFromBegining(String Field, String Search) {
+        return "(" + getDbField(Field) + " LIKE '" + Search + this.dbAttr.getWildCard() + "') ";
     }
     //2 
 
-    private String Anywhere_Query(String Field, String Search) {
-        return "(" + protectField(Field) + " LIKE '" + this.dbAttr.getWildCard() + Search + this.dbAttr.getWildCard() + "') ";
+    private String anywhereQuery(String Field, String Search) {
+        return "(" + getDbField(Field) + " LIKE '" + this.dbAttr.getWildCard() + Search + this.dbAttr.getWildCard() + "') ";
     }
     //3
 
-    private String Word_Based_Query(String Field, String Search) {
+    private String wordBasedQuery(String Field, String Search) {
         String q = "";
-        if (Search == null || Search.trim() == "") {
+        if (Search == null || "".equals(Search.trim())) {
             return "";
         }
         for (String value : Search.split("[ .,?!]+")) {
@@ -405,33 +405,48 @@ public final class DatabaseQuery extends DbInitalizer {
             if (q.equals("") == false) {
                 q += " AND ";
             }
-            q += protectField(Field) + " LIKE '" + this.dbAttr.getWildCard() + value + this.dbAttr.getWildCard() + "' ";
+            q += getDbField(Field) + " LIKE '" + this.dbAttr.getWildCard() + value + this.dbAttr.getWildCard() + "' ";
 
         }
         return "( " + q + " )";
     }
-
-    private String ReturnSingleQuery(String Field, String Search, int type) {
+    
+    /**
+     * 
+     * @param Field
+     * @param Search
+     * @param type : IQueryType
+     * @return single query based on search type given from IQueryType
+     */
+    private String returnSingleQuery(String Field, String Search, int type) {
         //System.out.println("F : " + Field + " S :" + Search + " T:" + type);
         if (type == WORD_BASE_SEARCH) {
-            return Word_Based_Query(Field, Search);
+            return wordBasedQuery(Field, Search);
         } else if (type == ANYWHERE) {
-            return Anywhere_Query(Field, Search);
+            return anywhereQuery(Field, Search);
         } else if (type == EXACT_FROM_FRIST) {
-            return Exact_From_Begining_Query(Field, Search);
+            return exactFromBegining(Field, Search);
         } else {
-            return Exact_Query(Field, Search);
+            return exactQuery(Field, Search);
         }
     }
-
-    public String protectField(String Field) {
+    /**
+     * `Field Name` for mysql
+     * @param Field
+     * @return this.dbAttr.getTableOpenerLeft() + Field + this.dbAttr.getTableOpenerRight()
+     */
+    public String getDbField(String Field) {
         if (Field.charAt(0) == this.dbAttr.getTableOpenerLeft() && Field.charAt(Field.length() - 1) == this.dbAttr.getTableOpenerRight()) {
             return Field;
         } else {
             return this.dbAttr.getTableOpenerLeft() + Field + this.dbAttr.getTableOpenerRight();
         }
     }
-
+    /**
+     * 
+     * @param value
+     * @return  'value'
+     */
     public String protectValue(String value) {
         if (value.charAt(0) == '\'' && value.charAt(value.length() - 1) == '\'') {
             return value;
@@ -526,7 +541,7 @@ public final class DatabaseQuery extends DbInitalizer {
                     value += " , ";
                 }
 
-                str += protectField(field);
+                str += getDbField(field);
                 value += protectValue(v.get(i));
             }
             i++;
@@ -672,9 +687,9 @@ public final class DatabaseQuery extends DbInitalizer {
                     //System.out.println("outside :" + type);
                 }
 
-                q += ReturnSingleQuery(f, s, type);
+                q += returnSingleQuery(f, s, type);
             } else {
-                q += ReturnSingleQuery(f, s, type);
+                q += returnSingleQuery(f, s, type);
                 //System.out.println("Query:" + q);
             }
         }
@@ -912,7 +927,7 @@ public final class DatabaseQuery extends DbInitalizer {
                     str += " , ";
                 }
                 value = getUpdateFieldsValues().get(i);
-                str += protectField(field) + " = " + protectValue(value);
+                str += getDbField(field) + " = " + protectValue(value);
             }
             i++;
         }
