@@ -53,22 +53,32 @@ public final class DatabaseQuery extends DbInitalizer {
     private Connection cnn;
     private Statement stmt, tempStatement;
     private ResultSet rs;
+    
+    //<editor-fold defaultstate="collapsed" desc="SQL strings">
     private String selectSQL, updateSQL, deleteSQL, createSQL;
+    public String LastSQL; //last executed SQL Query
+    private static final String SQL_COUNT = "SELECT Count(*) AS COUNT FROM ";
+
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Table">
+    /**
+     * table
+     */
+    private String TableName = "";
+    private String openFieldsName = "*";
+//</editor-fold>
 
     public DbAttribute dbAttr;
 
-    public String LastSQL = ""; //last executed SQL Query
-    //table
-    String TableName = "";
-    private String openFieldsName = "*";
-
     //Boleans
     /**
-     * make sure if we need to look for complex quries than equals
+     * make sure if we need to look for complex queries than equals
      */
     private Boolean queryTypeInitalized = false;
     // default value to initalize lists
     private int defaultListCreatingNumber = 30;
+    //<editor-fold defaultstate="collapsed" desc="Arrays">
     //Arrays
     private ArrayList<String> queryFieldNames;
     private ArrayList<String> queryValues;
@@ -78,6 +88,7 @@ public final class DatabaseQuery extends DbInitalizer {
     private ArrayList<String> updateFieldsValues;
     private ArrayList<String> createFields;
     private ArrayList<String> createFieldsValues;
+    //</editor-fold>
     private String createFieldsString = "";
     private String createFieldsValuesString = "";
 
@@ -114,6 +125,7 @@ public final class DatabaseQuery extends DbInitalizer {
 
     public void initialize(String url, String user, String password, DbAttribute dbAttribute) {
         this.createSQL = "";
+        this.LastSQL = "";
         this.deleteSQL = "";
         this.updateSQL = "";
         this.selectSQL = "";
@@ -410,9 +422,9 @@ public final class DatabaseQuery extends DbInitalizer {
         }
         return "( " + q + " )";
     }
-    
+
     /**
-     * 
+     *
      * @param Field
      * @param Search
      * @param type : IQueryType
@@ -430,10 +442,13 @@ public final class DatabaseQuery extends DbInitalizer {
             return exactQuery(Field, Search);
         }
     }
+
     /**
      * `Field Name` for mysql
+     *
      * @param Field
-     * @return this.dbAttr.getTableOpenerLeft() + Field + this.dbAttr.getTableOpenerRight()
+     * @return this.dbAttr.getTableOpenerLeft() + Field +
+     * this.dbAttr.getTableOpenerRight()
      */
     public String getDbField(String Field) {
         if (Field.charAt(0) == this.dbAttr.getTableOpenerLeft() && Field.charAt(Field.length() - 1) == this.dbAttr.getTableOpenerRight()) {
@@ -442,10 +457,11 @@ public final class DatabaseQuery extends DbInitalizer {
             return this.dbAttr.getTableOpenerLeft() + Field + this.dbAttr.getTableOpenerRight();
         }
     }
+
     /**
-     * 
+     *
      * @param value
-     * @return  'value'
+     * @return 'value'
      */
     public String protectValue(String value) {
         if (value.charAt(0) == '\'' && value.charAt(value.length() - 1) == '\'') {
@@ -701,14 +717,20 @@ public final class DatabaseQuery extends DbInitalizer {
     //R - Read
 
     public String completeReadQuery() {
-        String q = formulateQuery();
+         String whereClause = GetSQLWhereClauseFromFields();
 
-        if (q.equals("") == false) {
-            q = "\n WHERE \n" + q;
-        }
-        this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName() + q);
+        this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName() + whereClause);
         //this.setSelectSQL("SELECT f FROM " + getTableName() + " f "+ q);
-        return this.getSelectSQL();
+        return this.getSelectSQL();        
+
+    }
+    
+    public String completeReadQueryForEntity() {
+        String whereClause = GetSQLWhereClauseFromFields();
+
+        this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName() + whereClause);
+        //this.setSelectSQL("SELECT f FROM " + getTableName() + " f "+ q);
+        return this.getSelectSQL();        
 
     }
 
@@ -1047,6 +1069,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
     // </editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Search in Entity">
     /**
      * by default searching for exact from first
      *
@@ -1062,7 +1085,7 @@ public final class DatabaseQuery extends DbInitalizer {
         String[] vals = values.split(",");
         searchInEntity(cols, vals, null, em, list, queryQ);
     }
-
+    
     /**
      * by default searching for exact from first
      *
@@ -1078,7 +1101,7 @@ public final class DatabaseQuery extends DbInitalizer {
     public <T> void searchInEntity(String columns[], String values[], int queryTypes[], EntityManager em, List<T> list, Query queryQ) {
         setQueryFieldNames(columns);
         setQueryValues(values);
-
+        
         if (queryTypes == null) {
             queryTypes = new int[columns.length];
             for (int i = 0; i < columns.length; i++) {
@@ -1089,11 +1112,11 @@ public final class DatabaseQuery extends DbInitalizer {
         String sql = completeReadQuery();
         searchInEntity(sql, em, list, queryQ);
     }
-
+    
     @SuppressWarnings("unchecked")
-    public <T> void searchInEntity(String sql, EntityManager em, List<T> list, Query queryQ) {
+    private <T> void searchInEntity(String sql, EntityManager em, List<T> list, Query queryQ) {
         try {
-
+            
             em.getTransaction().rollback();
             em.getTransaction().begin();
             //queryQ = em.createNamedQuery(sql);
@@ -1110,9 +1133,9 @@ public final class DatabaseQuery extends DbInitalizer {
         } catch (Exception e) {
             ErrorMessage(e, sql, "searchInEntity(String sql, EntityManager em, List<Object> list, Query queryQ)");
         }
-
     }
-
+//</editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Others + Showing Data in Console">
     public void showData() {
         try {
@@ -1341,16 +1364,6 @@ public final class DatabaseQuery extends DbInitalizer {
         return rowCount();
     }
 
-    public int rowsExistInTable(String Where) {
-        readDataFullSQL("Select Count(*) as COUNT FROM " + this.getTableName() + " WHERE " + Where);
-        try {
-            return getRs().getInt(0);
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return 0;
-    }
-
     /**
      *
      * @param columns:CSV
@@ -1359,7 +1372,7 @@ public final class DatabaseQuery extends DbInitalizer {
      */
     public int rowsExistInTable(String columns, String values) {
         String[] _columns = columns.split(",");
-        String[] _values = columns.split(",");
+        String[] _values = values.split(",");
 
         return rowsExistInTable(_columns, _values);
     }
@@ -1370,25 +1383,35 @@ public final class DatabaseQuery extends DbInitalizer {
         return rowsExistInTable();
     }
 
-    public int rowsExistInTable() {
-        String q = formulateQuery();
+    public int rowsExistInTable(String Where) {
+        String sql = SQL_COUNT + this.getTableName() + " WHERE " + Where;
 
-        if (q.equals("") == false) {
-            q = "\n WHERE \n" + q;
-        }
-        String sql = SQL_COUNT + this.getTableName() + " " + q;
-
-        setRs(readDataFullSQL(sql));
+        rs = readDataFullSQL(sql);
+        moveToRow(1);
         try {
-            return getRs().getInt(0);
+            return getRs().getInt(1);
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
         }
         return 0;
     }
-    private static final String SQL_COUNT = "SELECT Count(*) AS COUNT FROM ";
+
+    public int rowsExistInTable() {
+        String whereClause = GetSQLWhereClauseFromFields();
+
+        String sql = SQL_COUNT + this.getTableName() + " " + whereClause;
+        rs = readDataFullSQL(sql);
+        moveToRow(1);
+        try {
+            return getRs().getInt(1);
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
 
     // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
     /**
      * Zero based index.
@@ -1448,6 +1471,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold>    
+    
     // <editor-fold defaultstate="collapsed" desc="Getters Setters Folder">
     //<editor-fold defaultstate="collapsed" desc="Getters">
     //<editor-fold defaultstate="collapsed" desc="Getters related to List">
@@ -1639,6 +1663,21 @@ public final class DatabaseQuery extends DbInitalizer {
      */
     public String getPassword() {
         return password;
+    }
+    
+    
+    /**
+     *
+     * @return the where clause based on special fields. If no fields there
+     * empty string "" not null.
+     */
+    public String GetSQLWhereClauseFromFields() {
+        String q = formulateQuery();
+
+        if (q.equals("") == false) {
+            q = "\n WHERE \n" + q;
+        }
+        return q;
     }
 
     //</editor-fold>
@@ -1850,6 +1889,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>    
+    
     // <editor-fold defaultstate="collapsed" desc="How to use it comments ">
     public static void main(String args[]) {
         UserTable _user = new UserTable();
