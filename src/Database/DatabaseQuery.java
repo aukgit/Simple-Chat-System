@@ -48,7 +48,7 @@ public final class DatabaseQuery extends DbInitalizer {
     private SimpleDateFormat simpleDateFormatter;
 
     //Configaration
-    private String url = DatabaseURL;
+    private String url;
     private String user = "root", password = "";
     private Connection cnn;
     private Statement stmt, tempStatement;

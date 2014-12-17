@@ -1,0 +1,3 @@
+10.20.19.11
+9891
+jdbc:mysql://10.20.19.11:3306/chatdatabase?zeroDateTimeBehavior=convertToNull
