@@ -10,10 +10,24 @@ Target Server Type    : MYSQL
 Target Server Version : 50614
 File Encoding         : 65001
 
-Date: 2014-12-16 21:04:59
+Date: 2014-12-18 02:23:31
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for `activestate`
+-- ----------------------------
+DROP TABLE IF EXISTS `activestate`;
+CREATE TABLE `activestate` (
+  `ActiveStateID` tinyint(2) NOT NULL AUTO_INCREMENT,
+  `State` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`ActiveStateID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of activestate
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `chatlist`
@@ -78,13 +92,14 @@ CREATE TABLE `serversetting` (
   `ServerIP` varchar(50) NOT NULL,
   `ServerPort` int(11) NOT NULL,
   `IsActive` tinyint(1) NOT NULL,
+  `ConnectionString` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`ServerSettingID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of serversetting
 -- ----------------------------
-INSERT INTO `serversetting` VALUES ('1', 'localhost', '9861', '1');
+INSERT INTO `serversetting` VALUES ('1', 'localhost', '9861', '1', 'jdbc:mysql://10.20.19.11:3306/chatdatabase?zeroDateTimeBehavior=convertToNull');
 
 -- ----------------------------
 -- Table structure for `user`
@@ -105,7 +120,23 @@ CREATE TABLE `user` (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('1', 'alim', 'alim@gmail.com', '3DA541559918A808C2402BBA5012F6C60B27661C', '2014-12-16 20:24:20', '0', '1', '0');
+INSERT INTO `user` VALUES ('1', 'alim', 'alim@gmail.com', '3DA541559918A808C2402BBA5012F6C60B27661C', '2014-12-16 20:24:20', '0', '1', '1');
+
+-- ----------------------------
+-- Table structure for `userstatus`
+-- ----------------------------
+DROP TABLE IF EXISTS `userstatus`;
+CREATE TABLE `userstatus` (
+  `UserStatusID` int(11) NOT NULL AUTO_INCREMENT,
+  `UserID` int(11) NOT NULL,
+  `Status` varchar(80) NOT NULL,
+  `Dated` datetime NOT NULL,
+  PRIMARY KEY (`UserStatusID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of userstatus
+-- ----------------------------
 
 -- ----------------------------
 -- Procedure structure for `EmptyUserTable`
