@@ -19,7 +19,7 @@ import Common.Codes;
 import ConsolePackage.Console;
 import CurrentDb.Tables.UserTable;
 import Database.Attributes.DbAttribute;
-import Database.Attributes.MySQL;
+import Database.Attributes.*;
 import Database.Components.DbInitalizer;
 import Database.Components.IQueryType;
 import Database.Components.StringMore;
@@ -756,6 +756,8 @@ public final class DatabaseQuery extends DbInitalizer {
         if (getQueryFieldNames().isEmpty()) {
             return "";
         }
+        String opt = "=";
+
         for (int i = 0; i < getQueryFieldNames().size(); i++) {
             String f = getQueryFieldNames().get(i);
             String s = getQueryValues().get(i);
@@ -763,6 +765,9 @@ public final class DatabaseQuery extends DbInitalizer {
             int type = 0;
             if (f.equals("")) {
                 continue;
+            }
+            if (Operators != null) {
+                opt = Operators[i];
             }
             if (q.equals("") == false) {
                 if (getJoiningArray() == null) {
@@ -786,9 +791,9 @@ public final class DatabaseQuery extends DbInitalizer {
                     //System.out.println("outside :" + type);
                 }
 
-                q += returnSingleQuery(f, s, type);
+                q += returnSingleQuery(f, s, type, opt, false);
             } else {
-                q += returnSingleQuery(f, s, type);
+                q += returnSingleQuery(f, s, type, opt, false);
                 //System.out.println("Query:" + q);
             }
         }
