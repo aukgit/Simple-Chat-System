@@ -53,14 +53,25 @@ public final class DatabaseQuery extends DbInitalizer {
     private Connection cnn;
     private Statement stmt, tempStatement;
     private ResultSet rs;
-    
+
+    //<editor-fold defaultstate="collapsed" desc="Entity Required fields">
+    private String tableAlias = "f";
+
+    //New fields for Enity
+    private String FieldDataTypes[] = null; //keeps all data column datatypes
+    private int SelectedColumnsIndexes[] = null; //index that the columns are exist in database
+    private String tempAllColumnNames[] = null; //get all column names uing columnNames() method
+    private String FieldsWithLinks[] = null;
+    private String Operators[] = null; // =,>=,<= etc...
+    private String previoursTableName = "";
+    //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="SQL strings">
     private String selectSQL, updateSQL, deleteSQL, createSQL;
     public String LastSQL; //last executed SQL Query
     private static final String SQL_COUNT = "SELECT Count(*) AS COUNT FROM ";
 
     //</editor-fold>
-    
     //<editor-fold defaultstate="collapsed" desc="Table">
     /**
      * table
@@ -386,7 +397,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Smart Query Type & Field Protector">
+    // <editor-fold defaultstate="collapsed" desc="Query Types : Exact, anywhere, between ...">
     //0
     private String exactQuery(String Field, String Search) {
         String q = "(" + getDbField(Field) + " = '" + Search + "') ";
@@ -422,6 +433,43 @@ public final class DatabaseQuery extends DbInitalizer {
         }
         return "( " + q + " )";
     }
+    
+    //4 Word based Or Search
+    private String wordBasedQueryUsingOr(String Field, String Search) {
+        String q = "";
+        int param = 0;
+        if (Search.trim().equals("")) {
+            return "";
+        }
+        for (String s : Search.split("[ .,?!]+")) {
+            if (s.equals("")) {
+                continue;
+            }
+            if (q.equals("") == false) {
+                q += " OR ";
+            }
+            //q += protectField(Field) + " LIKE '*" + s + "*' ";
+            //s += param;
+            q += (Field) + " LIKE '" + this.wildCard + s + this.wildCard + "' ";
+
+        }
+        return "( " + q + " )";
+    }
+
+    //5 Between Query
+    private String betweenQuery(String Field, String Search) {
+        String queryReturn;
+        if (Search == null || "".equals(Search.trim()) || Search.contains(";") == false) {
+            return "";
+        }
+
+        String params[] = Search.split("[;]");
+        if (params.length != 2) {
+            return "";
+        }
+        queryReturn = (Field) + " BETWEEN '" + params[0] + "' AND '" + params[1] + "'";
+        return "( " + queryReturn + " )";
+    }
 
     /**
      *
@@ -434,10 +482,15 @@ public final class DatabaseQuery extends DbInitalizer {
         //System.out.println("F : " + Field + " S :" + Search + " T:" + type);
         if (type == WORD_BASE_SEARCH) {
             return wordBasedQuery(Field, Search);
+        } else if (type == WORD_BASE_SEARCH_USING_OR) {
+            return wordBasedQueryUsingOr(Field, Search);
         } else if (type == ANYWHERE) {
             return anywhereQuery(Field, Search);
         } else if (type == EXACT_FROM_FRIST) {
             return exactFromBegining(Field, Search);
+        } else if (type == BETWEEN) {
+
+            return betweenQuery(Field, Search);
         } else {
             return exactQuery(Field, Search);
         }
@@ -717,20 +770,11 @@ public final class DatabaseQuery extends DbInitalizer {
     //R - Read
 
     public String completeReadQuery() {
-         String whereClause = GetSQLWhereClauseFromFields();
-
-        this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName() + whereClause);
-        //this.setSelectSQL("SELECT f FROM " + getTableName() + " f "+ q);
-        return this.getSelectSQL();        
-
-    }
-    
-    public String completeReadQueryForEntity() {
         String whereClause = GetSQLWhereClauseFromFields();
 
         this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName() + whereClause);
         //this.setSelectSQL("SELECT f FROM " + getTableName() + " f "+ q);
-        return this.getSelectSQL();        
+        return this.getSelectSQL();
 
     }
 
@@ -918,6 +962,7 @@ public final class DatabaseQuery extends DbInitalizer {
         return this.rs;
     }
 // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="U - [Update] in CRUD">
 //    public boolean updateDataWithoutSQL(int rowNumber , String [] dataColumnWise){
 //        
@@ -931,7 +976,6 @@ public final class DatabaseQuery extends DbInitalizer {
 //            
 //        }
 //    }
-
     /**
      * translate all conditions to sql statement
      *
@@ -1029,8 +1073,8 @@ public final class DatabaseQuery extends DbInitalizer {
         return getRs();
     }
 // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="D - [Delete] in CRUD">
 
+    // <editor-fold defaultstate="collapsed" desc="D - [Delete] in CRUD">
     public String completeDeleteQuery() {
         String q = formulateQuery();
         this.setDeleteSQL("DELETE " + getTableName() + " WHERE " + q);
@@ -1070,6 +1114,111 @@ public final class DatabaseQuery extends DbInitalizer {
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Search in Entity">
+    // <editor-fold defaultstate="collapsed" desc="getSmart">
+    public String getSmart(String s) {
+        return s.replaceAll("_", " ").toUpperCase().replaceAll(TableName.toUpperCase() + " ", "").replaceAll(TableName.toUpperCase(), "");
+    }
+
+    public String getSmartNameForTable(String s) {
+        s = s.replaceAll("_", " ").toLowerCase();
+        return strMore.EachWordUpperCase(s);
+    }
+
+    public String getSmartName(String s) {
+        s = getSmart(s).toLowerCase();
+        s = strMore.EachWordUpperCase(s);
+        return s;
+    }
+
+    public String getEntitySmartName(String s) {
+        s = s.replaceAll("_", " ").toLowerCase();
+        s = strMore.EachWordUpperCase(s).replaceAll(" ", "");
+        return s;
+    }
+
+    public String getEntitySmartColumnName(String s) {
+        s = s.replaceAll("_", " ").toLowerCase();
+        s = strMore.EachWordUpperCase(s).replaceAll(" ", "");
+        s = strMore.chatAtLowerCase(s, 0);
+        return s;
+    }
+// </editor-fold>
+
+    public String formulateQueryEntity() {
+        String q = "";
+
+        if (getQueryFieldNames() == null) {
+            return "";
+        }
+        if (getQueryFieldNames().size() == 0) {
+            return "";
+        }
+        for (int i = 0; i < getQueryFieldNames().size(); i++) {
+            String regularColumn = getQueryFieldNames().get(i);
+            String smartColumn = getEntitySmartColumnName(regularColumn);
+            if (FieldsWithLinks != null) {
+                if (arr.search(FieldsWithLinks, regularColumn) > -1) {
+                    //found
+                    smartColumn += "." + smartColumn;
+                }
+            }
+
+            String f = tableAlias + "." + smartColumn;
+            String s = getQueryValues().get(i);
+            String opt = "=";
+            if (Operators != null) {
+                opt = Operators[i];
+            }
+            int type = 0;
+            if (f.equals("")) {
+                continue;
+            }
+            if (q.equals("") == false) {
+                if (getJoiningArray() == null) {
+                    q += " AND ";
+                } else {
+                    if ((getJoiningArray().size() - 1) >= i) {
+                        q += " " + getJoiningArray().get(i) + " ";
+                    } else {
+                        q += " AND ";
+                    }
+                }
+
+            }
+            if (getQueryTypeInitalized()) {
+                if ((getQueryTypes().size() - 1) >= i) {
+                    type = getQueryTypes().get(i);
+                    //System.out.println("inside :" + type);
+                } else {
+                    type = 0;
+                    //System.out.println("outside :" + type);
+                }
+                q += returnSingleQuery(f, s, type, opt);
+            } else {
+                q += returnSingleQuery(f, s, type, opt);
+                //System.out.println("Query:" + q);
+            }
+        }
+
+        cleanQueryArrays();
+        //System.out.println("Query Last:" + q);
+        return q;
+    }
+
+    public String completeReadQueryForEntity() {
+        String q = formulateQueryEntity();
+        String tempTable = getEntitySmartName(TableName);
+        //String tempTable = "FoodCategory";
+        if (q.equals("") == false) {
+            q = " WHERE " + q;
+        }
+        //this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName() + q);
+        this.setSelectSQL("SELECT " + tableAlias + " FROM " + tempTable + " " + tableAlias + " " + q); //only for entity manager
+        //this.setSelectSQL("SELECT x,f FROM  FoodCategory x, Food f ON f.foodCategoryId = x.foodCategoryId " + tableAlias +" " + q); //only for entity manager
+        return this.getSelectSQL();
+
+    }
+
     /**
      * by default searching for exact from first
      *
@@ -1085,7 +1234,7 @@ public final class DatabaseQuery extends DbInitalizer {
         String[] vals = values.split(",");
         searchInEntity(cols, vals, null, em, list, queryQ);
     }
-    
+
     /**
      * by default searching for exact from first
      *
@@ -1101,7 +1250,7 @@ public final class DatabaseQuery extends DbInitalizer {
     public <T> void searchInEntity(String columns[], String values[], int queryTypes[], EntityManager em, List<T> list, Query queryQ) {
         setQueryFieldNames(columns);
         setQueryValues(values);
-        
+
         if (queryTypes == null) {
             queryTypes = new int[columns.length];
             for (int i = 0; i < columns.length; i++) {
@@ -1109,14 +1258,14 @@ public final class DatabaseQuery extends DbInitalizer {
             }
         }
         setQueryTypes(queryTypes);
-        String sql = completeReadQuery();
+        String sql = completeReadQueryForEntity();
         searchInEntity(sql, em, list, queryQ);
     }
-    
+
     @SuppressWarnings("unchecked")
     private <T> void searchInEntity(String sql, EntityManager em, List<T> list, Query queryQ) {
         try {
-            
+
             em.getTransaction().rollback();
             em.getTransaction().begin();
             //queryQ = em.createNamedQuery(sql);
@@ -1135,7 +1284,7 @@ public final class DatabaseQuery extends DbInitalizer {
         }
     }
 //</editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Others + Showing Data in Console">
     public void showData() {
         try {
@@ -1411,7 +1560,6 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold>
-    
     // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
     /**
      * Zero based index.
@@ -1471,7 +1619,6 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold>    
-    
     // <editor-fold defaultstate="collapsed" desc="Getters Setters Folder">
     //<editor-fold defaultstate="collapsed" desc="Getters">
     //<editor-fold defaultstate="collapsed" desc="Getters related to List">
@@ -1664,8 +1811,7 @@ public final class DatabaseQuery extends DbInitalizer {
     public String getPassword() {
         return password;
     }
-    
-    
+
     /**
      *
      * @return the where clause based on special fields. If no fields there
@@ -1889,7 +2035,6 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>    
-    
     // <editor-fold defaultstate="collapsed" desc="How to use it comments ">
     public static void main(String args[]) {
         UserTable _user = new UserTable();
