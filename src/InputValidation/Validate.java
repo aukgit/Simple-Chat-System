@@ -173,7 +173,7 @@ public class Validate {
         String userInput = input.getText();
         boolean minMax = minMaxCheck(userInput, min, max, false);
         boolean isValid = minMax && _SQLSearchValidator.validate(userInput);
-        ErrorHighLight.ErrorValidateSQL(!isValid, label, input, "Your input should not contain \",?brackets;quote\"", "Valid input.");
+        ErrorHighLight.ErrorValidateSQL(!isValid, label, input, "Your input should not contain \"?brackets;quote\"", "Valid input.");
         return isValid;
     }
 

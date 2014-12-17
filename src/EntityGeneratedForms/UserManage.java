@@ -32,7 +32,7 @@ public class UserManage extends JPanel {
         if (!Beans.isDesignTime()) {
             entityManager.getTransaction().begin();
         }
-
+        entityManager = javax.persistence.Persistence.createEntityManagerFactory("chatdatabase?zeroDateTimeBehavior=convertToNullPU").createEntityManager();
         db.setTableName(TableNames.USER);
     }
 
@@ -309,8 +309,7 @@ public class UserManage extends JPanel {
     public void doSearch() {
         String input = this.SearchingtextBox.getText();
         if (Validate.sqlSearchValid(SearchingtextBox, this.SearchingLabel)) {
-            input += "," + input;
-            db.setSpecialJoiningType_(false, "Or", "Or");
+            input = db.setSameInputValueForOrQuery(input, 2);
             db.searchInEntity("Username,Email", input, entityManager, list, query);
         }
     }

@@ -17,6 +17,7 @@ public interface TableNames {
     public String SERVERSETTING = "serversetting";
     public String USER = "user";
     // Ctrl + U, U upppercase in netbeans
-    public String USERSTATUS = "user";
+    // https://forums.netbeans.org/ntopic3947.html
+    public String USERSTATUS = "USERSTATUS";
 
 }

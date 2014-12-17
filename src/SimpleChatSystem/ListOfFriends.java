@@ -33,7 +33,7 @@ public class ListOfFriends extends InheritableJFrame {
             adminConfigBtn.setVisible(false);
         }
         
-        this.
+  
     }
 
     /**

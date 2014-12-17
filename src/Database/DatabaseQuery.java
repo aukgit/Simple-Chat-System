@@ -847,7 +847,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * at least one row returned.
      *
      * @param Columns : CSV
-     * @param valuesSearchInFields: CSV
+     * @param valuesSearchInFields: Semi-colon
      * @return
      */
     public boolean isExist(String Columns, String valuesSearchInFields) {
@@ -865,14 +865,14 @@ public final class DatabaseQuery extends DbInitalizer {
     /**
      *
      * @param Columns : CSV
-     * @param valuesSearchInFields: CSV
+     * @param valuesSearchInFields: semi-colon
      * @return
      */
     public ResultSet readData(String Columns, String valuesSearchInFields) {
         try {
             if (Columns != null && valuesSearchInFields != null) {
-                String[] columns = Columns.split(",");
-                String[] values = valuesSearchInFields.split(",");
+                String[] columns = getColumnsSplited(Columns);
+                String[] values = getValuesSplited(valuesSearchInFields);
                 setQueryFieldNames(columns);
                 setQueryValues(values);
                 completeReadQuery(); // generated Select SQL
@@ -1149,6 +1149,25 @@ public final class DatabaseQuery extends DbInitalizer {
     }
     // </editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Same input repeat for OR query">
+    /**
+     * this.joiningArray will be recreated so no previous entry will be there.
+     * don't need to set joiningArray (will be set from this method)
+     * @param input : should be sql valid by validator
+     * @param numberOfTimes : 1 based number , 2 means will repeat at lest once
+     * 
+     * return  input;input;input
+     */
+    public String setSameInputValueForOrQuery(String input, int numberOfTimes) {
+        this.joiningArray = new ArrayList<>(defaultListCreatingNumber);
+        for (int i = 1; i < numberOfTimes; i++) {
+            input += ";" + input;
+            this.joiningArray.add("Or");
+        }
+        return input;
+    }
+//</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="Search in Entity">
     // <editor-fold defaultstate="collapsed" desc="getSmart">
     public String getSmart(String s) {
@@ -1266,15 +1285,15 @@ public final class DatabaseQuery extends DbInitalizer {
      *
      * @param <T>
      * @param columns:CSV
-     * @param values:CSV
+     * @param values:semi-colon
      * @param em
      * @param list
      * @param queryQ
      */
     public <T> void searchInEntity(String columns, String values, EntityManager em, List<T> list, Query queryQ) {
-        String[] cols = columns.split(",");
-        String[] vals = values.split(",");
-        searchInEntity(cols, vals, null, em, list, queryQ);
+        String[] _columns = getColumnsSplited(columns);
+        String[] _values = getValuesSplited(values);
+        searchInEntity(_columns, _values, null, em, list, queryQ);
     }
 
     /**
@@ -1552,8 +1571,8 @@ public final class DatabaseQuery extends DbInitalizer {
      * @return
      */
     public int rowsExistInTable(String columns, String values) {
-        String[] _columns = columns.split(",");
-        String[] _values = values.split(",");
+        String[] _columns = getColumnsSplited(columns);
+        String[] _values = getValuesSplited(values);
 
         return rowsExistInTable(_columns, _values);
     }
@@ -1660,6 +1679,44 @@ public final class DatabaseQuery extends DbInitalizer {
     public ArrayList<String> getQueryFieldNames() {
         return queryFieldNames;
     }
+
+    //<editor-fold defaultstate="collapsed" desc="Columns Split by comma">
+    public List<String> getColumnsSplitedAsList(String columns) {
+        if (columns == null) {
+            return Arrays.asList(columns.split(","));
+        }
+        return null;
+    }
+
+    public String[] getColumnsSplited(String columns) {
+        if (columns == null) {
+            return columns.split(",");
+        }
+        return null;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Columns Split by semi-colon">
+    /**
+     * Values splited by semi-colon
+     *
+     * @param values
+     * @return
+     */
+    public List<String> getValuesSplitedAsList(String values) {
+        if (values == null) {
+            return Arrays.asList(values.split(";"));
+        }
+        return null;
+    }
+
+    public String[] getValuesSplited(String values) {
+        if (values == null) {
+            return values.split(";");
+        }
+        return null;
+    }
+    //</editor-fold>
 
     /**
      * @return the queryValues
