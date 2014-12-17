@@ -1,11 +1,9 @@
 package ChatConnection;
 
 import ConsolePackage.Console;
-import CurrentDb.TableColumns.ServerSetting;
 import CurrentDb.*;
 import CurrentDb.Tables.ServerSettingTable;
 import Database.DatabaseQuery;
-import Database.DbData;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,7 +12,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.ResultSet;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
