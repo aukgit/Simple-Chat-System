@@ -1194,15 +1194,15 @@ public final class DatabaseQuery extends DbInitalizer {
         if (getQueryFieldNames().isEmpty()) {
             return "";
         }
-        for (int i = 0; getQueryFieldNames().size() >= i; i++) {
+        for (int i = 0; i < getQueryFieldNames().size(); i++) {
             String regularColumn = getQueryFieldNames().get(i);
             String smartColumn = getEntitySmartColumnName(regularColumn);
-            if (FieldsWithLinks != null) {
-                if (arr.search(FieldsWithLinks, regularColumn) > -1) {
-                    //found
-                    smartColumn += "." + smartColumn;
-                }
-            }
+//            if (FieldsWithLinks != null) {
+//                if (arr.search(FieldsWithLinks, regularColumn) > -1) {
+//                    //found
+//                    smartColumn += "." + smartColumn;
+//                }
+//            }
 
             String f = tableAlias + "." + smartColumn;
             String s = getQueryValues().get(i);
@@ -1247,14 +1247,14 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     public String completeReadQueryForEntity() {
-        String q = formulateQueryEntity();
+        String whereClause = formulateQueryEntity();
         String tempTable = getEntitySmartName(TableName);
         //String tempTable = "FoodCategory";
-        if (q.equals("") == false) {
-            q = " WHERE " + q;
+        if (whereClause.equals("") == false) {
+            whereClause = " WHERE " + whereClause;
         }
         //this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName() + q);
-        this.setSelectSQL("SELECT " + tableAlias + " FROM " + tempTable + " " + tableAlias + " " + q); //only for entity manager
+        this.setSelectSQL("SELECT " + tableAlias + " FROM " + tempTable + " " + tableAlias + " " + whereClause); //only for entity manager
         //this.setSelectSQL("SELECT x,f FROM  FoodCategory x, Food f ON f.foodCategoryId = x.foodCategoryId " + tableAlias +" " + q); //only for entity manager
         return this.getSelectSQL();
 
