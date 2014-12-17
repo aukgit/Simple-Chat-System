@@ -50,7 +50,10 @@ public final class DatabaseQuery extends DbInitalizer {
 
     //Configaration
     private String url;
-    private String user = "root", password = "";
+    
+    private String user = DatabaseQuery.DATABASE_USER, 
+            password = DatabaseQuery.DATABASE_USER_PASSWORD;
+    
     private Connection cnn;
     private Statement stmt, tempStatement;
     private ResultSet rs;

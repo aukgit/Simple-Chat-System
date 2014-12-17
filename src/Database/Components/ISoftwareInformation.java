@@ -24,6 +24,8 @@ public interface ISoftwareInformation {
     public String DEVELOPER = "Alim Ul Karim";
     public String WEBSITE = "NONE";
     public String EMAIL = "auk.junk@live.com";
+    public String DATABASE_USER = "admin";
+    public String DATABASE_USER_PASSWORD = "asdf";
 
     //public String DatabaseURL = "jdbc:mysql://localhost:3306/chatdatabase?zeroDateTimeBehavior=convertToNull";
     public ArrayMore arr = new ArrayMore(); //for getting or readding array in print

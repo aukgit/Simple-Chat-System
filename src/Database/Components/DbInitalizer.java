@@ -5,10 +5,6 @@
  */
 package Database.Components;
 
-import Database.Components.SQLError;
-import Database.Components.IQueryType;
-import Database.Components.ISoftwareInformation;
-
 /**
  *
  * @author Alim
