@@ -32,11 +32,10 @@ public class AppConfig {
 
     private static String _appPath;
     private static String _pictureUploadPath;
-    private static String _connectionString;
     private static String _connectionConfigTextFilePath = "server.loc";
     private static List<String> _configFileLines;
 
-    public static ServerSettingTable ServerConfig;
+    public static ServerSettingTable ServerConfig = readDefaultConfigFile();
 
     /**
      *
@@ -74,27 +73,26 @@ public class AppConfig {
         return _pictureUploadPath;
     }
 
-    public static void readDefaultConfigFile() {
+    public static ServerSettingTable readDefaultConfigFile() {
         try {
             _configFileLines = Files.readAllLines(Paths.get(getAbsoluteServerConfigFilePath()), Charset.defaultCharset());
         } catch (IOException ex) {
             Logger.getLogger(AppConfig.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ServerConfig = new ServerSettingTable();
+        if (ServerConfig == null) {
+            ServerConfig = new ServerSettingTable();
+        }
         ServerConfig.ServerPort = Integer.parseInt(_configFileLines.get(IServerConfig.Port));
         ServerConfig.ServerIP = _configFileLines.get(IServerConfig.ServerIP);
         ServerConfig.ConnectionString = _configFileLines.get(IServerConfig.ConnectionString);
-        
+        return ServerConfig;
     }
 
     /**
      * @return the _connectionString
      */
-    public static String getConnectionString() {
-        if (_connectionString == null) {
-            readDefaultConfigFile();
-        }
-        return _connectionString;
+    public static String getConnectionString() {        
+        return ServerConfig.ConnectionString;
     }
 
     /**

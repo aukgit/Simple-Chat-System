@@ -24,6 +24,7 @@ import Database.Components.DbInitalizer;
 import Database.Components.IQueryType;
 import Database.Components.StringMore;
 import DesignPattern.DatabaseRunnableComponentsJFrame;
+import Global.AppConfig;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -115,7 +116,7 @@ public final class DatabaseQuery extends DbInitalizer {
     /**
      * By default loads for mysql
      *
-     * @param url : database url or connection string
+     * @param url : database url or connection string, if null then load from config file.
      * @param user : user name in database
      * @param password : database user password
      */
@@ -133,7 +134,7 @@ public final class DatabaseQuery extends DbInitalizer {
     public DatabaseQuery(String url, String user, String password, DbAttribute dbAttribute) {
         initialize(url, user, password, dbAttribute);
     }
-
+    
     public void initialize(String url, String user, String password, DbAttribute dbAttribute) {
         this.createSQL = "";
         this.LastSQL = "";
@@ -143,6 +144,9 @@ public final class DatabaseQuery extends DbInitalizer {
         dbAttr = dbAttribute;
         this.simpleDateFormatter = new java.text.SimpleDateFormat(MYSQL_DATE_FORMAT);
         try {
+            if(url == null){
+                url = AppConfig.getConnectionString();
+            }
             this.url = url;
             this.password = password;
             this.user = user;
