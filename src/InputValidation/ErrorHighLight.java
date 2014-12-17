@@ -37,6 +37,14 @@ public class ErrorHighLight {
             ResumeErrorLabelGreen(label, textbox, normalTooltip);
         }
     }
+
+    public static void ErrorValidateSQL(boolean isError, JLabel label, JTextField textbox, String errorMsg, String normalTooltip) {
+        if (isError) {
+            ErrorLabel(label, textbox, errorMsg);
+        } else {
+            ResumeErrorLabelBlue(label, textbox, normalTooltip);
+        }
+    }
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc=" Error Labeling and coloring ">
@@ -71,6 +79,24 @@ public class ErrorHighLight {
 
         if (textbox != null) {
             textbox.setForeground(pickingColor);
+            if (regularTooltip != null) {
+                textbox.setToolTipText(regularTooltip);
+            }
+        }
+    }
+
+    public static void ResumeErrorLabelBlue(JLabel label, JTextField textbox, String regularTooltip) {
+        Color pickingColor = new Color(51, 204, 255);
+        if (label != null) {
+            label.setForeground(Color.BLACK);
+            if (regularTooltip != null) {
+                label.setToolTipText(regularTooltip);
+            }
+        }
+
+        if (textbox != null) {
+            textbox.setForeground(Color.BLACK);
+            textbox.setBackground(pickingColor);
             if (regularTooltip != null) {
                 textbox.setToolTipText(regularTooltip);
             }

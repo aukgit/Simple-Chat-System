@@ -214,13 +214,14 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param list
      * @param fields
      */
-    public void addSpecialFieldsToList(boolean append, ArrayList<String> list, String... fields) {
-        initializeListIfNecessary(list);
+    public ArrayList<String> addSpecialFieldsToList(boolean append, ArrayList<String> list, String... fields) {
+        list = initializeListIfNecessary(list);
         if (append == false) {
             list.clear();
         }
         //<editor-fold defaultstate="collapsed" desc="adding items to the list">
         list.addAll(Arrays.asList(fields));
+        return list;
         //</editor-fold>
     }
 
@@ -347,7 +348,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param values :Query joining(AND,OR) types ie.: where ... column = value
      */
     public void setSpecialJoiningType_(boolean append, String... values) {
-        addSpecialFieldsToList(append, getJoiningArray(), values);
+        this.joiningArray = addSpecialFieldsToList(append, getJoiningArray(), values);
 //        setJoiningArray(new String[values.length]);
 //        for (int i = 0; i < values.length; i++) {
 //            getJoiningArray()[i] = values[i].toUpperCase();

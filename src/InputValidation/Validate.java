@@ -18,6 +18,7 @@ public class Validate {
 
     static final RegEx _UsernameValidator = new RegEx(InputRegularExpressions.USERNAME);
     static final RegEx _EmailValidator = new RegEx(InputRegularExpressions.EMAIL);
+    static final RegEx _SQLSearchValidator = new RegEx(InputRegularExpressions.SQL_SEARCH_VALID);
     static final RegEx _NumberValidator = new RegEx(InputRegularExpressions.NUMBER);
     static final RegEx _CharactersValidator = new RegEx(InputRegularExpressions.CHARACTERS_ONLY);
 //</editor-fold>
@@ -148,7 +149,36 @@ public class Validate {
         ErrorHighLight.ErrorValidate(!isValid, label, input, nameOfField, nameOfField);
         return isValid;
     }
+     /**
+     * 
+     * @param input
+     * @param label
+     * @param min
+     * @param max
+     * @return 
+     */
+    public static boolean sqlSearchValid(JTextField input, JLabel label) {        
+        return sqlSearchValid(input,label,-1,-1);
+    }
 
+    /**
+     * 
+     * @param input
+     * @param label
+     * @param min
+     * @param max
+     * @return 
+     */
+    public static boolean sqlSearchValid(JTextField input, JLabel label, int min, int max) {
+        String userInput = input.getText();
+        boolean minMax = minMaxCheck(userInput, min, max, false);
+        boolean isValid = minMax && _SQLSearchValidator.validate(userInput);
+        ErrorHighLight.ErrorValidateSQL(!isValid, label, input, "Your input should not contain \",?brackets;quote\"", "Valid input.");
+        return isValid;
+    }
+
+    
+    
     /**
      *
      * @param input
