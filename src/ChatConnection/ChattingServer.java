@@ -44,7 +44,7 @@ public class ChattingServer implements Runnable {
      */
     public void reReadDataFromServer() {
         // executing the db
-        db.ExecuteReadQuery(db.getSelectSQL());
+        db.readData();
         db.getResultsAsObject(serverConfig.getClass(), serverConfig);
     }
 
@@ -65,7 +65,7 @@ public class ChattingServer implements Runnable {
         System.out.println("Now you can run your client app.");
 
         while (serverConfig.IsActive) {
-            Console.writeLine("Server running....");
+            Console.writeLine("Server running...." + serverConfig.IsActive);
             Socket connectionSocket = null;
             try {
                 connectionSocket = severSocket.accept();
