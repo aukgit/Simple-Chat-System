@@ -355,6 +355,19 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     /**
+     * For entity added
+     *
+     * @param values
+     */
+    public void setSpecialOperators_(String... values) {
+        Operators = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            Operators[i] = values[i];
+
+        }
+    }
+
+    /**
      *
      * @param append : should append or add newly
      * @param values :Query joining(AND,OR) types ie.: where ... column = value
@@ -399,27 +412,39 @@ public final class DatabaseQuery extends DbInitalizer {
 
     // <editor-fold defaultstate="collapsed" desc="Query Types : Exact, anywhere, between ...">
     //0
-    private String exactQuery(String Field, String Search) {
-        String q = "(" + getDbField(Field) + " = '" + Search + "') ";
+    private String exactQuery(String Field, String Search, String opt, boolean isResultForEntity) {
+        if (isResultForEntity == false) {
+            Field = this.getDbField(Field);
+        }
+        String queryReturn = "(" + Field + opt + " '" + Search + "') ";
         //System.out.println(q);
-        return q;
+        return queryReturn;
     }
     //1
 
-    private String exactFromBegining(String Field, String Search) {
-        return "(" + getDbField(Field) + " LIKE '" + Search + this.dbAttr.getWildCard() + "') ";
+    private String exactFromBegining(String Field, String Search, boolean isResultForEntity) {
+        if (isResultForEntity == false) {
+            Field = this.getDbField(Field);
+        }
+        return "(" + Field + " LIKE '" + Search + this.dbAttr.getWildCard() + "') ";
     }
     //2 
 
-    private String anywhereQuery(String Field, String Search) {
-        return "(" + getDbField(Field) + " LIKE '" + this.dbAttr.getWildCard() + Search + this.dbAttr.getWildCard() + "') ";
+    private String anywhereQuery(String Field, String Search, boolean isResultForEntity) {
+        if (isResultForEntity == false) {
+            Field = this.getDbField(Field);
+        }
+        return "(" + Field + " LIKE '" + this.dbAttr.getWildCard() + Search + this.dbAttr.getWildCard() + "') ";
     }
     //3
 
-    private String wordBasedQuery(String Field, String Search) {
+    private String wordBasedQuery(String Field, String Search, boolean isResultForEntity) {
         String q = "";
         if (Search == null || "".equals(Search.trim())) {
             return "";
+        }
+        if (isResultForEntity == false) {
+            Field = this.getDbField(Field);
         }
         for (String value : Search.split("[ .,?!]+")) {
             if (value.equals("")) {
@@ -428,18 +453,21 @@ public final class DatabaseQuery extends DbInitalizer {
             if (q.equals("") == false) {
                 q += " AND ";
             }
-            q += getDbField(Field) + " LIKE '" + this.dbAttr.getWildCard() + value + this.dbAttr.getWildCard() + "' ";
+            q += Field + " LIKE '" + this.dbAttr.getWildCard() + value + this.dbAttr.getWildCard() + "' ";
 
         }
         return "( " + q + " )";
     }
-    
+
     //4 Word based Or Search
-    private String wordBasedQueryUsingOr(String Field, String Search) {
+    private String wordBasedQueryUsingOr(String Field, String Search, boolean isResultForEntity) {
         String q = "";
         int param = 0;
         if (Search.trim().equals("")) {
             return "";
+        }
+        if (isResultForEntity == false) {
+            Field = this.getDbField(Field);
         }
         for (String s : Search.split("[ .,?!]+")) {
             if (s.equals("")) {
@@ -450,19 +478,21 @@ public final class DatabaseQuery extends DbInitalizer {
             }
             //q += protectField(Field) + " LIKE '*" + s + "*' ";
             //s += param;
-            q += (Field) + " LIKE '" + this.wildCard + s + this.wildCard + "' ";
+            q += (Field) + " LIKE '" + this.dbAttr.getWildCard() + s + this.dbAttr.getWildCard() + "' ";
 
         }
         return "( " + q + " )";
     }
 
     //5 Between Query
-    private String betweenQuery(String Field, String Search) {
+    private String betweenQuery(String Field, String Search, boolean isResultForEntity) {
         String queryReturn;
         if (Search == null || "".equals(Search.trim()) || Search.contains(";") == false) {
             return "";
         }
-
+        if (isResultForEntity == false) {
+            Field = this.getDbField(Field);
+        }
         String params[] = Search.split("[;]");
         if (params.length != 2) {
             return "";
@@ -478,21 +508,21 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param type : IQueryType
      * @return single query based on search type given from IQueryType
      */
-    private String returnSingleQuery(String Field, String Search, int type) {
+    private String returnSingleQuery(String Field, String Search, int type, String opt, boolean isResultForEntity) {
         //System.out.println("F : " + Field + " S :" + Search + " T:" + type);
         if (type == WORD_BASE_SEARCH) {
-            return wordBasedQuery(Field, Search);
+            return wordBasedQuery(Field, Search, isResultForEntity);
         } else if (type == WORD_BASE_SEARCH_USING_OR) {
-            return wordBasedQueryUsingOr(Field, Search);
+            return wordBasedQueryUsingOr(Field, Search, isResultForEntity);
         } else if (type == ANYWHERE) {
-            return anywhereQuery(Field, Search);
+            return anywhereQuery(Field, Search, isResultForEntity);
         } else if (type == EXACT_FROM_FRIST) {
-            return exactFromBegining(Field, Search);
+            return exactFromBegining(Field, Search, isResultForEntity);
         } else if (type == BETWEEN) {
 
-            return betweenQuery(Field, Search);
+            return betweenQuery(Field, Search, isResultForEntity);
         } else {
-            return exactQuery(Field, Search);
+            return exactQuery(Field, Search, opt, isResultForEntity);
         }
     }
 
@@ -1142,6 +1172,12 @@ public final class DatabaseQuery extends DbInitalizer {
         s = strMore.chatAtLowerCase(s, 0);
         return s;
     }
+
+    public String getSmartTableName(String s) {
+        char c2 = s.toUpperCase().charAt(0);
+        char c = s.toLowerCase().charAt(0);
+        return s.replaceAll("_", " ").replace(c, c2);
+    }
 // </editor-fold>
 
     public String formulateQueryEntity() {
@@ -1150,10 +1186,10 @@ public final class DatabaseQuery extends DbInitalizer {
         if (getQueryFieldNames() == null) {
             return "";
         }
-        if (getQueryFieldNames().size() == 0) {
+        if (getQueryFieldNames().isEmpty()) {
             return "";
         }
-        for (int i = 0; i < getQueryFieldNames().size(); i++) {
+        for (int i = 0; getQueryFieldNames().size() >= i; i++) {
             String regularColumn = getQueryFieldNames().get(i);
             String smartColumn = getEntitySmartColumnName(regularColumn);
             if (FieldsWithLinks != null) {
@@ -1193,9 +1229,9 @@ public final class DatabaseQuery extends DbInitalizer {
                     type = 0;
                     //System.out.println("outside :" + type);
                 }
-                q += returnSingleQuery(f, s, type, opt);
+                q += returnSingleQuery(f, s, type, opt, true);
             } else {
-                q += returnSingleQuery(f, s, type, opt);
+                q += returnSingleQuery(f, s, type, opt, true);
                 //System.out.println("Query:" + q);
             }
         }
@@ -1388,17 +1424,7 @@ public final class DatabaseQuery extends DbInitalizer {
         return names.split(",");
     }
 
-    public String getSmart(String s) {
-        return s.replaceAll("_", " ").toUpperCase().replaceAll(TableName.toUpperCase() + " ", "").replaceAll(TableName.toUpperCase(), "");
-    }
-
-    public String getSmartTableName(String s) {
-        char c2 = s.toUpperCase().charAt(0);
-        char c = s.toLowerCase().charAt(0);
-        return s.replaceAll("_", " ").replace(c, c2);
-    }
 // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Move to row ">
     public ResultSet moveToRow(int rowNumber) {
         if (isResultValid(rowNumber)) {
