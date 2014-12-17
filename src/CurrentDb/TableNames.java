@@ -15,6 +15,8 @@ public interface TableNames {
     public String CHATSESSION = "chatsession";
     public String MESSAGE = "message";
     public String SERVERSETTING = "serversetting";
-    public String  USER = "user";
+    public String USER = "user";
+    // Ctrl + U, U upppercase in netbeans
+    public String USERSTATUS = "user";
 
 }
