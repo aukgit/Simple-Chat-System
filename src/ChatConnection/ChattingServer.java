@@ -24,12 +24,12 @@ public class ChattingServer implements Runnable {
     private int serverHitCounter = 0;
     DatabaseQuery db;
     ServerSettingTable serverConfig = new ServerSettingTable();
-    
+
     boolean isActive = false;
 
     public ChattingServer() {
         this.serverRefershAfterHits = 20000;
-       
+        initalizeQuery();
     }
 
     private void initalizeQuery() {
@@ -37,13 +37,11 @@ public class ChattingServer implements Runnable {
         // setting table name
         db.setTableName(TableNames.SERVERSETTING);
     }
-    
-    /**
-     * Refreshing Server ResultSet
-     * refresh port
-     * 
-     */
 
+    /**
+     * Refreshing Server ResultSet refresh port
+     *
+     */
     public void reReadDataFromServer() {
         // executing the db
         db.ExecuteReadQuery(db.getSelectSQL());
@@ -133,8 +131,8 @@ public class ChattingServer implements Runnable {
         return readingLineFromClientSocket;
 
     }
-   
-    public static void main(String [] args){
+
+    public static void main(String[] args) {
         Thread server = new Thread(new ChattingServer());
         server.start();
     }
