@@ -6,6 +6,7 @@
 package DesignPattern;
 
 import Database.Components.MsgBox;
+import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -111,7 +112,11 @@ public abstract class JFrameInheritable extends JFrameDbComponents {
         };
         frame.setContentPane(panel);
         frame.pack();
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         frame.setVisible(true);
+        Dimension dimension = new Dimension(panel.getWidth(), panel.getHeight());
+                
+        frame.setPreferredSize(dimension);
         return frame;
     }
 
