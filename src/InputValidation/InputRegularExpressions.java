@@ -23,7 +23,7 @@ public final class InputRegularExpressions {
     
     public static final String CHARACTERS_ONLY = "[aA-zZ]";
     
-    public static final String SQL_SEARCH_VALID = "[^'`\\[\\];\\\"\\\\|&?$\\^\\(\\)%]+";
+    public static final String SQL_SEARCH_VALID = "[^'`\\[\\]\\\"\\\\|&?$\\^\\(\\)]+";
     
     
 }

@@ -32,7 +32,7 @@ public class UserManage extends JPanel {
         if (!Beans.isDesignTime()) {
             entityManager.getTransaction().begin();
         }
-        db.chnageConnectinStringToEntity(entityManager);
+        
         db.setTableName(TableNames.USER);
     }
 
@@ -52,31 +52,26 @@ public class UserManage extends JPanel {
         masterScrollPane = new javax.swing.JScrollPane();
         masterTable = new javax.swing.JTable();
         usernameLabel = new javax.swing.JLabel();
+        isActiveLabel = new javax.swing.JLabel();
+        isAdminLabel = new javax.swing.JLabel();
+        isBlockedLabel = new javax.swing.JLabel();
         usernameField = new javax.swing.JTextField();
+        isActiveField = new javax.swing.JTextField();
+        isAdminField = new javax.swing.JTextField();
+        isBlockedField = new javax.swing.JTextField();
         saveButton = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
-        SearchingtextBox = new javax.swing.JTextField();
-        SearchingLabel = new javax.swing.JLabel();
-        searchbtn = new javax.swing.JButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        usernameField1 = new javax.swing.JTextField();
-        usernameLabel1 = new javax.swing.JLabel();
+        newButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
+        searchTextBox = new javax.swing.JTextField();
+        searchLabel = new javax.swing.JLabel();
+        searchBtn = new javax.swing.JButton();
 
         FormListener formListener = new FormListener();
 
-        masterScrollPane.setBackground(new java.awt.Color(255, 255, 255));
         masterScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        masterScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        masterScrollPane.setAutoscrolls(true);
 
-        masterTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        masterTable.setEditingColumn(1);
-        masterTable.setEditingRow(1);
-
-        org.jdesktop.beansbinding.ELProperty eLProperty = org.jdesktop.beansbinding.ELProperty.create("${}");
-        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, list, eLProperty, masterTable);
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, list, masterTable);
         org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${userID}"));
         columnBinding.setColumnName("ID");
         columnBinding.setColumnClass(Integer.class);
@@ -92,14 +87,13 @@ public class UserManage extends JPanel {
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${lastLogin}"));
         columnBinding.setColumnName("Last Login");
         columnBinding.setColumnClass(java.util.Date.class);
+        columnBinding.setEditable(false);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${isBlocked}"));
         columnBinding.setColumnName("Is Blocked");
         columnBinding.setColumnClass(Boolean.class);
-        columnBinding.setEditable(false);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${isActive}"));
         columnBinding.setColumnName("Is Active");
         columnBinding.setColumnClass(Boolean.class);
-        columnBinding.setEditable(false);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${isAdmin}"));
         columnBinding.setColumnName("Is Admin");
         columnBinding.setColumnClass(Boolean.class);
@@ -107,18 +101,44 @@ public class UserManage extends JPanel {
         jTableBinding.bind();
         masterScrollPane.setViewportView(masterTable);
         if (masterTable.getColumnModel().getColumnCount() > 0) {
-            masterTable.getColumnModel().getColumn(5).setResizable(false);
-            masterTable.getColumnModel().getColumn(6).setResizable(false);
+            masterTable.getColumnModel().getColumn(1).setMinWidth(250);
+            masterTable.getColumnModel().getColumn(2).setMinWidth(200);
+            masterTable.getColumnModel().getColumn(3).setMinWidth(250);
+            masterTable.getColumnModel().getColumn(4).setMinWidth(200);
+            masterTable.getColumnModel().getColumn(5).setMinWidth(200);
+            masterTable.getColumnModel().getColumn(6).setMinWidth(200);
         }
 
         usernameLabel.setText("Username:");
 
-        usernameField.setEditable(false);
+        isActiveLabel.setText("Is Active:");
+
+        isAdminLabel.setText("Is Admin:");
+
+        isBlockedLabel.setText("Is Blocked:");
 
         org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement.username}"), usernameField, org.jdesktop.beansbinding.BeanProperty.create("text"));
         binding.setSourceUnreadableValue("null");
         bindingGroup.addBinding(binding);
         binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), usernameField, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement.isActive}"), isActiveField, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        binding.setSourceUnreadableValue("null");
+        bindingGroup.addBinding(binding);
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), isActiveField, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement.isAdmin}"), isAdminField, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        binding.setSourceUnreadableValue("null");
+        bindingGroup.addBinding(binding);
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), isAdminField, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement.isBlocked}"), isBlockedField, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        binding.setSourceUnreadableValue("null");
+        bindingGroup.addBinding(binding);
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), isBlockedField, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
         bindingGroup.addBinding(binding);
 
         saveButton.setText("Save");
@@ -127,36 +147,23 @@ public class UserManage extends JPanel {
         refreshButton.setText("Refresh");
         refreshButton.addActionListener(formListener);
 
-        SearchingtextBox.setToolTipText("Search for username or email");
-        SearchingtextBox.addActionListener(formListener);
-        SearchingtextBox.addKeyListener(formListener);
+        newButton.setText("New");
+        newButton.addActionListener(formListener);
 
-        SearchingLabel.setText("Search(username or email):");
+        deleteButton.setText("Delete");
 
-        searchbtn.setText("Search");
-        searchbtn.addActionListener(formListener);
-
-        jCheckBox1.setText("Is Active");
-
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement.isActive}"), jCheckBox1, org.jdesktop.beansbinding.BeanProperty.create("selected"));
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement != null}"), deleteButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
         bindingGroup.addBinding(binding);
 
-        jCheckBox2.setText("Is Blocked");
+        deleteButton.addActionListener(formListener);
 
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement.isBlocked}"), jCheckBox2, org.jdesktop.beansbinding.BeanProperty.create("selected"));
-        bindingGroup.addBinding(binding);
+        searchTextBox.addActionListener(formListener);
+        searchTextBox.addKeyListener(formListener);
 
-        jCheckBox3.setText("Is Admin");
+        searchLabel.setText("Search");
 
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement.isAdmin}"), jCheckBox3, org.jdesktop.beansbinding.BeanProperty.create("selected"));
-        bindingGroup.addBinding(binding);
-
-        usernameField1.setEditable(false);
-
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, masterTable, org.jdesktop.beansbinding.ELProperty.create("${selectedElement.email}"), usernameField1, org.jdesktop.beansbinding.BeanProperty.create("text"));
-        bindingGroup.addBinding(binding);
-
-        usernameLabel1.setText("Email:");
+        searchBtn.setText("Search");
+        searchBtn.addActionListener(formListener);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -165,67 +172,71 @@ public class UserManage extends JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(masterScrollPane)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(usernameLabel)
+                            .addComponent(isActiveLabel)
+                            .addComponent(isAdminLabel)
+                            .addComponent(isBlockedLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(usernameField, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+                            .addComponent(isActiveField, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+                            .addComponent(isAdminField, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+                            .addComponent(isBlockedField, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)))
+                    .addComponent(masterScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(SearchingLabel)
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(newButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(deleteButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(refreshButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(saveButton))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(searchLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(SearchingtextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 429, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(searchbtn))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jCheckBox1)
-                                .addGap(18, 18, 18)
-                                .addComponent(jCheckBox2)
-                                .addGap(18, 18, 18)
-                                .addComponent(jCheckBox3)
-                                .addGap(188, 188, 188)
-                                .addComponent(refreshButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(saveButton))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(usernameLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(usernameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(usernameField)
-                                    .addComponent(usernameField1))))
-                        .addGap(7, 7, 7)))
+                        .addComponent(searchTextBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(searchBtn)))
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {refreshButton, saveButton});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {deleteButton, newButton, refreshButton, saveButton});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(17, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(SearchingtextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(SearchingLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchbtn))
+                    .addComponent(searchTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(masterScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(masterScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(usernameLabel)
                     .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(usernameLabel1)
-                    .addComponent(usernameField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(3, 3, 3)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(saveButton)
-                        .addComponent(refreshButton))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jCheckBox1)
-                        .addComponent(jCheckBox2)
-                        .addComponent(jCheckBox3)))
+                    .addComponent(isActiveLabel)
+                    .addComponent(isActiveField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(isAdminLabel)
+                    .addComponent(isAdminField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(isBlockedLabel)
+                    .addComponent(isBlockedField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(saveButton)
+                    .addComponent(refreshButton)
+                    .addComponent(deleteButton)
+                    .addComponent(newButton))
                 .addContainerGap())
         );
 
@@ -243,11 +254,17 @@ public class UserManage extends JPanel {
             else if (evt.getSource() == refreshButton) {
                 UserManage.this.refreshButtonActionPerformed(evt);
             }
-            else if (evt.getSource() == SearchingtextBox) {
-                UserManage.this.SearchingtextBoxActionPerformed(evt);
+            else if (evt.getSource() == newButton) {
+                UserManage.this.newButtonActionPerformed(evt);
             }
-            else if (evt.getSource() == searchbtn) {
-                UserManage.this.searchbtnActionPerformed(evt);
+            else if (evt.getSource() == deleteButton) {
+                UserManage.this.deleteButtonActionPerformed(evt);
+            }
+            else if (evt.getSource() == searchTextBox) {
+                UserManage.this.searchTextBoxActionPerformed(evt);
+            }
+            else if (evt.getSource() == searchBtn) {
+                UserManage.this.searchBtnActionPerformed(evt);
             }
         }
 
@@ -255,8 +272,8 @@ public class UserManage extends JPanel {
         }
 
         public void keyReleased(java.awt.event.KeyEvent evt) {
-            if (evt.getSource() == SearchingtextBox) {
-                UserManage.this.SearchingtextBoxKeyReleased(evt);
+            if (evt.getSource() == searchTextBox) {
+                UserManage.this.searchTextBoxKeyReleased(evt);
             }
         }
 
@@ -276,6 +293,26 @@ public class UserManage extends JPanel {
         list.addAll(data);
     }//GEN-LAST:event_refreshButtonActionPerformed
 
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        int[] selected = masterTable.getSelectedRows();
+        List<EntityClass.User> toRemove = new ArrayList<EntityClass.User>(selected.length);
+        for (int idx = 0; idx < selected.length; idx++) {
+            EntityClass.User u = list.get(masterTable.convertRowIndexToModel(selected[idx]));
+            toRemove.add(u);
+            entityManager.remove(u);
+        }
+        list.removeAll(toRemove);
+    }//GEN-LAST:event_deleteButtonActionPerformed
+
+    private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
+        EntityClass.User u = new EntityClass.User();
+        entityManager.persist(u);
+        list.add(u);
+        int row = list.size() - 1;
+        masterTable.setRowSelectionInterval(row, row);
+        masterTable.scrollRectToVisible(masterTable.getCellRect(row, 0, true));
+    }//GEN-LAST:event_newButtonActionPerformed
+
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         try {
             entityManager.getTransaction().commit();
@@ -292,48 +329,51 @@ public class UserManage extends JPanel {
         }
     }//GEN-LAST:event_saveButtonActionPerformed
 
-    private void SearchingtextBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SearchingtextBoxKeyReleased
+    private void searchTextBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextBoxKeyReleased
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             doSearch();
         }
 
-    }//GEN-LAST:event_SearchingtextBoxKeyReleased
+    }//GEN-LAST:event_searchTextBoxKeyReleased
 
-    private void SearchingtextBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchingtextBoxActionPerformed
+    private void searchTextBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchTextBoxActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_SearchingtextBoxActionPerformed
+    }//GEN-LAST:event_searchTextBoxActionPerformed
 
-    private void searchbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchbtnActionPerformed
+    private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
         // TODO add your handling code here:
         doSearch();
-    }//GEN-LAST:event_searchbtnActionPerformed
-    public void doSearch() {
-        String input = this.SearchingtextBox.getText();
-        if (Validate.sqlSearchValid(SearchingtextBox, this.SearchingLabel)) {
+    }//GEN-LAST:event_searchBtnActionPerformed
+   public void doSearch() {
+        String input = this.searchTextBox.getText();
+        if (Validate.sqlSearchValid(searchTextBox, this.searchLabel)) {
             input = db.setSameInputValueForOrQuery(input, 2);
             db.searchInEntity("Username,Email", input, entityManager, list, query);
         }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel SearchingLabel;
-    private javax.swing.JTextField SearchingtextBox;
+    private javax.swing.JButton deleteButton;
     private javax.persistence.EntityManager entityManager;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JTextField isActiveField;
+    private javax.swing.JLabel isActiveLabel;
+    private javax.swing.JTextField isAdminField;
+    private javax.swing.JLabel isAdminLabel;
+    private javax.swing.JTextField isBlockedField;
+    private javax.swing.JLabel isBlockedLabel;
     private java.util.List<EntityClass.User> list;
     private javax.swing.JScrollPane masterScrollPane;
     private javax.swing.JTable masterTable;
+    private javax.swing.JButton newButton;
     private javax.persistence.Query query;
     private javax.swing.JButton refreshButton;
     private javax.swing.JButton saveButton;
-    private javax.swing.JButton searchbtn;
+    private javax.swing.JButton searchBtn;
+    private javax.swing.JLabel searchLabel;
+    private javax.swing.JTextField searchTextBox;
     private javax.swing.JTextField usernameField;
-    private javax.swing.JTextField usernameField1;
     private javax.swing.JLabel usernameLabel;
-    private javax.swing.JLabel usernameLabel1;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
     public static void main(String[] args) {
@@ -362,7 +402,6 @@ public class UserManage extends JPanel {
 
         /* Create and display the form */
         EventQueue.invokeLater(new Runnable() {
-            @Override
             public void run() {
                 JFrame frame = new JFrame();
                 frame.setContentPane(new UserManage());

@@ -9,6 +9,7 @@ import EntityClass.Forms.ServerConfigForm;
 import DesignPattern.JFrameInheritable;
 import EntityClass.Forms.UserManage;
 
+
 /**
  *
  * @author Alim

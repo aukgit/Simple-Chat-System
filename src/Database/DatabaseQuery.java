@@ -692,8 +692,8 @@ public final class DatabaseQuery extends DbInitalizer {
      */
     public boolean createData(String columns, String values) {
         try {
-            setCreateFields(columns.split(","));
-            setCreateFieldsValues(values.split(","));
+            setCreateFields(getColumnsSplited(columns));
+            setCreateFieldsValues(getValuesSplited(values));
             completeCreateQuery();
             ExecuteUpdateQueries(this.getCreateSQL());
             return true;
@@ -1179,7 +1179,7 @@ public final class DatabaseQuery extends DbInitalizer {
     public String setSameInputValueForOrQuery(String input, int numberOfTimes) {
         this.joiningArray = new ArrayList<>(defaultListCreatingNumber);
         for (int i = 1; i < numberOfTimes; i++) {
-            input += ";" + input;
+            input += dbAttr.getValueSplitter() + input;
             this.joiningArray.add("Or");
         }
         return input;
