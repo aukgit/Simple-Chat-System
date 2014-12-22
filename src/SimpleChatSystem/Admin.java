@@ -5,9 +5,9 @@
  */
 package SimpleChatSystem;
 
-import EntityGeneratedForms.ServerConfigForm;
+import EntityClass.Forms.ServerConfigForm;
 import DesignPattern.JFrameInheritable;
-import EntityGeneratedForms.UserManage;
+import EntityClass.Forms.UserManage;
 
 /**
  *
