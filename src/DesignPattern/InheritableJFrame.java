@@ -6,7 +6,6 @@
 package DesignPattern;
 
 import Database.Components.MsgBox;
-import EntityGeneratedForms.ServerConfigForm;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -14,30 +13,10 @@ import javax.swing.JPanel;
  *
  * @author Alim
  */
-public abstract class InheritableJFrame extends DatabaseRunnableComponentsJFrame {
+public abstract class InheritableJFrame extends DatabaseRunnableComponents {
 
     private static final long serialVersionUID = 1L;
 
-    //<editor-fold defaultstate="collapsed" desc="Fields">
-    private MsgBox messageBox;
-    public JFrame PreviousForm;
-    public JFrame NextForm;
-    //</editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Personal Methods added by Alim Ul Karim">
-    public void Println(String title, String msg) {
-        System.out.println(title + " : " + msg);
-    }
-
-    public void Sysout(String title, String msg) {
-        this.Println(title, msg);
-    }
-
-    public void Sysout(String msg) {
-        System.out.println(msg);
-    }
-
-    // </editor-fold>
     /**
      * Creates new form InheritableJFrame
      */
@@ -45,8 +24,7 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponentsJFrame
         this.messageBox = new MsgBox();
         initalizeTableName();
         initComponents();
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     }
 
     public abstract void initalizeTableName();
