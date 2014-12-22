@@ -5,18 +5,116 @@
  */
 package DesignPattern;
 
+import Database.Components.MsgBox;
+import Database.DatabaseQuery;
+import java.awt.Dimension;
+import javax.swing.JFrame;
+
 /**
  *
  * @author Alim
  */
-public class JPanelDbComponent extends javax.swing.JPanel {
+public abstract class JPanelDbComponent extends javax.swing.JPanel implements IDbComponents {
 
+    private static final long serialVersionUID = 1L;
+
+    //<editor-fold defaultstate="collapsed" desc="Fields">
+    private DatabaseQuery _db;
+
+    private MsgBox _messageBox;
+    private JFrame _previousForm;
+    private JFrame _nextForm;
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Move to row">
+    @Override
+    public void moveToRow(int rowNumber) {
+        getDb().moveToRow(rowNumber);
+
+    }
+    //</editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Personal Methods added by Alim Ul Karim">
+    public void Println(String title, String msg) {
+        System.out.println(title + " : " + msg);
+    }
+
+    public void Sysout(String title, String msg) {
+        this.Println(title, msg);
+    }
+
+    public void Sysout(String msg) {
+        System.out.println(msg);
+    }
+
+    // </editor-fold>
+    
     /**
-     * Creates new form JPanelDbComponent
+     * 
+     * @param callingFrame : where the method is calling, will be set as previous frame
      */
+    public void displayCurrentPanel(JFrameInheritable callingFrame) {
+        JFrameInheritable  frame = getFrame(this);
+        loadNewForm(callingFrame, frame);
+    }
+
     public JPanelDbComponent() {
         initComponents();
+        initalizeTableName();
     }
+
+    public abstract void initalizeTableName();
+    
+    //<editor-fold defaultstate="collapsed" desc="Jframe related code">
+    
+    /**
+     * Also points to previous form
+     *
+     * @param nextFrame
+     * @param prevFrame
+     * @param frame
+     * @param onTop
+     */
+    public void loadNewForm(JFrameInheritable nextFrame,JFrameInheritable prevFrame, boolean onTop) {
+        loadNewForm(nextFrame,prevFrame);
+        nextFrame.setAlwaysOnTop(true);
+    }
+    
+    @SuppressWarnings("deprecation")
+    public void loadNewForm(JFrameInheritable nextFrame,JFrameInheritable prevFrame, boolean onTop, boolean hideCurrentOne) {
+        loadNewForm(nextFrame,prevFrame, onTop);
+        if (hideCurrentOne) {
+            this.hide();
+        }
+    }
+    
+    public void loadNewForm(JFrameInheritable nextFrame,JFrameInheritable prevFrame) {
+        
+        nextFrame.show(true);
+        nextFrame.setPreviousForm(prevFrame);
+        this.setNextForm(nextFrame);
+    }
+    
+    public JFrameInheritable getFrame(final JPanelDbComponent panel) {
+        JFrameInheritable frame;
+        frame = new JFrameInheritable() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void initalizeTableName() {
+                panel.initalizeTableName();
+            }
+        };
+        frame.setContentPane(panel);
+        frame.pack();
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        frame.setVisible(true);
+        Dimension dimension = new Dimension(panel.getWidth(), panel.getHeight());
+        
+        frame.setPreferredSize(dimension);
+        return frame;
+    }
+    //</editor-fold>
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -42,4 +140,70 @@ public class JPanelDbComponent extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
+    //<editor-fold defaultstate="collapsed" desc="Getter setters">
+    /**
+     * @return the _db
+     */
+    @Override
+    public DatabaseQuery getDb() {
+        return _db;
+    }
+
+    /**
+     * @param _db the _db to set
+     */
+    @Override
+    public void setDb(DatabaseQuery _db) {
+        this._db = _db;
+    }
+
+    /**
+     * @return the _messageBox
+     */
+    @Override
+    public MsgBox getMessageBox() {
+        return _messageBox;
+    }
+
+    /**
+     * @param _messageBox the _messageBox to set
+     */
+    @Override
+    public void setMessageBox(MsgBox _messageBox) {
+        this._messageBox = _messageBox;
+    }
+
+    /**
+     * @return the _previousForm
+     */
+    @Override
+    public JFrame getPreviousForm() {
+        return _previousForm;
+    }
+
+    /**
+     * @param _previousForm the _previousForm to set
+     */
+    @Override
+    public void setPreviousForm(JFrame _previousForm) {
+        this._previousForm = _previousForm;
+    }
+
+    /**
+     * @return the _nextForm
+     */
+    @Override
+    public JFrame getNextForm() {
+        return _nextForm;
+    }
+
+    /**
+     * @param _nextForm the _nextForm to set
+     */
+    @Override
+    public void setNextForm(JFrame _nextForm) {
+        this._nextForm = _nextForm;
+    }
+//</editor-fold>
+
 }

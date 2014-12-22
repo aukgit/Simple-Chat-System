@@ -57,12 +57,12 @@ public abstract class JFrameInheritable extends JFrameDbComponents {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-  
-
+    //<editor-fold defaultstate="collapsed" desc="Jframe related code">
     /**
      * Also points to previous form
      *
      * @param frame
+     * @param onTop
      */
     public void loadNewForm(JFrameInheritable frame, boolean onTop) {
         loadNewForm(frame);
@@ -83,13 +83,13 @@ public abstract class JFrameInheritable extends JFrameDbComponents {
         this.setNextForm(frame);
     }
 
-    public JFrameInheritable getFrame(JPanel panel) {
+    public JFrameInheritable getFrame(final JPanelDbComponent panel) {
         JFrameInheritable frame = new JFrameInheritable() {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void initalizeTableName() {
-
+                panel.initalizeTableName();
             }
         };
         frame.setContentPane(panel);
@@ -97,11 +97,11 @@ public abstract class JFrameInheritable extends JFrameDbComponents {
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         frame.setVisible(true);
         Dimension dimension = new Dimension(panel.getWidth(), panel.getHeight());
-                
+
         frame.setPreferredSize(dimension);
         return frame;
     }
-
+    //</editor-fold>
     /**
      * @param args the command line arguments
      */

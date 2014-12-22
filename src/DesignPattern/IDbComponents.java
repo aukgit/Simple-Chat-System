@@ -7,13 +7,15 @@ package DesignPattern;
 
 import Database.Components.MsgBox;
 import Database.DatabaseQuery;
+import java.awt.Dimension;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  *
  * @author Alim
  */
-public interface IDbDisplayComponents {
+public interface IDbComponents {
 
     // <editor-fold defaultstate="collapsed" desc="Personal Methods added by Alim Ul Karim">
     /**
@@ -71,4 +73,6 @@ public interface IDbDisplayComponents {
      */
     public void setNextForm(JFrame _nextForm);
 //</editor-fold>
+    
+
 }
