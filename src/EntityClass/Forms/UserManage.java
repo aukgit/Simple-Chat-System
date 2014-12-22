@@ -32,7 +32,7 @@ public class UserManage extends JPanel {
         if (!Beans.isDesignTime()) {
             entityManager.getTransaction().begin();
         }
-        entityManager = javax.persistence.Persistence.createEntityManagerFactory("chatdatabase?zeroDateTimeBehavior=convertToNullPU").createEntityManager();
+        db.chnageConnectinStringToEntity(entityManager);
         db.setTableName(TableNames.USER);
     }
 

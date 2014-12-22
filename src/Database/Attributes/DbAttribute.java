@@ -14,7 +14,9 @@ public class DbAttribute {
     private char _wildCard;
     private char _tableOpenerLeft;
     private char _tableOpenerRight;
-
+    private String _columnSplitter;
+    private String _valueSplitter;
+    private String _defaultDateFormat;
     /**
      * @return the _wildCard
      */
@@ -55,6 +57,48 @@ public class DbAttribute {
      */
     public void setTableOpenerRight(char _tableOpenerRight) {
         this._tableOpenerRight = _tableOpenerRight;
+    }
+
+    /**
+     * @return the _columnSplitter
+     */
+    public String getColumnSplitter() {
+        return _columnSplitter;
+    }
+
+    /**
+     * @param _columnSplitter the _columnSplitter to set
+     */
+    public void setColumnSplitter(String _columnSplitter) {
+        this._columnSplitter = _columnSplitter;
+    }
+
+    /**
+     * @return the _valueSplitter
+     */
+    public String getValueSplitter() {
+        return _valueSplitter;
+    }
+
+    /**
+     * @param _valueSplitter the _valueSplitter to set
+     */
+    public void setValueSplitter(String _valueSplitter) {
+        this._valueSplitter = _valueSplitter;
+    }
+
+    /**
+     * @return the _defaultDateFormat
+     */
+    public String getDefaultDateFormat() {
+        return _defaultDateFormat;
+    }
+
+    /**
+     * @param _defaultDateFormat the _defaultDateFormat to set
+     */
+    public void setDefaultDateFormat(String _defaultDateFormat) {
+        this._defaultDateFormat = _defaultDateFormat;
     }
 
    

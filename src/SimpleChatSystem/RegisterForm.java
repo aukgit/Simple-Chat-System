@@ -208,7 +208,7 @@ public class RegisterForm extends JFrameInheritable {
 
             //3
             Columns[i] = User.LastLogin;
-            Values[i++] = getDb().getCurrentDateInMySQLFormat(); // returns current date.
+            Values[i++] = getDb().getCurrentInDbFormat(); // returns current date.
 
             //4
             Columns[i] = User.IsActive;

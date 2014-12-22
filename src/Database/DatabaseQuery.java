@@ -15,6 +15,7 @@
  */
 package Database;
 
+//<editor-fold defaultstate="collapsed" desc="imports">
 import Common.Codes;
 import ConsolePackage.Console;
 import CurrentDb.Tables.UserTable;
@@ -37,23 +38,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+//</editor-fold>
 
 public final class DatabaseQuery extends DbInitalizer {
 
     StringMore strMore = new StringMore();
-    // <editor-fold defaultstate="collapsed" desc="Intializers & Configarations">
 
+    // <editor-fold defaultstate="collapsed" desc="Intializers & Configarations">
     //<editor-fold defaultstate="collapsed" desc="Constants">
-    private final String MYSQL_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     //</editor-fold>
     private SimpleDateFormat simpleDateFormatter;
 
     //Configaration
     private String url;
-    
-    private String user = DatabaseQuery.DATABASE_USER, 
+
+    private String user = DatabaseQuery.DATABASE_USER,
             password = DatabaseQuery.DATABASE_USER_PASSWORD;
-    
+
     private Connection cnn;
     private Statement stmt, tempStatement;
     private ResultSet rs;
@@ -119,7 +120,8 @@ public final class DatabaseQuery extends DbInitalizer {
     /**
      * By default loads for mysql
      *
-     * @param url : database url or connection string, if null then load from config file.
+     * @param url : database url or connection string, if null then load from
+     * config file.
      * @param user : user name in database
      * @param password : database user password
      */
@@ -137,7 +139,7 @@ public final class DatabaseQuery extends DbInitalizer {
     public DatabaseQuery(String url, String user, String password, DbAttribute dbAttribute) {
         initialize(url, user, password, dbAttribute);
     }
-    
+
     public void initialize(String url, String user, String password, DbAttribute dbAttribute) {
         this.createSQL = "";
         this.LastSQL = "";
@@ -145,9 +147,9 @@ public final class DatabaseQuery extends DbInitalizer {
         this.updateSQL = "";
         this.selectSQL = "";
         dbAttr = dbAttribute;
-        this.simpleDateFormatter = new java.text.SimpleDateFormat(MYSQL_DATE_FORMAT);
+        this.simpleDateFormatter = new java.text.SimpleDateFormat(dbAttr.getDefaultDateFormat());
         try {
-            if(url == null){
+            if (url == null) {
                 url = AppConfig.getConnectionString();
             }
             this.url = url;
@@ -164,8 +166,16 @@ public final class DatabaseQuery extends DbInitalizer {
         }
     }
 // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Clean Ups">
 
+    public void chnageConnectinStringToEntity(EntityManager em) {
+        chnageConnectinStringToEntity(em, this.url);
+    }
+
+    public void chnageConnectinStringToEntity(EntityManager em, String connectionString) {
+        em = javax.persistence.Persistence.createEntityManagerFactory(connectionString).createEntityManager();
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Clean Ups">
     private void cleanQueryArrays() {
         setQueryFieldNamesCleanUp();
         setQueryValues(null);
@@ -1160,10 +1170,11 @@ public final class DatabaseQuery extends DbInitalizer {
     /**
      * this.joiningArray will be recreated so no previous entry will be there.
      * don't need to set joiningArray (will be set from this method)
+     *
      * @param input : should be sql valid by validator
      * @param numberOfTimes : 1 based number , 2 means will repeat at lest once
-     * 
-     * return  input;input;input
+     *
+     * return input;input;input
      */
     public String setSameInputValueForOrQuery(String input, int numberOfTimes) {
         this.joiningArray = new ArrayList<>(defaultListCreatingNumber);
@@ -1690,14 +1701,14 @@ public final class DatabaseQuery extends DbInitalizer {
     //<editor-fold defaultstate="collapsed" desc="Columns Split by comma">
     public List<String> getColumnsSplitedAsList(String columns) {
         if (columns == null) {
-            return Arrays.asList(columns.split(","));
+            return Arrays.asList(getColumnsSplited(columns));
         }
         return null;
     }
 
     public String[] getColumnsSplited(String columns) {
         if (columns == null) {
-            return columns.split(",");
+            return columns.split(dbAttr.getColumnSplitter());
         }
         return null;
     }
@@ -1712,14 +1723,14 @@ public final class DatabaseQuery extends DbInitalizer {
      */
     public List<String> getValuesSplitedAsList(String values) {
         if (values == null) {
-            return Arrays.asList(values.split(";"));
+            return Arrays.asList(getValuesSplited(values));
         }
         return null;
     }
 
     public String[] getValuesSplited(String values) {
         if (values == null) {
-            return values.split(";");
+            return values.split(dbAttr.getValueSplitter());
         }
         return null;
     }
@@ -1776,7 +1787,7 @@ public final class DatabaseQuery extends DbInitalizer {
 
     //</editor-fold>
     public java.util.Date getCurrentDate() {
-        java.util.Date date = (java.util.Date) new Date();
+        java.util.Date date = new Date();
         return date;
     }
 
@@ -1796,7 +1807,7 @@ public final class DatabaseQuery extends DbInitalizer {
         return getSimpleDateFormatter().format(date);
     }
 
-    public String getCurrentDateInMySQLFormat() {
+    public String getCurrentInDbFormat() {
         return getDateInMySQLFormat(getCurrentDate());
     }
 
