@@ -7,6 +7,7 @@ package DesignPattern;
 
 import Database.Components.MsgBox;
 import Database.DatabaseQuery;
+import Database.DbData;
 import javax.swing.JFrame;
 
 /**
@@ -23,6 +24,7 @@ public class JFrameDbComponents extends JFrame implements IDbComponents {
     private MsgBox _messageBox;
     private JFrame _previousForm;
     private JFrame _nextForm;
+    private DbData _dbData;
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Move to row">
@@ -50,6 +52,7 @@ public class JFrameDbComponents extends JFrame implements IDbComponents {
     
     public JFrameDbComponents() {
         _db = new DatabaseQuery();
+        _dbData = new DbData(_db);
     }
 
   
@@ -120,4 +123,18 @@ public class JFrameDbComponents extends JFrame implements IDbComponents {
         this._nextForm = _nextForm;
     }
 //</editor-fold>
+
+    /**
+     * @return the _dbData
+     */
+    public DbData getDbData() {
+        return _dbData;
+    }
+
+    /**
+     * @param _dbData the _dbData to set
+     */
+    public void setDbData(DbData _dbData) {
+        this._dbData = _dbData;
+    }
 }

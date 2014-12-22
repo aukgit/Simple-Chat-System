@@ -996,7 +996,13 @@ public final class DatabaseQuery extends DbInitalizer {
         }
         return rs;
     }
-
+    
+    /**
+     * You don't have to include where 
+     * "SELECT " + getOpenFieldsName() + " FROM " + getTableName() + "\n WHERE \n" + where
+     * @param where
+     * @return 
+     */
     public ResultSet readData(String where) {
         try {
             this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName() + "\n WHERE \n" + where);

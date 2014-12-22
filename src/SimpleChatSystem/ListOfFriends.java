@@ -6,9 +6,15 @@
 package SimpleChatSystem;
 
 import CurrentDb.CommonData;
+import CurrentDb.TableColumns.UserStatus;
+import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
+import Database.DatabaseQuery;
+import Database.DbData;
 import DesignPattern.JFrameInheritable;
-import java.sql.Array;
+
+import org.eclipse.persistence.exceptions.DatabaseException;
+import org.eclipse.persistence.exceptions.OptimisticLockException;
 
 /**
  *
@@ -24,9 +30,21 @@ public class ListOfFriends extends JFrameInheritable {
     /**
      * Creates new form ListOfFriends
      */
-  
-    
-    public ListOfFriends(UserTable u){
+    public void loadCurrentStatus() {
+        DatabaseQuery db2 = new DatabaseQuery();
+        db2.setTableName(TableNames.USERSTATUS);
+        String whereSql = UserStatus.UserID + "=" + _user.UserID + " ORDER BY DATED LIMIT 1";
+        db2.readData(whereSql);
+        if (db2.rowCount() > 0) {
+            DbData dbData2 = new DbData(db2);
+            String currentStatus = dbData2.getRowValue(1, UserStatus.Status);
+            this.UsterstatusLabel.setText(currentStatus);
+        } else {
+            this.UsterstatusLabel.setText("No Status");
+        }
+    }
+
+    public ListOfFriends(UserTable u) {
         initComponents();
         setUser(u);
         if (getUser().IsAdmin) {
@@ -34,11 +52,11 @@ public class ListOfFriends extends JFrameInheritable {
         } else {
             adminConfigBtn.setVisible(false);
         }
-        
+
         for (String item : CommonData.getActiveStateList()) {
             this.UserActiveState.add(item);
         }
-  
+
     }
 
     /**
