@@ -229,7 +229,7 @@ public class RegisterForm extends JFrameInheritable {
     public void OnSuccess() {
         this.getMessageBox().show(this, "User created successfully.");
         this.hide();
-        this.PreviousForm.show(true);
+        this.getPreviousForm().show(true);
     }
 
     public void OnFail() {

@@ -153,7 +153,7 @@ public class Startup extends JFrameInheritable {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         RegisterForm reg = new RegisterForm();
-        reg.PreviousForm = this;
+        reg.setPreviousForm(this);
         reg.show(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 

@@ -22,7 +22,7 @@ public abstract class JFrameInheritable extends JFrameDbComponents {
      * Creates new form InheritableJFrame
      */
     public JFrameInheritable() {
-        this.messageBox = new MsgBox();
+        setMessageBox(new MsgBox());
         initalizeTableName();
         initComponents();
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -57,25 +57,7 @@ public abstract class JFrameInheritable extends JFrameDbComponents {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    //<editor-fold defaultstate="collapsed" desc="Getter seeters">
-    // <editor-fold defaultstate="collapsed" desc="Getter">
-    /**
-     * @return the messageBox
-     */
-    public MsgBox getMessageBox() {
-        return messageBox;
-    }
-
-    // </editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="Setter">
-    /**
-     * @param messageBox the messageBox to set
-     */
-    public void setMessageBox(MsgBox messageBox) {
-        this.messageBox = messageBox;
-    }
-//</editor-fold>
-    //</editor-fold>
+  
 
     /**
      * Also points to previous form
@@ -97,8 +79,8 @@ public abstract class JFrameInheritable extends JFrameDbComponents {
     public void loadNewForm(JFrameInheritable frame) {
 
         frame.show(true);
-        frame.PreviousForm = this;
-        this.NextForm = frame;
+        frame.setPreviousForm(this);
+        this.setNextForm(frame);
     }
 
     public JFrameInheritable getFrame(JPanel panel) {

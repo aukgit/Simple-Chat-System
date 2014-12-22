@@ -13,16 +13,16 @@ import javax.swing.JFrame;
  *
  * @author Alim
  */
-public class JFrameDbComponents extends JFrame {
+public class JFrameDbComponents extends JFrame implements IDbDisplayComponents {
 
     private static final long serialVersionUID = 1L;
 
+ //<editor-fold defaultstate="collapsed" desc="Fields">
     private DatabaseQuery _db;
-
-    //<editor-fold defaultstate="collapsed" desc="Fields">
-    public MsgBox messageBox;
-    public JFrame PreviousForm;
-    public JFrame NextForm;
+    
+    private MsgBox _messageBox;
+    private JFrame _previousForm;
+    private JFrame _nextForm;
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Personal Methods added by Alim Ul Karim">
@@ -43,6 +43,12 @@ public class JFrameDbComponents extends JFrame {
         _db = new DatabaseQuery();
     }
 
+
+    public void moveToRow(int rowNumber) {
+        getDb().moveToRow(rowNumber);
+
+    }
+
     /**
      * @return the _db
      */
@@ -57,9 +63,47 @@ public class JFrameDbComponents extends JFrame {
         this._db = _db;
     }
 
-    public void moveToRow(int rowNumber) {
-        _db.moveToRow(rowNumber);
-
+    /**
+     * @return the _messageBox
+     */
+    public MsgBox getMessageBox() {
+        return _messageBox;
     }
+
+    /**
+     * @param _messageBox the _messageBox to set
+     */
+    public void setMessageBox(MsgBox _messageBox) {
+        this._messageBox = _messageBox;
+    }
+
+    /**
+     * @return the _previousForm
+     */
+    public JFrame getPreviousForm() {
+        return _previousForm;
+    }
+
+    /**
+     * @param _previousForm the _previousForm to set
+     */
+    public void setPreviousForm(JFrame _previousForm) {
+        this._previousForm = _previousForm;
+    }
+
+    /**
+     * @return the _nextForm
+     */
+    public JFrame getNextForm() {
+        return _nextForm;
+    }
+
+    /**
+     * @param _nextForm the _nextForm to set
+     */
+    public void setNextForm(JFrame _nextForm) {
+        this._nextForm = _nextForm;
+    }
+
 
 }

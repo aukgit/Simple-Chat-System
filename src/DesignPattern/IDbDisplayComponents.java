@@ -13,15 +13,7 @@ import javax.swing.JFrame;
  *
  * @author Alim
  */
-public interface DbComponentForDisplayModel {
-
-    //<editor-fold defaultstate="collapsed" desc="Fields">
-    DatabaseQuery _db;
-    
-    MsgBox MessageBox;
-    JFrame PreviousForm;
-    JFrame NextForm;
-    //</editor-fold>
+public interface IDbDisplayComponents {
 
     // <editor-fold defaultstate="collapsed" desc="Personal Methods added by Alim Ul Karim">
     /**
@@ -36,6 +28,9 @@ public interface DbComponentForDisplayModel {
     public void Sysout(String msg);
 
     // </editor-fold>
+    public void moveToRow(int rowNumber);
+
+    //<editor-fold defaultstate="collapsed" desc="Getter and Setters">
     /**
      * @return the _db
      */
@@ -46,5 +41,34 @@ public interface DbComponentForDisplayModel {
      */
     public void setDb(DatabaseQuery _db);
 
-    public void moveToRow(int rowNumber);
+    /**
+     * @return the _messageBox
+     */
+    public MsgBox getMessageBox();
+
+    /**
+     * @param _messageBox the _messageBox to set
+     */
+    public void setMessageBox(MsgBox _messageBox);
+
+    /**
+     * @return the _previousForm
+     */
+    public JFrame getPreviousForm();
+
+    /**
+     * @param _previousForm the _previousForm to set
+     */
+    public void setPreviousForm(JFrame _previousForm);
+
+    /**
+     * @return the _nextForm
+     */
+    public JFrame getNextForm();
+
+    /**
+     * @param _nextForm the _nextForm to set
+     */
+    public void setNextForm(JFrame _nextForm);
+//</editor-fold>
 }

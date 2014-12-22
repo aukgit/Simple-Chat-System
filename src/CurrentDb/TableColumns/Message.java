@@ -6,6 +6,8 @@
  */
 package CurrentDb.TableColumns;
 
+
+
 /**
  *
  * @author Alim
@@ -19,5 +21,5 @@ public interface Message {
     public String Message = "Message";
     public String IsFileExit = "IsFileExit";
     public String FileLocation = "FileLocation";
-
+   
 }
