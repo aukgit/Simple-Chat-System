@@ -9,35 +9,40 @@ import CurrentDb.TableColumns.UserStatus;
 import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
 import DesignPattern.JFrameInheritable;
+import InputValidation.Validate;
 
 /**
  *
  * @author Alim
  */
 public class UpdateStatus extends JFrameInheritable {
+    
     private static final long serialVersionUID = 1L;
-
+    
     UserTable _user;
+    ListOfFriends _listOfFiendsForm;
 
     /**
      * Creates new form UpdateStatus
      *
      * @param user
+     * @param listOfFiendsForm
      */
-    public UpdateStatus(UserTable user) {
+    public UpdateStatus(UserTable user, ListOfFriends listOfFiendsForm) {
         initComponents();
         _user = user;
+        _listOfFiendsForm = listOfFiendsForm;
         this.UsernameLabel.setText(_user.Username);
         String userID = _user.UserID + "";
-
+        
         this.getDb().readData(UserStatus.UserID, userID);
-
+        this.getDbData().setDb(this.getDb());
         String[] statuses = this.getDbData().getSingleColumnValues(UserStatus.Status);
         this.getDbData().populateListFromDBColumn(statuses, jList1);
     }
-
+    
     private UpdateStatus() {
-       
+        
     }
 
     /**
@@ -50,7 +55,7 @@ public class UpdateStatus extends JFrameInheritable {
     private void initComponents() {
 
         UsernameLabel = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        UserStatusTextbox = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
@@ -62,7 +67,7 @@ public class UpdateStatus extends JFrameInheritable {
         UsernameLabel.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         UsernameLabel.setText("jLabel1");
 
-        jTextField1.setToolTipText("new ststus");
+        UserStatusTextbox.setToolTipText("new ststus");
 
         jLabel1.setText("New status");
 
@@ -95,7 +100,7 @@ public class UpdateStatus extends JFrameInheritable {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel1)
                             .addComponent(UsernameLabel)
-                            .addComponent(jTextField1)
+                            .addComponent(UserStatusTextbox)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE))))
                 .addContainerGap(26, Short.MAX_VALUE))
         );
@@ -107,7 +112,7 @@ public class UpdateStatus extends JFrameInheritable {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel1)
                 .addGap(1, 1, 1)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(UserStatusTextbox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -122,7 +127,29 @@ public class UpdateStatus extends JFrameInheritable {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        
+        byte numberOFCol = 3;
+        String status = this.UserStatusTextbox.getText();
+        if (Validate.sqlSearchValid(UserStatusTextbox, jLabel1)) {
+            String[] columns = new String[numberOFCol];
+            String[] values = new String[numberOFCol];
+            
+            columns[--numberOFCol] = UserStatus.Dated;
+            values[numberOFCol] = this.getDb().getCurrentInDbFormat();
+            
+            columns[--numberOFCol] = UserStatus.UserID;
+            values[numberOFCol] = _user.UserID + "";
+            
+            columns[--numberOFCol] = UserStatus.Status;
+            values[numberOFCol] = this.UserStatusTextbox.getText();
+            
+            if (this.getDb().insertData(columns, values)) {
+                this.hide();
+                this.getPreviousForm().show(true);
+                _listOfFiendsForm.loadCurrentStatus();
+            } else {
+                this.getMessageBox().show(this, "Sorry can't update your status.");
+            }
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -161,13 +188,13 @@ public class UpdateStatus extends JFrameInheritable {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField UserStatusTextbox;
     private javax.swing.JLabel UsernameLabel;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 
     @Override

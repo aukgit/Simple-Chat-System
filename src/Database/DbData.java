@@ -14,15 +14,13 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JList;
-import javax.swing.ListModel;
-import javax.swing.event.ListDataListener;
 
 /**
  *
  * @author Alim
  */
 public class DbData extends SQLError {
-    
+
     private String[] _columns;
     private ArrayList<String[]> _data;
     private ResultSet _rs;
@@ -37,7 +35,7 @@ public class DbData extends SQLError {
         _db = db;
         _rs = db.getRs();
     }
-    
+
     public String[] getColumns() {
         return _columns;
     }
@@ -55,12 +53,12 @@ public class DbData extends SQLError {
             ErrorMessage("Record Set empty.", "reIntialize");
             return;
         }
-        
+
         try {
             int currentRow = 0, currentCol, colCount = _columns.length;
             _rs.last(); // goto last
             int size = _rs.getRow();
-            
+
             _data = new ArrayList<>(size);
             _rs.beforeFirst(); // move to first again.
 
@@ -73,16 +71,16 @@ public class DbData extends SQLError {
                 _data.set(currentRow++, rowValues);
             }
             isInitialized = true;
-            
+
         } catch (SQLException ex) {
             ErrorMessage(ex, "No Record Exist.", "reIntialize");
         }
     }
-    
+
     public void setResultSet(ResultSet rs) {
         _rs = rs;
     }
-    
+
     public ResultSet getResultSet() {
         return _rs;
     }
@@ -92,7 +90,7 @@ public class DbData extends SQLError {
         if (isInitialized) {
             return _data.get(index);
         }
-        
+
         if (_rs == null || _columns == null || _columns.length == 0) {
             ErrorMessage("Record Set empty.", "reIntialize");
             return null;
@@ -102,7 +100,7 @@ public class DbData extends SQLError {
         } catch (SQLException sQLException) {
             ErrorMessage(sQLException, "Can't move record.", "getRow method");
         }
-        
+
         String[] rowValues = new String[_columns.length];
         int currentCol = 0;
         try {
@@ -112,29 +110,29 @@ public class DbData extends SQLError {
         } catch (SQLException ex) {
             ErrorMessage(ex, "Can't give column value.", "getRow method");
         }
-        
+
         return rowValues;
-        
+
     }
 
     // it moves the cursor to the index
     public String[] getSingleColumnValues(String columnName) {
-        
+
         if (_rs == null) {
             ErrorMessage("Record Set empty.", "reIntialize");
             return null;
         }
-        
+
         try {
             _rs.absolute(1);
-            
+
         } catch (SQLException sQLException) {
             ErrorMessage(sQLException, "Can't move record.", "getRow method");
             return null;
         }
-        _db.setRs(_rs);
-        int rowsExist = _db.rowCount();
-        
+        getDb().setRs(_rs);
+        int rowsExist = getDb().rowCount();
+
         String[] rowValues = new String[rowsExist];
         try {
             for (int i = 0; i < rowsExist; i++) {
@@ -144,7 +142,7 @@ public class DbData extends SQLError {
         } catch (SQLException ex) {
             ErrorMessage(ex, "Can't give column value.", "getSingleColumnValues method");
         }
-        
+
         return rowValues;
     }
 
@@ -155,6 +153,9 @@ public class DbData extends SQLError {
      * @param combo
      */
     public void populateComboBoxFromDBColumn(String[] singleColumnRows, JComboBox combo) {
+        if (singleColumnRows == null) {
+            return;
+        }
         for (String singleColumnRow : singleColumnRows) {
             combo.addItem(singleColumnRow);
         }
@@ -168,13 +169,16 @@ public class DbData extends SQLError {
      */
     @SuppressWarnings("unchecked")
     public void populateListFromDBColumn(String[] singleColumnRows, JList list) {
+        if (singleColumnRows == null) {
+            return;
+        }
         DefaultListModel listModel = new DefaultListModel();
         for (String singleColumnRow : singleColumnRows) {
             listModel.addElement(singleColumnRow);
         }
         list = new JList(listModel);
     }
-    
+
     public String getRowValue(int index, String columnName) {
         if (isInitialized) {
             String[] rowValues = _data.get(index);
@@ -186,7 +190,7 @@ public class DbData extends SQLError {
                 return "";
             }
         }
-        
+
         if (_rs == null || _columns == null || _columns.length == 0) {
             ErrorMessage("Record Set empty.", "reIntialize");
             return null;
@@ -196,7 +200,7 @@ public class DbData extends SQLError {
         } catch (SQLException sQLException) {
             ErrorMessage(sQLException, "Can't move record.", "getRow method");
         }
-        
+
         for (String column : _columns) {
             if (column.equals(columnName)) {
                 String result = null;
@@ -210,12 +214,26 @@ public class DbData extends SQLError {
         }
         return "";
     }
-    
+
     public String[] getData(int index) {
         if (isInitialized) {
             return _data.get(index);
         }
         return null;
     }
-    
+
+    /**
+     * @return the _db
+     */
+    public DatabaseQuery getDb() {
+        return _db;
+    }
+
+    /**
+     * @param _db the _db to set
+     */
+    public void setDb(DatabaseQuery _db) {
+        this._db = _db;
+    }
+
 }

@@ -12,9 +12,9 @@ import CurrentDb.Tables.UserTable;
 import Database.DatabaseQuery;
 import Database.DbData;
 import DesignPattern.JFrameInheritable;
-
-import org.eclipse.persistence.exceptions.DatabaseException;
-import org.eclipse.persistence.exceptions.OptimisticLockException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -33,11 +33,19 @@ public class ListOfFriends extends JFrameInheritable {
     public void loadCurrentStatus() {
         DatabaseQuery db2 = new DatabaseQuery();
         db2.setTableName(TableNames.USERSTATUS);
-        String whereSql = UserStatus.UserID + "=" + _user.UserID + " ORDER BY DATED LIMIT 1";
+        String whereSql = UserStatus.UserID + "=" + _user.UserID + " ORDER BY DATED DESC LIMIT 1";
         db2.readData(whereSql);
+        String sql = db2.LastSQL;
+
         if (db2.rowCount() > 0) {
-            DbData dbData2 = new DbData(db2);
-            String currentStatus = dbData2.getRowValue(1, UserStatus.Status);
+
+            String currentStatus = "No Status";
+            try {
+                db2.getRs().first();
+                currentStatus = db2.getRs().getString(UserStatus.Status);
+            } catch (SQLException ex) {
+                Logger.getLogger(ListOfFriends.class.getName()).log(Level.SEVERE, null, ex);
+            }
             this.UsterstatusLabel.setText(currentStatus);
         } else {
             this.UsterstatusLabel.setText("No Status");
@@ -86,16 +94,20 @@ public class ListOfFriends extends JFrameInheritable {
         UsernameLabel.setText("Username");
 
         UsterstatusLabel.setText("Status");
+        UsterstatusLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                UsterstatusLabelMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(UsernameLabel)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(UsterstatusLabel)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(UsernameLabel)
+                    .addComponent(UsterstatusLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -180,6 +192,15 @@ public class ListOfFriends extends JFrameInheritable {
     private void editProfileMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editProfileMouseReleased
         // TODO add your handling code here:
     }//GEN-LAST:event_editProfileMouseReleased
+
+    private void UsterstatusLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UsterstatusLabelMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            UpdateStatus updateStatus;
+            updateStatus = new UpdateStatus(_user, this);
+            loadNewForm(updateStatus);
+        }
+    }//GEN-LAST:event_UsterstatusLabelMouseClicked
 
     /**
      * @param args the command line arguments

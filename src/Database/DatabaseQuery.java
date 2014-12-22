@@ -167,10 +167,9 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 // </editor-fold>
 
-    
     //<editor-fold defaultstate="collapsed" desc="Set connection string in entitymanager">
     /**
-     * 
+     *
      * @param em
      * @param connectionString : a name from META-INF\persistence.xml
      */
@@ -178,7 +177,7 @@ public final class DatabaseQuery extends DbInitalizer {
         em = javax.persistence.Persistence.createEntityManagerFactory(connectionString).createEntityManager();
     }
 //</editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Clean Ups">
     private void cleanQueryArrays() {
         setQueryFieldNamesCleanUp();
@@ -996,12 +995,13 @@ public final class DatabaseQuery extends DbInitalizer {
         }
         return rs;
     }
-    
+
     /**
-     * You don't have to include where 
-     * "SELECT " + getOpenFieldsName() + " FROM " + getTableName() + "\n WHERE \n" + where
+     * You don't have to include where "SELECT " + getOpenFieldsName() + " FROM
+     * " + getTableName() + "\n WHERE \n" + where
+     *
      * @param where
-     * @return 
+     * @return
      */
     public ResultSet readData(String where) {
         try {
@@ -1574,7 +1574,9 @@ public final class DatabaseQuery extends DbInitalizer {
                 int currentPos = rs.getRow();
                 rs.last();
                 int count = rs.getRow();
-                rs.absolute(currentPos);
+                if (currentPos > -1) {
+                    rs.absolute(currentPos);
+                }
                 return count;
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
