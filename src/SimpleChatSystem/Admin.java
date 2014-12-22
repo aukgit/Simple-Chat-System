@@ -6,14 +6,14 @@
 package SimpleChatSystem;
 
 import EntityGeneratedForms.ServerConfigForm;
-import DesignPattern.InheritableJFrame;
+import DesignPattern.JFrameInheritable;
 import EntityGeneratedForms.UserManage;
 
 /**
  *
  * @author Alim
  */
-public class Admin extends InheritableJFrame {
+public class Admin extends JFrameInheritable {
 
     private static final long serialVersionUID = 1L;
 
@@ -86,7 +86,7 @@ public class Admin extends InheritableJFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         ServerConfigForm panel = new ServerConfigForm();
-        InheritableJFrame frame = getFrame(panel);
+        JFrameInheritable frame = getFrame(panel);
         //form.show(true);
         loadNewForm(frame, true);
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -94,7 +94,7 @@ public class Admin extends InheritableJFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         UserManage panel = new UserManage();
-        InheritableJFrame frame = getFrame(panel);
+        JFrameInheritable frame = getFrame(panel);
         //form.show(true);
         loadNewForm(frame, true);
     }//GEN-LAST:event_jButton1ActionPerformed

@@ -6,13 +6,13 @@
 package SimpleChatSystem;
 
 import CurrentDb.TableNames;
-import DesignPattern.InheritableJFrame;
+import DesignPattern.JFrameInheritable;
 
 /**
  *
  * @author Alim
  */
-public class ChatingInterface extends InheritableJFrame {
+public class ChatingInterface extends JFrameInheritable {
     private static final long serialVersionUID = 1L;
 
     /**

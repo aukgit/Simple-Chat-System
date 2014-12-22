@@ -13,7 +13,7 @@ import javax.swing.JFrame;
  *
  * @author Alim
  */
-public class DatabaseRunnableComponents extends JFrame {
+public class JFrameDbComponents extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,7 +39,7 @@ public class DatabaseRunnableComponents extends JFrame {
     }
 
     // </editor-fold>
-    public DatabaseRunnableComponents() {
+    public JFrameDbComponents() {
         _db = new DatabaseQuery();
     }
 

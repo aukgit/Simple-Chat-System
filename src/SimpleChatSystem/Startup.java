@@ -10,7 +10,7 @@ import Cryptography.Hasher;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
-import DesignPattern.InheritableJFrame;
+import DesignPattern.JFrameInheritable;
 import Global.AppConfig;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -22,7 +22,7 @@ import javax.swing.UnsupportedLookAndFeelException;
  *
  * @author Alim
  */
-public class Startup extends InheritableJFrame {
+public class Startup extends JFrameInheritable {
 
     private static final long serialVersionUID = 1L;
 

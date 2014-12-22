@@ -10,14 +10,14 @@ import Cryptography.Hasher;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
 
-import DesignPattern.InheritableJFrame;
+import DesignPattern.JFrameInheritable;
 import InputValidation.Validate;
 
 /**
  *
  * @author Alim
  */
-public class RegisterForm extends InheritableJFrame {
+public class RegisterForm extends JFrameInheritable {
 
     private static final long serialVersionUID = 1L;
 

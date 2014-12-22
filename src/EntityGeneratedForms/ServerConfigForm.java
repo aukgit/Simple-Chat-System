@@ -5,7 +5,7 @@
  */
 package EntityGeneratedForms;
 
-import DesignPattern.InheritableJFrame;
+import DesignPattern.JFrameInheritable;
 import java.awt.EventQueue;
 import java.beans.Beans;
 import java.util.ArrayList;

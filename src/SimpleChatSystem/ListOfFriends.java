@@ -6,13 +6,13 @@
 package SimpleChatSystem;
 
 import CurrentDb.Tables.UserTable;
-import DesignPattern.InheritableJFrame;
+import DesignPattern.JFrameInheritable;
 
 /**
  *
  * @author Alim
  */
-public class ListOfFriends extends InheritableJFrame {
+public class ListOfFriends extends JFrameInheritable {
 //    private static ListOfFriends Form = new ListOfFriends();
 
     private static final long serialVersionUID = 1L;

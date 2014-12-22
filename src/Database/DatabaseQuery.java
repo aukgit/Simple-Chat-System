@@ -23,7 +23,7 @@ import Database.Attributes.*;
 import Database.Components.DbInitalizer;
 import Database.Components.IQueryType;
 import Database.Components.StringMore;
-import DesignPattern.DatabaseRunnableComponents;
+import DesignPattern.JFrameDbComponents;
 import Global.AppConfig;
 import java.lang.reflect.Field;
 import java.sql.*;
@@ -1464,7 +1464,7 @@ public final class DatabaseQuery extends DbInitalizer {
                 rs.absolute(rowNumber);
                 return rs;
             } catch (SQLException ex) {
-                Logger.getLogger(DatabaseRunnableComponents.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(JFrameDbComponents.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -1477,7 +1477,7 @@ public final class DatabaseQuery extends DbInitalizer {
                 _rs.absolute(rowNumber);
                 return _rs;
             } catch (SQLException ex) {
-                Logger.getLogger(DatabaseRunnableComponents.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(JFrameDbComponents.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;

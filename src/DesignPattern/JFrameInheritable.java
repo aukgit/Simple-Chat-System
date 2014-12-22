@@ -13,14 +13,14 @@ import javax.swing.JPanel;
  *
  * @author Alim
  */
-public abstract class InheritableJFrame extends DatabaseRunnableComponents {
+public abstract class JFrameInheritable extends JFrameDbComponents {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * Creates new form InheritableJFrame
      */
-    public InheritableJFrame() {
+    public JFrameInheritable() {
         this.messageBox = new MsgBox();
         initalizeTableName();
         initComponents();
@@ -81,27 +81,27 @@ public abstract class InheritableJFrame extends DatabaseRunnableComponents {
      *
      * @param frame
      */
-    public void loadNewForm(InheritableJFrame frame, boolean onTop) {
+    public void loadNewForm(JFrameInheritable frame, boolean onTop) {
         loadNewForm(frame);
         frame.setAlwaysOnTop(true);
     }
 
-    public void loadNewForm(InheritableJFrame frame, boolean onTop, boolean hideCurrentOne) {
+    public void loadNewForm(JFrameInheritable frame, boolean onTop, boolean hideCurrentOne) {
         loadNewForm(frame, onTop);
         if (hideCurrentOne) {
             this.hide();
         }
     }
 
-    public void loadNewForm(InheritableJFrame frame) {
+    public void loadNewForm(JFrameInheritable frame) {
 
         frame.show(true);
         frame.PreviousForm = this;
         this.NextForm = frame;
     }
 
-    public InheritableJFrame getFrame(JPanel panel) {
-        InheritableJFrame frame = new InheritableJFrame() {
+    public JFrameInheritable getFrame(JPanel panel) {
+        JFrameInheritable frame = new JFrameInheritable() {
             private static final long serialVersionUID = 1L;
 
             @Override
