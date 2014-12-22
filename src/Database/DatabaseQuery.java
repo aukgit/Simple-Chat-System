@@ -167,14 +167,18 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 // </editor-fold>
 
-    public void chnageConnectinStringToEntity(EntityManager em) {
-        chnageConnectinStringToEntity(em, this.url);
-    }
-
-    public void chnageConnectinStringToEntity(EntityManager em, String connectionString) {
+    
+    //<editor-fold defaultstate="collapsed" desc="Set connection string in entitymanager">
+    /**
+     * 
+     * @param em
+     * @param connectionString : a name from META-INF\persistence.xml
+     */
+    public void setConnectinStringToEntity(EntityManager em, String connectionString) {
         em = javax.persistence.Persistence.createEntityManagerFactory(connectionString).createEntityManager();
     }
-
+//</editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Clean Ups">
     private void cleanQueryArrays() {
         setQueryFieldNamesCleanUp();

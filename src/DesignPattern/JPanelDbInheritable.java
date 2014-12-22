@@ -7,7 +7,9 @@ package DesignPattern;
 
 import Database.Components.MsgBox;
 import Database.DatabaseQuery;
+import Global.AppConfig;
 import java.awt.Dimension;
+import javax.persistence.EntityManager;
 import javax.swing.JFrame;
 
 /**
@@ -24,6 +26,7 @@ public abstract class JPanelDbInheritable extends javax.swing.JPanel implements 
     private MsgBox _messageBox;
     private JFrame _previousForm;
     private JFrame _nextForm;
+    
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Move to row">

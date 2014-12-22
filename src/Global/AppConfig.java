@@ -23,6 +23,7 @@ public class AppConfig {
 
     public static final int MAX_TRY_LOGIN = 10;
     public static final boolean IS_TESTING = true;
+    public static final String  PERSISTENSE_CONNECTION_STRING = "chatdatabase";
     /**
      * returns path like this E:\Working\GitHub\Simple-Chat-System (without
      * slash)

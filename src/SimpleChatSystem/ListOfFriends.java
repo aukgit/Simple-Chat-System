@@ -5,8 +5,10 @@
  */
 package SimpleChatSystem;
 
+import CurrentDb.CommonData;
 import CurrentDb.Tables.UserTable;
 import DesignPattern.JFrameInheritable;
+import java.sql.Array;
 
 /**
  *
@@ -33,6 +35,9 @@ public class ListOfFriends extends JFrameInheritable {
             adminConfigBtn.setVisible(false);
         }
         
+        for (String item : CommonData.getActiveStateList()) {
+            this.UserActiveState.add(item);
+        }
   
     }
 

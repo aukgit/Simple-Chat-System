@@ -21,14 +21,16 @@ public class DbData extends SQLError {
     private String[] _columns;
     private ArrayList<String[]> _data;
     private ResultSet _rs;
+    private DatabaseQuery _db;
     private boolean isInitialized = false;
 
     /**
      *
      * @param countRows
      */
-    public DbData() {
-
+    public DbData(DatabaseQuery db) {
+        _db = db;
+        _rs = db.getRs();
     }
 
     public String[] getColumns() {
@@ -79,7 +81,7 @@ public class DbData extends SQLError {
     public ResultSet getResultSet() {
         return _rs;
     }
-    
+
     // it moves the cursor to the index
     public String[] getRow(int index) {
         if (isInitialized) {
@@ -104,11 +106,44 @@ public class DbData extends SQLError {
             }
         } catch (SQLException ex) {
             ErrorMessage(ex, "Can't give column value.", "getRow method");
-        }      
-        
+        }
 
         return rowValues;
 
+    }
+
+    // it moves the cursor to the index
+    public String[] getSingleColumnValues(String columnName) {
+
+        if (_rs == null) {
+            ErrorMessage("Record Set empty.", "reIntialize");
+            return null;
+        }
+        if (_columns == null) {
+            _columns = _db.getColumnsNames();
+        }
+
+        try {
+            _rs.absolute(1);
+            
+        } catch (SQLException sQLException) {
+            ErrorMessage(sQLException, "Can't move record.", "getRow method");
+            return null;
+        }
+        _db.setRs(_rs);
+        int rowsExist = _db.rowCount();
+        
+        String[] rowValues = new String[rowsExist];
+        try {
+            for (int i = 0; i < rowsExist; i++) {
+                _rs.absolute(i+1);
+                rowValues[i] = _rs.getString(columnName);
+            }
+        } catch (SQLException ex) {
+            ErrorMessage(ex, "Can't give column value.", "getSingleColumnValues method");
+        }
+
+        return rowValues;
     }
 
     public String getRowValue(int index, String columnName) {
@@ -140,7 +175,7 @@ public class DbData extends SQLError {
                     result = _rs.getString(column);
                 } catch (SQLException ex) {
                     Logger.getLogger(DbData.class.getName()).log(Level.SEVERE, null, ex);
-                }              
+                }
                 return result;
             }
         }

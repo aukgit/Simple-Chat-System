@@ -12,6 +12,7 @@ import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
 import DesignPattern.JFrameInheritable;
 import Global.AppConfig;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,6 +84,11 @@ public class Startup extends JFrameInheritable {
         });
 
         UsernameTextBox.setText("username or email");
+        UsernameTextBox.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                UsernameTextBoxKeyReleased(evt);
+            }
+        });
 
         UsernameLabel.setText("Username:");
 
@@ -97,6 +103,16 @@ public class Startup extends JFrameInheritable {
         });
 
         PasswordTextBox.setToolTipText("Please write your password");
+        PasswordTextBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PasswordTextBoxActionPerformed(evt);
+            }
+        });
+        PasswordTextBox.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                UsernameTextBoxKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -164,6 +180,10 @@ public class Startup extends JFrameInheritable {
     @SuppressWarnings("deprecation")
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+        Login();
+
+    }//GEN-LAST:event_jButton4ActionPerformed
+    void Login() {
         if (loginCounter >= AppConfig.MAX_TRY_LOGIN) {
             getMessageBox().show(this, "Your login is blocked for short time. Try again later.");
             return;
@@ -204,8 +224,22 @@ public class Startup extends JFrameInheritable {
             OnSuccessLogin(true);
         }
         loginCounter++;
+    }
+    private void UsernameTextBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_UsernameTextBoxKeyReleased
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (this.PasswordTextBox.getText() == null || "".equals(this.PasswordTextBox.getText())) {
+                this.PasswordTextBox.grabFocus();
+            } else {
+                Login();
+            }
+        }
 
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_UsernameTextBoxKeyReleased
+
+    private void PasswordTextBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PasswordTextBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_PasswordTextBoxActionPerformed
 
     @SuppressWarnings("deprecation")
     public void OnSuccessLogin(boolean foundByUserName) {
@@ -239,7 +273,7 @@ public class Startup extends JFrameInheritable {
      */
     public static void main(String args[]) throws IOException {
         /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        //        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
 //        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
 //         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
 //         */

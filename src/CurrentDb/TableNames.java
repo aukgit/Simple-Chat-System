@@ -11,6 +11,7 @@ package CurrentDb;
  */
 public interface TableNames {
 
+    public String ACTIVESTATE = "activestate";
     public String CHATLIST = "chatlist";
     public String CHATSESSION = "chatsession";
     public String MESSAGE = "message";

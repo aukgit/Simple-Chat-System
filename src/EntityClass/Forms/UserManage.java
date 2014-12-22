@@ -6,8 +6,8 @@
 package EntityClass.Forms;
 
 import CurrentDb.TableNames;
-import Database.DatabaseQuery;
 import DesignPattern.JPanelDbInheritable;
+import Global.AppConfig;
 import InputValidation.Validate;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
@@ -25,10 +25,11 @@ import javax.swing.JFrame;
 public class UserManage extends JPanelDbInheritable {
 
     private static final long serialVersionUID = 1L;
-  
 
     public UserManage() {
+ 
         initComponents();
+        
         if (!Beans.isDesignTime()) {
             entityManager.getTransaction().begin();
         }
@@ -45,7 +46,7 @@ public class UserManage extends JPanelDbInheritable {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        entityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("chatdatabase?zeroDateTimeBehavior=convertToNullPU").createEntityManager();
+        entityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("chatdatabase").createEntityManager();
         query = java.beans.Beans.isDesignTime() ? null : entityManager.createQuery("SELECT u FROM User u");
         list = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(query.getResultList());
         masterScrollPane = new javax.swing.JScrollPane();
@@ -344,7 +345,7 @@ public class UserManage extends JPanelDbInheritable {
         // TODO add your handling code here:
         doSearch();
     }//GEN-LAST:event_searchBtnActionPerformed
-   
+
     public void doSearch() {
         String input = this.searchTextBox.getText();
         if (Validate.sqlSearchValid(searchTextBox, this.searchLabel)) {
@@ -415,6 +416,8 @@ public class UserManage extends JPanelDbInheritable {
     @Override
     public void initalizeTableName() {
         this.getDb().setTableName(TableNames.USER);
+                this.getDb().setConnectinStringToEntity(entityManager, AppConfig.PERSISTENSE_CONNECTION_STRING);
+
     }
 
 }
