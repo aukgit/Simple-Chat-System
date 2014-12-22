@@ -5,7 +5,7 @@
  */
 package EntityClass.Forms;
 
-import DesignPattern.JFrameInheritable;
+import DesignPattern.JPanelDbInheritable;
 import java.awt.EventQueue;
 import java.beans.Beans;
 import java.util.ArrayList;
@@ -13,13 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.RollbackException;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 /**
  *
  * @author Alim
  */
-public class ServerConfigForm extends JPanel {
+public class ServerConfigForm extends JPanelDbInheritable {
     
     public ServerConfigForm() {
         initComponents();
@@ -269,6 +268,11 @@ public class ServerConfigForm extends JPanel {
                 frame.setVisible(true);
             }
         });
+    }
+
+    @Override
+    public void initalizeTableName() {
+        
     }
 
 

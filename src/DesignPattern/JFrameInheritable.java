@@ -83,7 +83,7 @@ public abstract class JFrameInheritable extends JFrameDbComponents {
         this.setNextForm(frame);
     }
 
-    public JFrameInheritable getFrame(final JPanelDbComponent panel) {
+    public JFrameInheritable getFrame(final JPanelDbInheritable panel) {
         JFrameInheritable frame = new JFrameInheritable() {
             private static final long serialVersionUID = 1L;
 

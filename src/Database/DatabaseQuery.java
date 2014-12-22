@@ -1707,7 +1707,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     public String[] getColumnsSplited(String columns) {
-        if (columns == null) {
+        if (columns != null) {
             return columns.split(dbAttr.getColumnSplitter());
         }
         return null;
@@ -1729,7 +1729,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     public String[] getValuesSplited(String values) {
-        if (values == null) {
+        if (values != null) {
             return values.split(dbAttr.getValueSplitter());
         }
         return null;

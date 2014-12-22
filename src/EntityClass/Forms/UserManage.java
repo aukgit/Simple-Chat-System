@@ -7,6 +7,7 @@ package EntityClass.Forms;
 
 import CurrentDb.TableNames;
 import Database.DatabaseQuery;
+import DesignPattern.JPanelDbInheritable;
 import InputValidation.Validate;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
@@ -16,24 +17,22 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.RollbackException;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 /**
  *
  * @author Alim
  */
-public class UserManage extends JPanel {
+public class UserManage extends JPanelDbInheritable {
 
     private static final long serialVersionUID = 1L;
-    DatabaseQuery db = new DatabaseQuery();
+  
 
     public UserManage() {
         initComponents();
         if (!Beans.isDesignTime()) {
             entityManager.getTransaction().begin();
         }
-        
-        db.setTableName(TableNames.USER);
+
     }
 
     /**
@@ -345,11 +344,12 @@ public class UserManage extends JPanel {
         // TODO add your handling code here:
         doSearch();
     }//GEN-LAST:event_searchBtnActionPerformed
-   public void doSearch() {
+   
+    public void doSearch() {
         String input = this.searchTextBox.getText();
         if (Validate.sqlSearchValid(searchTextBox, this.searchLabel)) {
-            input = db.setSameInputValueForOrQuery(input, 2);
-            db.searchInEntity("Username,Email", input, entityManager, list, query);
+            input = this.getDb().setSameInputValueForOrQuery(input, 2);
+            this.getDb().searchInEntity("Username,Email", input, entityManager, list, query);
         }
     }
 
@@ -410,6 +410,11 @@ public class UserManage extends JPanel {
                 frame.setVisible(true);
             }
         });
+    }
+
+    @Override
+    public void initalizeTableName() {
+        this.getDb().setTableName(TableNames.USER);
     }
 
 }

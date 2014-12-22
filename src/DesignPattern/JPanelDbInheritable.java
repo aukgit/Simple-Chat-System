@@ -14,7 +14,7 @@ import javax.swing.JFrame;
  *
  * @author Alim
  */
-public abstract class JPanelDbComponent extends javax.swing.JPanel implements IDbComponents {
+public abstract class JPanelDbInheritable extends javax.swing.JPanel implements IDbComponents {
 
     private static final long serialVersionUID = 1L;
 
@@ -58,7 +58,8 @@ public abstract class JPanelDbComponent extends javax.swing.JPanel implements ID
         loadNewForm(callingFrame, frame);
     }
 
-    public JPanelDbComponent() {
+    public JPanelDbInheritable() {
+        setDb(new DatabaseQuery());
         initComponents();
         initalizeTableName();
     }
@@ -95,7 +96,7 @@ public abstract class JPanelDbComponent extends javax.swing.JPanel implements ID
         this.setNextForm(nextFrame);
     }
     
-    public JFrameInheritable getFrame(final JPanelDbComponent panel) {
+    public JFrameInheritable getFrame(final JPanelDbInheritable panel) {
         JFrameInheritable frame;
         frame = new JFrameInheritable() {
             private static final long serialVersionUID = 1L;
