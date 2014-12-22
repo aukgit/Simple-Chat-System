@@ -1,3 +1,6 @@
+#code file 
+*.class
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
@@ -13,6 +16,7 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+
 
 # =========================
 # Operating System Files
