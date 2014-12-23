@@ -39,7 +39,7 @@ public class ListOfFriends extends JFrameInheritable {
 
     }
 
-    public ListOfFriends(UserTable u) {
+    public void customInit(UserTable u) {
         initComponents();
         setUser(u);
         if (getUser().IsAdmin) {
@@ -52,21 +52,16 @@ public class ListOfFriends extends JFrameInheritable {
             this.UserActiveState.add(item);
         }
         loadCurrentStatus();
+
     }
-    
-    public ListOfFriends(UserTable u) {
-        initComponents();
-        setUser(u);
-        if (getUser().IsAdmin) {
-            adminConfigBtn.setVisible(true);
-        } else {
-            adminConfigBtn.setVisible(false);
-        }
 
-        for (String item : CommonData.getActiveStateList()) {
-            this.UserActiveState.add(item);
-        }
-        loadCurrentStatus();
+    public ListOfFriends(UserTable u) {
+        customInit(u);
+    }
+
+    public ListOfFriends() {
+        this.getDb().getResultsFirstAsObject(_user);
+        customInit(_user);
     }
 
     /**

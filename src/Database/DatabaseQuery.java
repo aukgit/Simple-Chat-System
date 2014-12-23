@@ -61,6 +61,8 @@ public final class DatabaseQuery extends DbInitalizer {
 
     private int queryStartLimit;
     private int queryEndLimit;
+    private int rowCountValueCached = -1;
+
     //<editor-fold defaultstate="collapsed" desc="Entity Required fields">
     private String tableAlias = "f";
 
@@ -586,6 +588,8 @@ public final class DatabaseQuery extends DbInitalizer {
         try {
             LastSQL = sql;
             rs = getStmt().executeQuery(sql);
+            rowCount();
+
         } catch (Exception ex) {
             ErrorMessage(ex, LastSQL, "ExecuteReadQuery(String sql)");
             LastSQL = "";
@@ -1620,7 +1624,6 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold>
-        
     // <editor-fold defaultstate="collapsed" desc="Move to row ">
     public ResultSet moveToRow(int rowNumber) {
         if (isResultValid(rowNumber)) {
@@ -1689,7 +1692,7 @@ public final class DatabaseQuery extends DbInitalizer {
                 }
             }
         } catch (SQLException | IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+            ErrorMessage(ex, this.LastSQL,"getResultsAsObject() - may be row doesn't exist");
         }
     }
 
@@ -1702,6 +1705,44 @@ public final class DatabaseQuery extends DbInitalizer {
     public <T> void getResultsAsObject(T classObject) {
         getResultsAsObject(classObject, 1);
     }
+    
+    
+    /**
+     * database's first row
+     *
+     * @param <T>
+     * @param classObject : your class type
+     */
+    public <T> void getResultsFirstAsObject(T classObject) {
+        setLimitsOnQuery(0, 1);
+        readData();
+        getResultsAsObject(classObject, 1);
+    }
+    /**
+     * row default first
+     *
+     * @param <T>
+     * @param columns: checkout your db attr splitter for column
+     * @param values: checkout your db attr splitter for value
+     * @param classObject : your class type
+     */
+    public <T> void getResultsFirstAsObject(String columns, String values, T classObject) {
+        readData(columns, values, 0, 1);
+        getResultsAsObject(classObject, 1);
+    }
+
+    /**
+     * row default first
+     *
+     * @param <T>
+     * @param columns: checkout your db attr splitter for column
+     * @param values: checkout your db attr splitter for value
+     * @param classObject : your class type
+     */
+    public <T> void getResultsFirstAsObject(String[] columns, String[] values, T classObject) {
+        readData(columns, values, 0, 1);
+        getResultsAsObject(classObject, 1);
+    }
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="row counts of result set">
@@ -1710,7 +1751,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @return how many rows exist in the result set.
      */
     public int rowCount() {
-        if (rs != null) {
+        if (isResultSetInitialized() && rowCountValueCached == -1) {
             try {
                 int currentPos = rs.getRow();
                 rs.last();
@@ -1718,11 +1759,14 @@ public final class DatabaseQuery extends DbInitalizer {
                 if (currentPos > -1) {
                     rs.absolute(currentPos);
                 }
+                rowCountValueCached = count;
                 return count;
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
 
             }
+        } else if (isResultSetInitialized() && rowCountValueCached > -1) {
+            return rowCountValueCached;
         }
         return 0;
     }
@@ -1782,7 +1826,6 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold>
-        
     // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
     /**
      * Zero based index.
@@ -1842,7 +1885,6 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold>   
-        
     // <editor-fold defaultstate="collapsed" desc="Getters Setters Folder">
     //<editor-fold defaultstate="collapsed" desc="Getters">
     //<editor-fold defaultstate="collapsed" desc="Getters related to List">
@@ -2297,7 +2339,6 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold> 
-        
     // <editor-fold defaultstate="collapsed" desc="How to use it comments ">
     public static void main(String args[]) {
         UserTable _user = new UserTable();
