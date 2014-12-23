@@ -23,4 +23,6 @@ public class UserTable {
     public boolean IsBlocked;
     public boolean IsActive;
     public boolean IsAdmin;
+    public boolean IsOnline;
+    
 }

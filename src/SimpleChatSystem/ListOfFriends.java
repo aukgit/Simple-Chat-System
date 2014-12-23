@@ -10,11 +10,7 @@ import CurrentDb.TableColumns.UserStatus;
 import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
 import Database.DatabaseQuery;
-import Database.DbData;
 import DesignPattern.JFrameInheritable;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -33,23 +29,14 @@ public class ListOfFriends extends JFrameInheritable {
     public void loadCurrentStatus() {
         DatabaseQuery db2 = new DatabaseQuery();
         db2.setTableName(TableNames.USERSTATUS);
-        String whereSql = UserStatus.UserID + "=" + _user.UserID + " ORDER BY DATED DESC LIMIT 1";
+        String whereSql = getLatestStatusWhereSQL();
         db2.readData(whereSql);
-        String sql = db2.LastSQL;
-
+        String currentStatus = "No Status";
         if (db2.rowCount() > 0) {
-
-            String currentStatus = "No Status";
-            try {
-                db2.getRs().first();
-                currentStatus = db2.getRs().getString(UserStatus.Status);
-            } catch (SQLException ex) {
-                Logger.getLogger(ListOfFriends.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            this.UsterstatusLabel.setText(currentStatus);
-        } else {
-            this.UsterstatusLabel.setText("No Status");
+            currentStatus = db2.getValue(1, currentStatus);
         }
+        this.UsterstatusLabel.setText(currentStatus);
+
     }
 
     public ListOfFriends(UserTable u) {
@@ -64,7 +51,22 @@ public class ListOfFriends extends JFrameInheritable {
         for (String item : CommonData.getActiveStateList()) {
             this.UserActiveState.add(item);
         }
+        loadCurrentStatus();
+    }
+    
+    public ListOfFriends(UserTable u) {
+        initComponents();
+        setUser(u);
+        if (getUser().IsAdmin) {
+            adminConfigBtn.setVisible(true);
+        } else {
+            adminConfigBtn.setVisible(false);
+        }
 
+        for (String item : CommonData.getActiveStateList()) {
+            this.UserActiveState.add(item);
+        }
+        loadCurrentStatus();
     }
 
     /**
@@ -250,5 +252,9 @@ public class ListOfFriends extends JFrameInheritable {
      */
     public void setUser(UserTable _user) {
         this._user = _user;
+    }
+
+    private String getLatestStatusWhereSQL() {
+        return UserStatus.UserID + "=" + _user.UserID + " ORDER BY DATED DESC LIMIT 1";
     }
 }

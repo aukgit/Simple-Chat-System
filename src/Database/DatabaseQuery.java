@@ -59,6 +59,8 @@ public final class DatabaseQuery extends DbInitalizer {
     private Statement stmt, tempStatement;
     private ResultSet rs;
 
+    private int queryStartLimit;
+    private int queryEndLimit;
     //<editor-fold defaultstate="collapsed" desc="Entity Required fields">
     private String tableAlias = "f";
 
@@ -635,6 +637,16 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="is result set init">
+    /**
+     *
+     * @return true if resultset is not null
+     */
+    public boolean isResultSetInitialized() {
+        return isResultSetInitialized();
+    }
+//</editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="C - [Create] in CRUD">
     public String completeCreateQuery() {
         formulateCreateSQL(getCreateFields(), getCreateFieldsValues());
@@ -767,6 +779,71 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Setting and getting limits">
+    /**
+     *
+     * @param start : less than or equal to '0' means starts from begining
+     * @param end : less than or equal to '0' means loads all from starting
+     * point
+     */
+    public void setLimitsOnQuery(int start, int end) {
+        queryStartLimit = start;
+        queryEndLimit = end;
+    }
+
+    /**
+     * for mysql limit start,end for mssql top
+     *
+     * @return based on database attribute
+     */
+    public String getLimitSQLBottom() {
+        String returnSql = "";
+        if (dbAttr.getCurrentDatabaseConfig() == DbAttribute.MYSQL) {
+            if (queryStartLimit > 0 && queryEndLimit > 0) {
+                returnSql = " Limit " + queryStartLimit + "," + queryEndLimit;
+            } else if (queryStartLimit > 0) {
+                returnSql = " Limit " + queryStartLimit;
+            } else if (queryEndLimit > 0) {
+                returnSql = " Limit " + 0 + "," + queryEndLimit;
+            }
+        }
+        return returnSql;
+    }
+
+    /**
+     * for mssql top end
+     *
+     * @return
+     */
+    public String getLimitSQLTop() {
+        String returnSql = "";
+        if (dbAttr.getCurrentDatabaseConfig() == DbAttribute.MICROSOFT_SQL_SERVER) {
+            if (queryStartLimit > 0 && queryEndLimit > 0) {
+                returnSql = " TOP " + queryEndLimit; //end at
+                if (isResultSetInitialized()) {
+                    try {
+                        getRs().setFetchDirection(queryStartLimit);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            } else if (queryStartLimit > 0) {
+                if (isResultSetInitialized()) {
+                    try {
+                        getRs().setFetchDirection(queryStartLimit);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            } else if (queryEndLimit > 0) {
+                returnSql = " TOP " + queryEndLimit; //end at
+
+            }
+        }
+        return returnSql;
+    }
+
+    //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="R - [Read/Select] in CRUD">
     public String formulateQuery() {
         String q = "";
@@ -1301,8 +1378,10 @@ public final class DatabaseQuery extends DbInitalizer {
         if (whereClause.equals("") == false) {
             whereClause = " WHERE " + whereClause;
         }
+        String tempSQL = "SELECT " + tableAlias + " FROM " + tempTable + " " + tableAlias + " " + whereClause;
+
         //this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName() + q);
-        this.setSelectSQL("SELECT " + tableAlias + " FROM " + tempTable + " " + tableAlias + " " + whereClause); //only for entity manager
+        this.setSelectSQL(tempSQL); //only for entity manager
         //this.setSelectSQL("SELECT x,f FROM  FoodCategory x, Food f ON f.foodCategoryId = x.foodCategoryId " + tableAlias +" " + q); //only for entity manager
         return this.getSelectSQL();
 
@@ -1371,6 +1450,50 @@ public final class DatabaseQuery extends DbInitalizer {
         } catch (Exception e) {
             ErrorMessage(e, sql, "searchInEntity(String sql, EntityManager em, List<Object> list, Query queryQ)");
         }
+    }
+//</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Get column value">
+    /**
+     * It moves cursor to last to get the index if exist Heavy method
+     *
+     * @param index : 1 based index
+     * @param columnName
+     * @return on not found returns default empty("") string
+     */
+    public String getValidValue(int index, String columnName) {
+        if (isResultSetInitialized() && isResultValid(index)) {
+            try {
+                int currentRow = getRs().getRow();
+                getRs().absolute(index);
+                String val = getRs().getString(columnName);
+                if (currentRow > -1) {
+                    getRs().absolute(currentRow);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Moves the cursor to that index.
+     *
+     * @param index : 1 based index
+     * @param columnName
+     * @return
+     */
+    public String getValue(int index, String columnName) {
+        if (isResultSetInitialized()) {
+            try {
+                getRs().absolute(index);
+                return getRs().getString(columnName);
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return "";
     }
 //</editor-fold>
 
@@ -1478,6 +1601,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Move to row ">
     public ResultSet moveToRow(int rowNumber) {
         if (isResultValid(rowNumber)) {
@@ -1561,7 +1685,7 @@ public final class DatabaseQuery extends DbInitalizer {
     public <T> void getResultsAsObject(Class<?> classNative, T obj) {
         getResultsAsObject(classNative, 1, obj);
     }
-//</editor-fold>
+    //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="row counts of result set">
     /**
@@ -1641,6 +1765,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
     /**
      * Zero based index.
@@ -1700,6 +1825,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold>    
+    
     // <editor-fold defaultstate="collapsed" desc="Getters Setters Folder">
     //<editor-fold defaultstate="collapsed" desc="Getters">
     //<editor-fold defaultstate="collapsed" desc="Getters related to List">
@@ -2154,6 +2280,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>    
+    
     // <editor-fold defaultstate="collapsed" desc="How to use it comments ">
     public static void main(String args[]) {
         UserTable _user = new UserTable();

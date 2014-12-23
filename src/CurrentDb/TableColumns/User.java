@@ -21,5 +21,6 @@ public interface User {
     public String IsBlocked = "IsBlocked";
     public String IsActive = "IsActive";
     public String IsAdmin = "IsAdmin";
+    public String IsOnline = "IsOnline";
 
 }

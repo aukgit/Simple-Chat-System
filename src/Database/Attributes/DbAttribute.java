@@ -17,6 +17,10 @@ public class DbAttribute {
     private String _columnSplitter;
     private String _valueSplitter;
     private String _defaultDateFormat;
+    private byte _currentDatabaseConfig;
+    
+    public static final byte MYSQL = 0;
+    public static final byte MICROSOFT_SQL_SERVER = 0;
     /**
      * @return the _wildCard
      */
@@ -99,6 +103,20 @@ public class DbAttribute {
      */
     public void setDefaultDateFormat(String _defaultDateFormat) {
         this._defaultDateFormat = _defaultDateFormat;
+    }
+
+    /**
+     * @return the _currentDatabaseConfig
+     */
+    public byte getCurrentDatabaseConfig() {
+        return _currentDatabaseConfig;
+    }
+
+    /**
+     * @param _currentDatabaseConfig the _currentDatabaseConfig to set
+     */
+    public void setCurrentDatabaseConfig(byte _currentDatabaseConfig) {
+        this._currentDatabaseConfig = _currentDatabaseConfig;
     }
 
    

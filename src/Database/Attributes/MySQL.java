@@ -22,6 +22,7 @@ public class MySQL extends DbAttribute {
         setColumnSplitter(MYSQL_COLUMN_SPLITER);
         setValueSplitter(MYSQL_VALUE_SPLITER);
         setDefaultDateFormat(MYSQL_DATE_FORMAT);
+        setCurrentDatabaseConfig(DbAttribute.MYSQL);
     }
 
 }
