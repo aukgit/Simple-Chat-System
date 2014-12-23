@@ -20,7 +20,7 @@ public class DbAttribute {
     private byte _currentDatabaseConfig;
     
     public static final byte MYSQL = 0;
-    public static final byte MICROSOFT_SQL_SERVER = 0;
+    public static final byte MICROSOFT_SQL_SERVER = 1;
     /**
      * @return the _wildCard
      */

@@ -67,6 +67,8 @@ public abstract class JFrameInheritable extends JFrameDbComponents {
     public void loadNewForm(JFrameInheritable frame, boolean onTop) {
         loadNewForm(frame);
         frame.setAlwaysOnTop(true);
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+
     }
 
     public void loadNewForm(JFrameInheritable frame, boolean onTop, boolean hideCurrentOne) {
@@ -74,6 +76,8 @@ public abstract class JFrameInheritable extends JFrameDbComponents {
         if (hideCurrentOne) {
             this.hide();
         }
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+
     }
 
     public void loadNewForm(JFrameInheritable frame) {
@@ -81,6 +85,7 @@ public abstract class JFrameInheritable extends JFrameDbComponents {
         frame.show(true);
         frame.setPreviousForm(this);
         this.setNextForm(frame);
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     }
 
     public JFrameInheritable getFrame(final JPanelDbInheritable panel) {

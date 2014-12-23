@@ -650,7 +650,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @return true if resultset is not null
      */
     public boolean isResultSetInitialized() {
-        return isResultSetInitialized();
+        return getRs() != null;
     }
     //</editor-fold>
 
@@ -1518,7 +1518,7 @@ public final class DatabaseQuery extends DbInitalizer {
         }
         return "";
     }
-//</editor-fold>
+   //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Others + Showing Data in Console">
     public void showData() {
@@ -1756,7 +1756,7 @@ public final class DatabaseQuery extends DbInitalizer {
                 int currentPos = rs.getRow();
                 rs.last();
                 int count = rs.getRow();
-                if (currentPos > -1) {
+                if (currentPos > 0) {
                     rs.absolute(currentPos);
                 }
                 rowCountValueCached = count;

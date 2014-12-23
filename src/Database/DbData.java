@@ -176,7 +176,7 @@ public class DbData extends SQLError {
         for (String singleColumnRow : singleColumnRows) {
             listModel.addElement(singleColumnRow);
         }
-        list = new JList(listModel);
+        list.setModel(listModel);
     }
 
     public String getRowValue(int index, String columnName) {

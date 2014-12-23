@@ -11,6 +11,11 @@ import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
 import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
@@ -33,7 +38,7 @@ public class ListOfFriends extends JFrameInheritable {
         db2.readData(whereSql);
         String currentStatus = "No Status";
         if (db2.rowCount() > 0) {
-            currentStatus = db2.getValue(1, currentStatus);
+            currentStatus = db2.getValue(1, UserStatus.Status);
         }
         this.UsterstatusLabel.setText(currentStatus);
 
@@ -60,6 +65,7 @@ public class ListOfFriends extends JFrameInheritable {
     }
 
     public ListOfFriends() {
+        _user = new UserTable();
         this.getDb().getResultsFirstAsObject(_user);
         customInit(_user);
     }
@@ -195,6 +201,7 @@ public class ListOfFriends extends JFrameInheritable {
         if (evt.getClickCount() == 2) {
             UpdateStatus updateStatus;
             updateStatus = new UpdateStatus(_user, this);
+            updateStatus.setTitle("Update your status");
             loadNewForm(updateStatus);
         }
     }//GEN-LAST:event_UsterstatusLabelMouseClicked
@@ -218,7 +225,7 @@ public class ListOfFriends extends JFrameInheritable {
 
     @Override
     public void initalizeTableName() {
-
+        this.getDb().setTableName(TableNames.USER);
     }
 
     /**
@@ -251,5 +258,45 @@ public class ListOfFriends extends JFrameInheritable {
 
     private String getLatestStatusWhereSQL() {
         return UserStatus.UserID + "=" + _user.UserID + " ORDER BY DATED DESC LIMIT 1";
+    }
+    
+    
+    public static void main(String args[]) throws IOException {
+        /* Set the Nimbus look and feel */
+        //        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(Startup.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(Startup.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(Startup.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(Startup.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new ListOfFriends().setVisible(true);
+            }
+        });
+        try {
+            UIManager.setLookAndFeel(
+                    UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
