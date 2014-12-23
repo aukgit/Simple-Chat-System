@@ -1619,7 +1619,8 @@ public final class DatabaseQuery extends DbInitalizer {
         return names.split(",");
     }
 
-// </editor-fold>
+    // </editor-fold>
+        
     // <editor-fold defaultstate="collapsed" desc="Move to row ">
     public ResultSet moveToRow(int rowNumber) {
         if (isResultValid(rowNumber)) {
@@ -1781,6 +1782,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold>
+        
     // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
     /**
      * Zero based index.
@@ -1839,7 +1841,8 @@ public final class DatabaseQuery extends DbInitalizer {
         return false;
     }
 
-    // </editor-fold>    
+    // </editor-fold>   
+        
     // <editor-fold defaultstate="collapsed" desc="Getters Setters Folder">
     //<editor-fold defaultstate="collapsed" desc="Getters">
     //<editor-fold defaultstate="collapsed" desc="Getters related to List">
@@ -2293,7 +2296,8 @@ public final class DatabaseQuery extends DbInitalizer {
         return createFieldsValuesString;
     }
 
-// </editor-fold>    
+    // </editor-fold> 
+        
     // <editor-fold defaultstate="collapsed" desc="How to use it comments ">
     public static void main(String args[]) {
         UserTable _user = new UserTable();
