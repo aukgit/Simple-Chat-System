@@ -252,7 +252,7 @@ public class Startup extends JFrameInheritable {
             this.getDb().readData(User.Email, UsernameTextBox.getText()); // get user
         }
 
-        this.getDb().getResultsAsObject(_user.getClass(), _user);
+        this.getDb().getResultsAsObject(_user);
 
         ListOfFriends listOfFriendsForm = new ListOfFriends(_user);
         Codes.displayRightMiddle(listOfFriendsForm);

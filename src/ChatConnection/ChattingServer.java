@@ -45,7 +45,7 @@ public class ChattingServer implements Runnable {
     public void reReadDataFromServer() {
         // executing the db
         db.readData();
-        db.getResultsAsObject(serverConfig.getClass(), serverConfig);
+        db.getResultsAsObject(serverConfig);
     }
 
     @Override

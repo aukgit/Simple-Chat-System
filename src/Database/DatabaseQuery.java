@@ -956,6 +956,19 @@ public final class DatabaseQuery extends DbInitalizer {
      *
      * @param Columns : CSV
      * @param valuesSearchInFields: semi-colon
+     * @param startLimit : less than or equal zero means no effect.
+     * @param endLimit : less than or equal zero means no effect.
+     * @return
+     */
+    public ResultSet readData(String Columns, String valuesSearchInFields, int startLimit, int endLimit) {
+        setLimitsOnQuery(startLimit, endLimit);
+        return readData(Columns, valuesSearchInFields);
+    }
+
+    /**
+     *
+     * @param Columns : CSV
+     * @param valuesSearchInFields: semi-colon
      * @return
      */
     public ResultSet readData(String Columns, String valuesSearchInFields) {
@@ -987,6 +1000,19 @@ public final class DatabaseQuery extends DbInitalizer {
             ErrorMessage(ex, this.getSelectSQL(), "readData(String Columns[], String ValuesToSearch[])");
         }
         return rs;
+    }
+
+    /**
+     *
+     * @param Columns : dbAttr splitter checkout
+     * @param valuesSearchInFields : dbAttr splitter checkout
+     * @param startLimit : less than or equal zero means no effect.
+     * @param endLimit : less than or equal zero means no effect.
+     * @return
+     */
+    public ResultSet readData(String Columns[], String valuesSearchInFields[], int startLimit, int endLimit) {
+        setLimitsOnQuery(startLimit, endLimit);
+        return readData(Columns, valuesSearchInFields);
     }
 
     public ResultSet readData(String Columns[], String ValuesToSearch[], String joingTypes[]) {
@@ -1094,7 +1120,7 @@ public final class DatabaseQuery extends DbInitalizer {
         }
         return this.rs;
     }
-// </editor-fold>
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="U - [Update] in CRUD">
 //    public boolean updateDataWithoutSQL(int rowNumber , String [] dataColumnWise){
@@ -1594,7 +1620,6 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>
-    
     // <editor-fold defaultstate="collapsed" desc="Move to row ">
     public ResultSet moveToRow(int rowNumber) {
         if (isResultValid(rowNumber)) {
@@ -1627,13 +1652,12 @@ public final class DatabaseQuery extends DbInitalizer {
     /**
      *
      * @param <T>
-     * @param classNative : class.getClass()
      * @param row : 1 based index
-     * @param obj: class itself
+     * @param classObject: class itself
      */
-    public <T> void getResultsAsObject(Class<?> classNative, int row, T obj) {
+    public <T> void getResultsAsObject(T classObject, int row) {
 
-        Field[] fieldsInClass = Codes.getAllFields(classNative);
+        Field[] fieldsInClass = Codes.getAllFields(classObject.getClass());
         List<String> Columns = Arrays.asList(getColumnsNames());
         moveToRow(row);
         try {
@@ -1645,21 +1669,21 @@ public final class DatabaseQuery extends DbInitalizer {
                     String fieldName = field.getName();
 
                     if (field.getType().equals(Double.TYPE) || field.getType().equals(Double.class)) {
-                        field.setDouble(obj, rs.getDouble(fieldName));
+                        field.setDouble(classObject, rs.getDouble(fieldName));
                     } else if (field.getType() == Integer.TYPE || field.getType() == Integer.class) {
-                        field.setInt(obj, rs.getInt(fieldName));
+                        field.setInt(classObject, rs.getInt(fieldName));
                     } else if (field.getType().equals(Long.TYPE) || field.getType().equals(Long.class)) {
-                        field.setLong(obj, getRs().getLong(fieldName));
+                        field.setLong(classObject, getRs().getLong(fieldName));
                     } else if (field.getType().equals(Date.class)) {
-                        field.set(obj, getRs().getDate(fieldName));
+                        field.set(classObject, getRs().getDate(fieldName));
                     } else if (field.getType().equals(Float.TYPE) || field.getType().equals(Float.class)) {
-                        field.setFloat(obj, getRs().getFloat(fieldName));
+                        field.setFloat(classObject, getRs().getFloat(fieldName));
                     } else if (field.getType().equals(Boolean.TYPE) || field.getType().equals(Boolean.class)) {
-                        field.setBoolean(obj, getRs().getBoolean(fieldName));
+                        field.setBoolean(classObject, getRs().getBoolean(fieldName));
                     } else if (field.getType().equals(Short.TYPE) || field.getType().equals(Short.class)) {
-                        field.setShort(obj, getRs().getShort(fieldName));
+                        field.setShort(classObject, getRs().getShort(fieldName));
                     } else {
-                        field.set(obj, rs.getString(fieldName));
+                        field.set(classObject, rs.getString(fieldName));
                     }
                 }
             }
@@ -1672,11 +1696,10 @@ public final class DatabaseQuery extends DbInitalizer {
      * row default first
      *
      * @param <T>
-     * @param classNative : class.getClass()
-     * @param obj: class itself
+     * @param classObject : your class type
      */
-    public <T> void getResultsAsObject(Class<?> classNative, T obj) {
-        getResultsAsObject(classNative, 1, obj);
+    public <T> void getResultsAsObject(T classObject) {
+        getResultsAsObject(classObject, 1);
     }
     //</editor-fold>
 
@@ -1758,7 +1781,6 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold>
-    
     // <editor-fold defaultstate="collapsed" desc="check validation of result set ">
     /**
      * Zero based index.
@@ -1818,7 +1840,6 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     // </editor-fold>    
-    
     // <editor-fold defaultstate="collapsed" desc="Getters Setters Folder">
     //<editor-fold defaultstate="collapsed" desc="Getters">
     //<editor-fold defaultstate="collapsed" desc="Getters related to List">
@@ -2273,7 +2294,6 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>    
-    
     // <editor-fold defaultstate="collapsed" desc="How to use it comments ">
     public static void main(String args[]) {
         UserTable _user = new UserTable();
@@ -2281,7 +2301,7 @@ public final class DatabaseQuery extends DbInitalizer {
         q.setTableName("user");
 //        int rowsFound = q.rowsExistInTable();
         q.readData();
-        q.getResultsAsObject(_user.getClass(), 1, _user);
+        q.getResultsAsObject(_user, 1);
 
         Console.writeLine(_user.toString());
 
