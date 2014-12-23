@@ -187,6 +187,9 @@ public final class DatabaseQuery extends DbInitalizer {
         setJoiningArray(null);
         setQueryTypes(null);
         setQueryTypeInitalized(false);
+        queryEndLimit = 0;
+        queryStartLimit = 0;
+
     }
 
     private void cleanUpdateArrays() {
@@ -645,7 +648,7 @@ public final class DatabaseQuery extends DbInitalizer {
     public boolean isResultSetInitialized() {
         return isResultSetInitialized();
     }
-//</editor-fold>
+    //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="C - [Create] in CRUD">
     public String completeCreateQuery() {
@@ -779,8 +782,10 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="Setting and getting limits">
+    //<editor-fold defaultstate="collapsed" desc="Setting and getting LLL Limits">
     /**
+     * start and end only possible for mysql. end only possible for microsoft
+     * sql server, defining start point is not possible.
      *
      * @param start : less than or equal to '0' means starts from begining
      * @param end : less than or equal to '0' means loads all from starting
@@ -811,7 +816,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     /**
-     * for mssql top end
+     * for mssql top end no start can be set
      *
      * @return
      */
@@ -820,24 +825,10 @@ public final class DatabaseQuery extends DbInitalizer {
         if (dbAttr.getCurrentDatabaseConfig() == DbAttribute.MICROSOFT_SQL_SERVER) {
             if (queryStartLimit > 0 && queryEndLimit > 0) {
                 returnSql = " TOP " + queryEndLimit; //end at
-                if (isResultSetInitialized()) {
-                    try {
-                        getRs().setFetchDirection(queryStartLimit);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
             } else if (queryStartLimit > 0) {
-                if (isResultSetInitialized()) {
-                    try {
-                        getRs().setFetchDirection(queryStartLimit);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+
             } else if (queryEndLimit > 0) {
                 returnSql = " TOP " + queryEndLimit; //end at
-
             }
         }
         return returnSql;
@@ -904,8 +895,9 @@ public final class DatabaseQuery extends DbInitalizer {
 
     public String completeReadQuery() {
         String whereClause = GetSQLWhereClauseFromFields();
+        String tempSql = "SELECT " + getLimitSQLTop() + getOpenFieldsName() + " FROM " + getTableName() + whereClause + getLimitSQLBottom();
 
-        this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName() + whereClause);
+        this.setSelectSQL(tempSql);
         //this.setSelectSQL("SELECT f FROM " + getTableName() + " f "+ q);
         return this.getSelectSQL();
 
@@ -931,6 +923,7 @@ public final class DatabaseQuery extends DbInitalizer {
     public boolean isExist(String[] Columns, String[] valuesSearchInFields) {
         try {
             if (Columns != null && valuesSearchInFields != null) {
+                setLimitsOnQuery(0, 1);
                 rs = readData(Columns, valuesSearchInFields);
                 return isResultValid(1);
             }
@@ -1378,7 +1371,7 @@ public final class DatabaseQuery extends DbInitalizer {
         if (whereClause.equals("") == false) {
             whereClause = " WHERE " + whereClause;
         }
-        String tempSQL = "SELECT " + tableAlias + " FROM " + tempTable + " " + tableAlias + " " + whereClause;
+        String tempSQL = "SELECT " + getLimitSQLTop() + tableAlias + " FROM " + tempTable + " " + tableAlias + " " + whereClause + getLimitSQLBottom();
 
         //this.setSelectSQL("SELECT " + getOpenFieldsName() + " FROM " + getTableName() + q);
         this.setSelectSQL(tempSQL); //only for entity manager
