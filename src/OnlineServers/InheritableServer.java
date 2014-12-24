@@ -1,4 +1,4 @@
-package ChatConnection;
+package OnlineServers;
 
 import CurrentDb.*;
 import CurrentDb.Tables.ServerSettingTable;

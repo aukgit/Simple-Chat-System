@@ -1,4 +1,4 @@
-package ChatConnection;
+package OnlineServers;
 
 import ConsolePackage.Console;
 import java.io.BufferedReader;
@@ -9,12 +9,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class UserOnlineServer extends InheritableServer {
+public class ChatServer extends InheritableServer {
 
     /**
      * checks if not null and alive
@@ -51,7 +50,7 @@ public class UserOnlineServer extends InheritableServer {
 
         while (_serverConfig.IsActive && _shouldThreadRun) {
             Console.writeLine("Server running...." + _serverConfig.IsActive);
-            serverForAddingUser();
+            serverForChatting();
             _serverHitCounter++;
             System.err.println("Counter : " + _serverHitCounter);
             if (_serverHitCounter >= _serverRefershAfterHits) {
@@ -64,63 +63,7 @@ public class UserOnlineServer extends InheritableServer {
 
     }
 
-    private void serverForAddingUser() {
-        ServerSocket severSocket = null;
-        try {
-            severSocket = new ServerSocket(_serverConfig.ServerPort);
-        } catch (IOException ex) {
-            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        Socket connectionSocket = null;
 
-        try {
-            connectionSocket = severSocket.accept();
-        } catch (IOException ex) {
-            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        // for taking input from client
-        InputStream inputStream = null;
-
-        try {
-            inputStream = connectionSocket.getInputStream();
-        } catch (IOException ex) {
-            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        InputStreamReader inputStreamReader = new InputStreamReader(
-                inputStream);
-        BufferedReader inputFromClient = new BufferedReader(
-                inputStreamReader);
-        // for giving output to the client.
-        OutputStream outputStream = null;
-
-        try {
-            outputStream = connectionSocket.getOutputStream();
-        } catch (IOException ex) {
-            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        // output to client, to send data to the server
-        DataOutputStream dataOutputStream = new DataOutputStream(
-                outputStream);
-        // get output from server
-
-        String readingLineFromClientSocket = null;
-
-        try {
-            readingLineFromClientSocket = inputFromClient.readLine();
-        } catch (IOException ex) {
-            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        // sending data to client
-        String modified = doOperation(readingLineFromClientSocket);
-
-        try {
-            // send data to client
-            dataOutputStream.writeBytes(modified + "\n");
-        } catch (IOException ex) {
-            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
     private void serverForChatting() {
         ServerSocket severSocket = null;
@@ -129,7 +72,7 @@ public class UserOnlineServer extends InheritableServer {
         try {
             connectionSocket = severSocket.accept();
         } catch (IOException ex) {
-            Logger.getLogger(UserOnlineServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ChatServer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // for taking input from client
