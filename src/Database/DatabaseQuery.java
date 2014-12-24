@@ -18,6 +18,7 @@ package Database;
 //<editor-fold defaultstate="collapsed" desc="imports">
 import Common.Codes;
 import ConsolePackage.Console;
+import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
 import Database.Attributes.DbAttribute;
 import Database.Attributes.*;
@@ -26,6 +27,7 @@ import Database.Components.IQueryType;
 import Database.Components.StringMore;
 import DesignPattern.JFrameDbComponents;
 import Global.AppConfig;
+import com.sun.istack.internal.FinalArrayList;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -62,6 +64,7 @@ public final class DatabaseQuery extends DbInitalizer {
     private int queryStartLimit;
     private int queryEndLimit;
     private int rowCountValueCached = -1;
+    private boolean isCleanUpNecessaryWhenQueryDone = true;
 
     //<editor-fold defaultstate="collapsed" desc="Entity Required fields">
     private String tableAlias = "f";
@@ -79,15 +82,17 @@ public final class DatabaseQuery extends DbInitalizer {
     private String selectSQL, updateSQL, deleteSQL, createSQL;
     public String LastSQL; //last executed SQL Query
     private static final String SQL_COUNT = "SELECT Count(*) AS COUNT FROM ";
+    private String _showDbColumnsSQL = "SHOW COLUMNS FROM ";
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Table">
     /**
      * table
      */
-    private String TableName = "";
+    private String _tableName = "";
     private String openFieldsName = "*";
-//</editor-fold>
+    private String[] _tableColumnsGlobal = null;
+    //</editor-fold>
 
     public DbAttribute dbAttr;
 
@@ -117,8 +122,40 @@ public final class DatabaseQuery extends DbInitalizer {
     /**
      * By default loads for mysql
      */
+    public DatabaseQuery(String tableName) {
+        initialize(this.url, this.user, this.password, new MySQL());
+        setTableName(tableName);
+    }
+
     public DatabaseQuery() {
         initialize(this.url, this.user, this.password, new MySQL());
+    }
+
+    /**
+     * if true then it will optimize, you also have to note that this db will
+     * only work for a single table. You can also change the setting from
+     * setIsCleanUpNecessaryWhenQueryDone() method
+     *
+     * @param optimizeQueryNoCleanUpsAfterwards : if true then it will optimize,
+     * you also have to note that this db will only work for a single table.
+     */
+    public DatabaseQuery(boolean optimizeQueryNoCleanUpsAfterwards) {
+        initialize(this.url, this.user, this.password, new MySQL());
+        setIsCleanUpNecessaryWhenQueryDone(!optimizeQueryNoCleanUpsAfterwards);
+    }
+
+    /**
+     * if true then it will optimize, you also have to note that this db will
+     * only work for a single table. You can also change the setting from
+     * setIsCleanUpNecessaryWhenQueryDone() method
+     *
+     * @param optimizeQueryNoCleanUpsAfterwards : if true then it will optimize,
+     * you also have to note that this db will only work for a single table.
+     */
+    public DatabaseQuery(String tableName, boolean optimizeQueryNoCleanUpsAfterwards) {
+        initialize(this.url, this.user, this.password, new MySQL());
+        setIsCleanUpNecessaryWhenQueryDone(!optimizeQueryNoCleanUpsAfterwards);
+        setTableName(tableName);
     }
 
     /**
@@ -184,26 +221,35 @@ public final class DatabaseQuery extends DbInitalizer {
 
     // <editor-fold defaultstate="collapsed" desc="Clean Ups">
     private void cleanQueryArrays() {
-        setQueryFieldNamesCleanUp();
-        setQueryValues(null);
-        setJoiningArray(null);
-        setQueryTypes(null);
-        setQueryTypeInitalized(false);
-        queryEndLimit = 0;
-        queryStartLimit = 0;
-
+        if (isIsCleanUpNecessaryWhenQueryDone()) {
+            setQueryFieldNamesCleanUp();
+            setQueryValues(null);
+            setJoiningArray(null);
+            setQueryTypes(null);
+            setQueryTypeInitalized(false);
+            queryEndLimit = 0;
+            queryStartLimit = 0;
+            _tableColumnsGlobal = null;
+        }
     }
 
     private void cleanUpdateArrays() {
-        setUpdateFields(null);
-        setUpdateFieldsValues(null);
+        if (isIsCleanUpNecessaryWhenQueryDone()) {
+            setUpdateFields(null);
+            setUpdateFieldsValues(null);
+            _tableColumnsGlobal = null;
+        }
     }
 
     private void cleanCreateArrays() {
-        setCreateFields(null);
-        setCreateFieldsValues(null);
-        //createFieldsString = ""; //gets nulll when the query is executed.
-        //createFieldsValuesString = ""; //gets nulll when the query is executed.
+        if (isIsCleanUpNecessaryWhenQueryDone()) {
+            setCreateFields(null);
+            setCreateFieldsValues(null);
+            //createFieldsString = ""; //gets nulll when the query is executed.
+            //createFieldsValuesString = ""; //gets nulll when the query is executed.
+            _tableColumnsGlobal = null;
+
+        }
     }
 // </editor-fold>
 
@@ -1299,7 +1345,7 @@ public final class DatabaseQuery extends DbInitalizer {
     //<editor-fold defaultstate="collapsed" desc="Search in Entity">
     // <editor-fold defaultstate="collapsed" desc="getSmart">
     public String getSmart(String s) {
-        return s.replaceAll("_", " ").toUpperCase().replaceAll(TableName.toUpperCase() + " ", "").replaceAll(TableName.toUpperCase(), "");
+        return s.replaceAll("_", " ").toUpperCase().replaceAll(_tableName.toUpperCase() + " ", "").replaceAll(_tableName.toUpperCase(), "");
     }
 
     public String getSmartNameForTable(String s) {
@@ -1396,7 +1442,7 @@ public final class DatabaseQuery extends DbInitalizer {
 
     public String completeReadQueryForEntity() {
         String whereClause = formulateQueryEntity();
-        String tempTable = getEntitySmartName(TableName);
+        String tempTable = getEntitySmartName(_tableName);
         //String tempTable = "FoodCategory";
         if (whereClause.equals("") == false) {
             whereClause = " WHERE " + whereClause;
@@ -1551,7 +1597,7 @@ public final class DatabaseQuery extends DbInitalizer {
                     if (printline.equals("row(" + (row - 1) + "): ") == false) {
                         printline += " ; ";
                     }
-                    printline += f.replaceAll("_", " ").toUpperCase().replaceAll(TableName.toUpperCase() + " ", "") + ": " + v;
+                    printline += f.replaceAll("_", " ").toUpperCase().replaceAll(_tableName.toUpperCase() + " ", "") + ": " + v;
                 }
                 System.out.println(printline);
             }
@@ -1584,12 +1630,40 @@ public final class DatabaseQuery extends DbInitalizer {
      * @return column names for this table
      */
     public String[] getColumnsNames() {
+        if (_tableColumnsGlobal == null) {
+            String names = "";
+            //int i = 1;
+            String query = _showDbColumnsSQL + getTableName();
+
+            try {
+                ResultSet rs2 = tempStatement.executeQuery(query);
+                while (rs2.next()) {
+                    if (names.equals("") == false) {
+                        names += ",";
+                    }
+                    names += rs2.getString("Field");
+                }
+            } catch (SQLException ex) {
+                ErrorMessage(ex, query, "columnsNames");
+            }
+            _tableColumnsGlobal = names.split(",");
+        }
+        return _tableColumnsGlobal;
+    }
+
+    /**
+     * also re-populate cahced table column names
+     *
+     * @param forceLoad : any
+     * @return
+     */
+    public String[] getColumnsNames(boolean forceLoad) {
         String names = "";
         //int i = 1;
-        String query = "SHOW COLUMNS FROM " + getTableName();
-        ResultSet rs2 = null;
+        String query = _showDbColumnsSQL + getTableName();
+
         try {
-            rs2 = tempStatement.executeQuery(query);
+            ResultSet rs2 = tempStatement.executeQuery(query);
             while (rs2.next()) {
                 if (names.equals("") == false) {
                     names += ",";
@@ -1599,7 +1673,8 @@ public final class DatabaseQuery extends DbInitalizer {
         } catch (SQLException ex) {
             ErrorMessage(ex, query, "columnsNames");
         }
-        return names.split(",");
+        _tableColumnsGlobal = names.split(",");
+        return _tableColumnsGlobal;
     }
 
     public String[] columnsNamesInSmartFormat() {
@@ -1653,6 +1728,7 @@ public final class DatabaseQuery extends DbInitalizer {
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Get Results as Object Type like EntityFramework">
+    //<editor-fold defaultstate="collapsed" desc="Single">
     /**
      *
      * @param <T>
@@ -1692,7 +1768,7 @@ public final class DatabaseQuery extends DbInitalizer {
                 }
             }
         } catch (SQLException | IllegalArgumentException | IllegalAccessException ex) {
-            ErrorMessage(ex, this.LastSQL,"getResultsAsObject() - may be row doesn't exist");
+            ErrorMessage(ex, this.LastSQL, "getResultsAsObject() - may be row doesn't exist");
         }
     }
 
@@ -1705,8 +1781,7 @@ public final class DatabaseQuery extends DbInitalizer {
     public <T> void getResultsAsObject(T classObject) {
         getResultsAsObject(classObject, 1);
     }
-    
-    
+
     /**
      * database's first row
      *
@@ -1718,6 +1793,7 @@ public final class DatabaseQuery extends DbInitalizer {
         readData();
         getResultsAsObject(classObject, 1);
     }
+
     /**
      * row default first
      *
@@ -1743,30 +1819,155 @@ public final class DatabaseQuery extends DbInitalizer {
         readData(columns, values, 0, 1);
         getResultsAsObject(classObject, 1);
     }
-    //</editor-fold>
 
+    //</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="multiple">
+    private ArrayList<Field> getAvailableColumnsList(Field[] listOfFields) {
+        ArrayList<Field> returnList = new FinalArrayList<>(50);
+        List<String> Columns = Arrays.asList(getColumnsNames());
+        for (Field field : listOfFields) {
+            if (Columns.indexOf(field.getName()) > -1) {
+                returnList.add(field);
+            }
+        }
+        return returnList;
+    }
+
+    /**
+     *
+     * @param <T>
+     * @param result
+     * @param classObject: object.getClass()
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public <T> ArrayList<T> getResultsAsORM(ResultSet result, T classObject) {
+        if (result != null) {
+            int rows = rowCount(result);
+            Field[] fieldsInClass = Codes.getAllFields(classObject.getClass());
+            ArrayList<Field> availableFieldsToWorkWith = getAvailableColumnsList(fieldsInClass);
+            ArrayList<T> returnList = new ArrayList<>(rows + 40);
+
+            for (int cursor = 0; cursor < rows; cursor++) {
+                T eachObject = null;
+
+                try {
+                    result.absolute(cursor + 1);
+                    eachObject = (T) classObject.getClass().newInstance();
+                } catch (InstantiationException | IllegalAccessException ex) {
+                    ErrorMessage(ex, "Can't create eachObject.");
+                } catch (SQLException ex) {
+                    ErrorMessage(ex, "Can't move row..");
+                }
+
+                for (Field field : availableFieldsToWorkWith) {
+
+                    // field exist in the class then populate the value
+                    field.setAccessible(true);
+                    String fieldName = field.getName();
+                    try {
+                        if (field.getType().equals(Double.TYPE) || field.getType().equals(Double.class)) {
+                            field.setDouble(eachObject, rs.getDouble(fieldName));
+                        } else if (field.getType() == Integer.TYPE || field.getType() == Integer.class) {
+                            field.setInt(eachObject, rs.getInt(fieldName));
+                        } else if (field.getType().equals(Long.TYPE) || field.getType().equals(Long.class)) {
+                            field.setLong(eachObject, getRs().getLong(fieldName));
+                        } else if (field.getType().equals(Date.class)) {
+                            field.set(eachObject, getRs().getDate(fieldName));
+                        } else if (field.getType().equals(Float.TYPE) || field.getType().equals(Float.class)) {
+                            field.setFloat(eachObject, getRs().getFloat(fieldName));
+                        } else if (field.getType().equals(Boolean.TYPE) || field.getType().equals(Boolean.class)) {
+                            field.setBoolean(eachObject, getRs().getBoolean(fieldName));
+                        } else if (field.getType().equals(Short.TYPE) || field.getType().equals(Short.class)) {
+                            field.setShort(eachObject, getRs().getShort(fieldName));
+                        } else {
+                            field.set(eachObject, rs.getString(fieldName));
+                        }
+                    } catch (SQLException | IllegalArgumentException | IllegalAccessException ex) {
+                        ErrorMessage(ex, this.LastSQL, "getResultsAsORM(ResultSet result, T classObject) - may be row doesn't exist");
+                    }
+
+                }
+                returnList.add(eachObject);
+
+            }
+
+            return returnList;
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @param <T>
+     * @param classObject: new class object
+     * @return
+     */
+    public <T> ArrayList<T> getResultsAsORM(T classObject) {
+        return getResultsAsORM(getRs(), classObject);
+    }
+
+    /**
+     *
+     * @param <T>
+     * @param classObject : new class object
+     * @return
+     */
+    public <T> ArrayList<T> readAndGetResultsAsORM(T classObject) {
+        readData();
+        return getResultsAsORM(getRs(), classObject);
+    }
+
+    //</editor-fold>
+//</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="row counts of result set">
     /**
+     * result set cursor may move to last returns cached row result if once ran
+     * for this table.
      *
      * @return how many rows exist in the result set.
      */
     public int rowCount() {
         if (isResultSetInitialized() && rowCountValueCached == -1) {
-            try {
-                int currentPos = rs.getRow();
-                rs.last();
-                int count = rs.getRow();
-                if (currentPos > 0) {
-                    rs.absolute(currentPos);
-                }
-                rowCountValueCached = count;
-                return count;
-            } catch (SQLException ex) {
-                Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
-
-            }
+            rowCountValueCached = rowCount(getRs());
+            return rowCountValueCached;
         } else if (isResultSetInitialized() && rowCountValueCached > -1) {
             return rowCountValueCached;
+        }
+        return 0;
+    }
+
+    /**
+     * result set cursor may move to last returns cached row result if once ran
+     * for this table.
+     *
+     * @param force : any
+     * @return how many rows exist in the result set.
+     */
+    public int rowCount(boolean force) {
+        rowCountValueCached = rowCount(getRs());
+        return rowCountValueCached;
+    }
+
+    /**
+     * result set cursor may move to last
+     *
+     * @param _result
+     * @return how many rows exist in the result set.
+     */
+    public int rowCount(ResultSet _result) {
+        if (_result != null) {
+            try {
+                int currentPos = _result.getRow();
+                _result.last();
+                int count = _result.getRow();
+                if (currentPos > 0) {
+                    _result.absolute(currentPos);
+                }
+                return count;
+            } catch (SQLException ex) {
+                ErrorMessage(ex, "rowCount(ResultSet _result)");
+            }
         }
         return 0;
     }
@@ -2075,10 +2276,10 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     /**
-     * @return the TableName
+     * @return the _tableName
      */
     public String getTableName() {
-        return TableName;
+        return _tableName;
     }
 
     /**
@@ -2300,12 +2501,12 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     /**
-     * @param TableName the TableName to set
+     * @param TableName the _tableName to set
      */
     public void setTableName(String TableName) {
-//        TableName = TableName.replaceAll("_", " ").toLowerCase();
-//        TableName = strMore.EachWordUpperCase(TableName).replaceAll(" ", "");
-        this.TableName = TableName;
+//        _tableName = _tableName.replaceAll("_", " ").toLowerCase();
+//        _tableName = strMore.EachWordUpperCase(_tableName).replaceAll(" ", "");
+        this._tableName = TableName;
     }
 
     /**
@@ -2341,15 +2542,20 @@ public final class DatabaseQuery extends DbInitalizer {
     // </editor-fold> 
     // <editor-fold defaultstate="collapsed" desc="How to use it comments ">
     public static void main(String args[]) {
-        UserTable _user = new UserTable();
+//        UserTable _user = new UserTable();
+//        DatabaseQuery q = new DatabaseQuery();
+//        q.setTableName("user");
+////        int rowsFound = q.rowsExistInTable();
+//        q.readData();
+//        q.getResultsAsObject(_user, 1);
+//
+//        Console.writeLine(_user.toString());
         DatabaseQuery q = new DatabaseQuery();
-        q.setTableName("user");
-//        int rowsFound = q.rowsExistInTable();
-        q.readData();
-        q.getResultsAsObject(_user, 1);
+        q.setTableName(TableNames.USER);
+        ArrayList<UserTable> rows = q.readAndGetResultsAsORM(new UserTable());
+        for (UserTable row : rows) {
 
-        Console.writeLine(_user.toString());
-
+        }
     }
 //
 //    public static void main(String args[]) {
@@ -2376,4 +2582,21 @@ public final class DatabaseQuery extends DbInitalizer {
     // */
 // </editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Clean up getter setter">
+    /**
+     * @return the isCleanUpNecessaryWhenQueryDone
+     */
+    public boolean isIsCleanUpNecessaryWhenQueryDone() {
+        return isCleanUpNecessaryWhenQueryDone;
+    }
+
+    /**
+     * @param isCleanUpNecessaryWhenQueryDone the
+     * isCleanUpNecessaryWhenQueryDone to set
+     */
+    public void setIsCleanUpNecessaryWhenQueryDone(boolean isCleanUpNecessaryWhenQueryDone) {
+        this.isCleanUpNecessaryWhenQueryDone = isCleanUpNecessaryWhenQueryDone;
+    }
+
+//</editor-fold>
 }

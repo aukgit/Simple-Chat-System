@@ -3,6 +3,7 @@ package ChatConnection;
 import ConsolePackage.Console;
 import CurrentDb.*;
 import CurrentDb.Tables.ServerSettingTable;
+import CurrentDb.Tables.UserTable;
 import Database.DatabaseQuery;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -12,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,12 +26,60 @@ public class ChattingServer implements Runnable {
     private int serverHitCounter = 0;
     DatabaseQuery db;
     ServerSettingTable serverConfig = new ServerSettingTable();
+    
+    public static ArrayList<UserTable> UsersOnline;
+
+    public static Thread serverThread;
 
     boolean isActive = false;
+    boolean shouldThreadRun = false;
 
     public ChattingServer() {
         this.serverRefershAfterHits = 20000;
         initalizeQuery();
+    }
+
+    /**
+     * checks if not null and alive
+     *
+     * @return
+     */
+    @SuppressWarnings("deprecation")
+    public Thread stopThread() {
+        if (serverThread == null) {
+            serverThread = new Thread(this);
+        }
+        if (serverThread.isAlive()) {
+            shouldThreadRun = false;
+            serverThread.interrupt();
+            serverThread.stop();
+
+            System.out.println("Server stopped.");
+
+        } else {
+            System.out.println("Sorry thread is not running can't stop. Already in stop mode.");
+        }
+        return serverThread;
+    }
+
+    /**
+     * checks if not null and alive
+     *
+     * @return
+     */
+    public Thread startThread() {
+        if (serverThread == null) {
+            serverThread = new Thread(this);
+        }
+        if (!serverThread.isAlive()) {
+            shouldThreadRun = true;
+            serverThread.start();
+            System.out.println("Server started.");
+        } else {
+            System.out.println("Thread is already running.");
+
+        }
+        return serverThread;
     }
 
     private void initalizeQuery() {
@@ -64,7 +114,7 @@ public class ChattingServer implements Runnable {
         }
         System.out.println("Now you can run your client app.");
 
-        while (serverConfig.IsActive) {
+        while (serverConfig.IsActive && shouldThreadRun) {
             Console.writeLine("Server running...." + serverConfig.IsActive);
             Socket connectionSocket = null;
             try {

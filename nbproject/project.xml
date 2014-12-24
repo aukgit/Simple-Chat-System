@@ -16,6 +16,7 @@
         </libraries>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
             <word>begining</word>
+            <word>cahced</word>
             <word>initalize</word>
         </spellchecker-wordlist>
     </configuration>
