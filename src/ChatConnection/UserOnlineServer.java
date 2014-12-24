@@ -1,10 +1,6 @@
 package ChatConnection;
 
 import ConsolePackage.Console;
-import CurrentDb.*;
-import CurrentDb.Tables.ServerSettingTable;
-import CurrentDb.Tables.UserTable;
-import Database.DatabaseQuery;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,130 +14,48 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ChattingServer implements Runnable {
-
-    private static Scanner in;
-    private final int serverRefershAfterHits;
-    private int serverHitCounter = 0;
-    DatabaseQuery db;
-    ServerSettingTable serverConfig = new ServerSettingTable();
-
-    public ArrayList<UserTable> UsersOnline;
-
-    public static Thread serverThread;
-
-    boolean isActive = false;
-    boolean shouldThreadRun = false;
-
-    public boolean isUserAlreadyOnlineList(UserTable userGotOnline) {
-        for (UserTable alreadyOnline : UsersOnline) {
-            if (alreadyOnline.UserID == userGotOnline.UserID) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void addUsertoOnlineList(UserTable userGotOnline) {
-        if (!isUserAlreadyOnlineList(userGotOnline)) {
-            UsersOnline.add(userGotOnline);
-        } else {
-            System.out.println("user already online.");
-        }
-    }
-
-    public void removeUserfromOnlineList(UserTable userGotOnline) {
-        if (isUserAlreadyOnlineList(userGotOnline)) {
-            UsersOnline.remove(userGotOnline);
-        } else {
-            System.out.println("user is not online.");
-        }
-    }
-
-    public ChattingServer() {
-        this.serverRefershAfterHits = 100;
-        initalizeQuery();
-    }
+public class UserOnlineServer extends InheritableServer {
 
     /**
      * checks if not null and alive
      *
+     * @param server
      * @return
      */
     @SuppressWarnings("deprecation")
     public Thread stopThread() {
-        if (serverThread == null) {
-            serverThread = new Thread(this);
-        }
-        if (serverThread.isAlive()) {
-            shouldThreadRun = false;
-            serverThread.interrupt();
-            serverThread.stop();
-
-            System.out.println("Server stopped.");
-
-        } else {
-            System.out.println("Sorry thread is not running can't stop. Already in stop mode.");
-        }
-        return serverThread;
+        return super.stopThread(this);
     }
 
     /**
      * checks if not null and alive
      *
+     * @param server
      * @return
      */
     public Thread startThread() {
-        if (serverThread == null) {
-            serverThread = new Thread(this);
-        }
-        if (!serverThread.isAlive()) {
-            shouldThreadRun = true;
-            serverThread.start();
-            UsersOnline = new ArrayList<>(1000);
-            System.out.println("Server started.");
-        } else {
-            System.out.println("Thread is already running.");
-
-        }
-        return serverThread;
-    }
-
-    private void initalizeQuery() {
-        db = new DatabaseQuery();
-        // setting table name
-        db.setTableName(TableNames.SERVERSETTING);
-    }
-
-    /**
-     * Refreshing Server ResultSet refresh port
-     *
-     */
-    public void reReadDataFromServer() {
-        // executing the db
-        db.readData();
-        db.getResultsAsObject(serverConfig);
+        return super.startThread(this);
     }
 
     @Override
     public void run() {
-        in = new Scanner(System.in);
+        _scanner = new Scanner(System.in);
 
         //refeshes port and is active state
         reReadDataFromServer();
 
         System.out.println("Server Estabilsh Connection On Localhost or own ip with port : "
-                + serverConfig.ServerPort);
+                + _serverConfig.ServerPort);
 
         System.out.println("Now you can run your client app.");
 
-        while (serverConfig.IsActive && shouldThreadRun) {
-            Console.writeLine("Server running...." + serverConfig.IsActive);
-
-            serverHitCounter++;
-            System.err.println("Counter : " + serverHitCounter);
-            if (serverHitCounter >= serverRefershAfterHits) {
-                serverHitCounter = 0;
+        while (_serverConfig.IsActive && _shouldThreadRun) {
+            Console.writeLine("Server running...." + _serverConfig.IsActive);
+            serverForAddingUser();
+            _serverHitCounter++;
+            System.err.println("Counter : " + _serverHitCounter);
+            if (_serverHitCounter >= _serverRefershAfterHits) {
+                _serverHitCounter = 0;
                 //refeshes port and is active state
                 reReadDataFromServer();
             }
@@ -153,16 +67,16 @@ public class ChattingServer implements Runnable {
     private void serverForAddingUser() {
         ServerSocket severSocket = null;
         try {
-            severSocket = new ServerSocket(serverConfig.ServerPort);
+            severSocket = new ServerSocket(_serverConfig.ServerPort);
         } catch (IOException ex) {
-            Logger.getLogger(ChattingServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         Socket connectionSocket = null;
 
         try {
             connectionSocket = severSocket.accept();
         } catch (IOException ex) {
-            Logger.getLogger(ChattingServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // for taking input from client
@@ -171,7 +85,7 @@ public class ChattingServer implements Runnable {
         try {
             inputStream = connectionSocket.getInputStream();
         } catch (IOException ex) {
-            Logger.getLogger(ChattingServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         InputStreamReader inputStreamReader = new InputStreamReader(
                 inputStream);
@@ -183,7 +97,7 @@ public class ChattingServer implements Runnable {
         try {
             outputStream = connectionSocket.getOutputStream();
         } catch (IOException ex) {
-            Logger.getLogger(ChattingServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         // output to client, to send data to the server
         DataOutputStream dataOutputStream = new DataOutputStream(
@@ -195,7 +109,7 @@ public class ChattingServer implements Runnable {
         try {
             readingLineFromClientSocket = inputFromClient.readLine();
         } catch (IOException ex) {
-            Logger.getLogger(ChattingServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         // sending data to client
         String modified = doOperation(readingLineFromClientSocket);
@@ -204,18 +118,18 @@ public class ChattingServer implements Runnable {
             // send data to client
             dataOutputStream.writeBytes(modified + "\n");
         } catch (IOException ex) {
-            Logger.getLogger(ChattingServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     private void serverForChatting() {
+        ServerSocket severSocket = null;
         Socket connectionSocket = null;
+
         try {
             connectionSocket = severSocket.accept();
-
         } catch (IOException ex) {
-            Logger.getLogger(ChattingServer.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UserOnlineServer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // for taking input from client
@@ -224,7 +138,7 @@ public class ChattingServer implements Runnable {
             inputStream = connectionSocket.getInputStream();
 
         } catch (IOException ex) {
-            Logger.getLogger(ChattingServer.class
+            Logger.getLogger(InheritableServer.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
         InputStreamReader inputStreamReader = new InputStreamReader(
@@ -237,7 +151,7 @@ public class ChattingServer implements Runnable {
             outputStream = connectionSocket.getOutputStream();
 
         } catch (IOException ex) {
-            Logger.getLogger(ChattingServer.class
+            Logger.getLogger(InheritableServer.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
         // output to client, to send data to the server
@@ -250,7 +164,7 @@ public class ChattingServer implements Runnable {
             readingLineFromClientSocket = inputFromClient.readLine();
 
         } catch (IOException ex) {
-            Logger.getLogger(ChattingServer.class
+            Logger.getLogger(InheritableServer.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
         // sending data to client
@@ -260,12 +174,12 @@ public class ChattingServer implements Runnable {
             dataOutputStream.writeBytes(modified + "\n");
 
         } catch (IOException ex) {
-            Logger.getLogger(ChattingServer.class
+            Logger.getLogger(InheritableServer.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private static String doOperation(String readingLineFromClientSocket) {
+    private String doOperation(String readingLineFromClientSocket) {
 //		String[] array = readingLineFromClientSocket.split(" ");
 //		StringBuilder strBuilder = new StringBuilder(array.length);
 //		
@@ -275,8 +189,4 @@ public class ChattingServer implements Runnable {
 
     }
 
-    public static void main(String[] args) {
-        Thread server = new Thread(new ChattingServer());
-        server.start();
-    }
 }

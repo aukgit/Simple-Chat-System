@@ -7,6 +7,7 @@
     <class>EntityClass.Chatlist</class>
     <class>EntityClass.Chatsession</class>
     <class>EntityClass.Message</class>
+    <class>ChatConnection.UserOnlineServer</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://192.168.1.100:3306/chatdatabase"/>
       <property name="javax.persistence.jdbc.password" value="asdf"/>

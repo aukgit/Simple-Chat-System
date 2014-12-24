@@ -5,7 +5,7 @@
  */
 package SimpleChatSystem;
 
-import ChatConnection.ChattingServer;
+import ChatConnection.InheritableServer;
 import Common.Codes;
 import Cryptography.Hasher;
 import CurrentDb.TableColumns.User;
@@ -29,7 +29,7 @@ public class Startup extends JFrameInheritable {
     private static final long serialVersionUID = 1L;
 
     private int loginCounter = 0;
-    static ChattingServer server = new ChattingServer();
+    static InheritableServer server = new InheritableServer();
 
     /**
      * Creates new form Startup
@@ -165,7 +165,7 @@ public class Startup extends JFrameInheritable {
         // TODO add your handling code here:
 //        ChatingInterface frm = new ChatingInterface();
 //        frm.show(true);
-       server.startThread();
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     @SuppressWarnings("deprecation")
@@ -178,7 +178,7 @@ public class Startup extends JFrameInheritable {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        server.stopThread();
+     
     }//GEN-LAST:event_jButton3ActionPerformed
 
     @SuppressWarnings("deprecation")
