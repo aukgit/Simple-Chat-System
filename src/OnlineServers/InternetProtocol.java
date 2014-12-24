@@ -8,6 +8,7 @@ package OnlineServers;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,21 +19,30 @@ import java.util.logging.Logger;
  */
 public class InternetProtocol {
 
-    public static void main(String[] args) {
-        try {
-            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-            while (networkInterfaces.hasMoreElements()) {
-                NetworkInterface n = networkInterfaces.nextElement();
-                Enumeration ee;
-                ee = n.getInetAddresses();
-                while (ee.hasMoreElements()) {
-                    InetAddress i = (InetAddress) ee.nextElement();
-                    System.out.println(i.getHostAddress());
-                }
-            }
-        } catch (SocketException ex) {
-            Logger.getLogger(InternetProtocol.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private static ArrayList<String> ipCollection;
 
+    public static String getIp() {
+        if (ipCollection == null) {
+            ipCollection = new ArrayList<>(10);
+            try {
+                Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+                while (networkInterfaces.hasMoreElements()) {
+                    NetworkInterface n = networkInterfaces.nextElement();
+                    Enumeration ee;
+                    ee = n.getInetAddresses();
+                    while (ee.hasMoreElements()) {
+                        InetAddress i = (InetAddress) ee.nextElement();
+                        ipCollection.add(i.getHostAddress());
+                    }
+                }
+            } catch (SocketException ex) {
+                Logger.getLogger(InternetProtocol.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return ipCollection.get(ipCollection.size() - 2);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getIp());
     }
 }
