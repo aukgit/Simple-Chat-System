@@ -1,17 +1,19 @@
 package OnlineServers;
 
 import ConsolePackage.Console;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
+import CurrentDb.TableColumns.User;
+import CurrentDb.TableNames;
+import CurrentDb.Tables.UserTable;
+import Database.DatabaseQuery;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.eclipse.persistence.queries.DataModifyQuery;
 
 public class UserOnlineServer extends InheritableServer {
 
@@ -66,7 +68,10 @@ public class UserOnlineServer extends InheritableServer {
     private void serverForAddingUser() {
         ServerSocket severSocket = null;
         try {
-            severSocket = new ServerSocket(_serverConfig.ServerPort);
+            severSocket = new ServerSocket(_serverConfig.UserOnlinePort);
+            if (severSocket != null) {
+                System.out.println("Useronline Conntected through port :" + _serverConfig.UserOnlinePort);
+            }
         } catch (IOException ex) {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -79,57 +84,57 @@ public class UserOnlineServer extends InheritableServer {
         }
 
         // for taking input from client
-        InputStream inputStream = null;
+        ObjectInputStream inputFromClient = super.getInputObjectStream(connectionSocket);
+
+        UserTable userReturnedfromClient = null;
 
         try {
-            inputStream = connectionSocket.getInputStream();
-        } catch (IOException ex) {
+            userReturnedfromClient = (UserTable) inputFromClient.readObject();
+        } catch (Exception ex) {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        InputStreamReader inputStreamReader = new InputStreamReader(
-                inputStream);
-        BufferedReader inputFromClient = new BufferedReader(
-                inputStreamReader);
-        // for giving output to the client.
-        OutputStream outputStream = null;
 
-        try {
-            outputStream = connectionSocket.getOutputStream();
-        } catch (IOException ex) {
-            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        // output to client, to send data to the server
-        DataOutputStream dataOutputStream = new DataOutputStream(
-                outputStream);
-        // get output from server
-
-        String readingLineFromClientSocket = null;
-
-        try {
-            readingLineFromClientSocket = inputFromClient.readLine();
-        } catch (IOException ex) {
-            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         // sending data to client
-        String modified = doOperation(readingLineFromClientSocket);
 
+        // for giving output to the client.
+        // output to client, to send data to the server
+        ObjectOutputStream objectOutputStream = null;
+        try {
+            objectOutputStream = new ObjectOutputStream(connectionSocket.getOutputStream());
+        } catch (IOException ex) {
+            Logger.getLogger(UserOnlineServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        // get output from server
         try {
             // send data to client
-            dataOutputStream.writeBytes(modified + "\n");
+            super.addUsertoOnlineList(userReturnedfromClient);
+            objectOutputStream.writeBoolean(true);
         } catch (IOException ex) {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    public void client() {
+        int port = _serverConfig.UserOnlinePort;
+        String ip = _serverConfig.ServerIP;
 
-    private String doOperation(String readingLineFromClientSocket) {
-//		String[] array = readingLineFromClientSocket.split(" ");
-//		StringBuilder strBuilder = new StringBuilder(array.length);
-//		
-//		
-//		return strBuilder.toString();
-        return readingLineFromClientSocket;
+        try (Socket socket = new Socket(ip, port)) {
+            System.out.println("User id to load : ");
+            int id = super.getInputObjectStream(socket).readInt();
+            UserTable _u = new UserTable();
+            DatabaseQuery db2 = new DatabaseQuery(TableNames.USER);
+            db2.getResultsFirstAsObject(User.UserID, id + "", _u);
+            super.getOutputObjectStream(socket).writeObject(_u);
+            
+            
+        } catch (IOException ex) {
+            Logger.getLogger(UserOnlineServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
+    public static void main(String[] args) {
+        Thread server = new Thread(new InheritableServer());
+        server.start();
     }
 
 }

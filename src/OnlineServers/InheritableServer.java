@@ -4,8 +4,17 @@ import CurrentDb.*;
 import CurrentDb.Tables.ServerSettingTable;
 import CurrentDb.Tables.UserTable;
 import Database.DatabaseQuery;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class InheritableServer implements Runnable {
 
@@ -37,10 +46,14 @@ public class InheritableServer implements Runnable {
     }
 
     public void addUsertoOnlineList(UserTable userGotOnline) {
-        if (!isUserAlreadyOnline(userGotOnline)) {
-            _UsersOnline.add(userGotOnline);
+        if (userGotOnline.UserID > 0) {
+            if (!isUserAlreadyOnline(userGotOnline)) {
+                _UsersOnline.add(userGotOnline);
+            } else {
+                System.out.println("user already online.");
+            }
         } else {
-            System.out.println("user already online.");
+            System.out.println("user id is less or equal to zero.");
         }
     }
 
@@ -110,8 +123,47 @@ public class InheritableServer implements Runnable {
      */
     public void reReadDataFromServer() {
         // executing the db
-        db.readData();
-        db.getResultsAsObject(_serverConfig);
+        db.getResultsFirstAsObject(_serverConfig);
+    }
+
+    public DataOutputStream getDataOutputObjectStream(Socket socket) {
+        DataOutputStream reader = null;
+        try {
+            reader = new DataOutputStream(socket.getOutputStream());
+        } catch (IOException ex) {
+            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return reader;
+    }
+
+    public ObjectOutputStream getOutputObjectStream(Socket socket) {
+        ObjectOutputStream reader = null;
+        try {
+            reader = new ObjectOutputStream(socket.getOutputStream());
+        } catch (IOException ex) {
+            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return reader;
+    }
+
+    public ObjectInputStream getInputObjectStream(Socket socket) {
+        ObjectInputStream reader = null;
+        try {
+            reader = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException ex) {
+            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return reader;
+    }
+
+    public BufferedReader getBufferedReader(Socket socket) {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException ex) {
+            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return reader;
     }
 
     public static void main(String[] args) {

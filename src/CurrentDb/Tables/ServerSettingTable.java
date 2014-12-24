@@ -5,17 +5,17 @@
  */
 package CurrentDb.Tables;
 
-
-
 /**
  *
  * @author Alim
  */
 public class ServerSettingTable {
+
     public short ServerSettingID;
     public String ServerIP;
     public int ServerPort;
     public boolean IsActive;
-    
+
     public String ConnectionString;
+    public int UserOnlinePort;
 }

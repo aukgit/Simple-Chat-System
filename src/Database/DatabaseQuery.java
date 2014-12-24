@@ -1783,7 +1783,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     /**
-     * database's first row
+     * read from db and return database's first row
      *
      * @param <T>
      * @param classObject : your class type
