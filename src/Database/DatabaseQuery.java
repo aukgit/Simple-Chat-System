@@ -27,7 +27,7 @@ import Database.Components.IQueryType;
 import Database.Components.StringMore;
 import DesignPattern.JFrameDbComponents;
 import Global.AppConfig;
-import com.sun.istack.internal.FinalArrayList;
+
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -1823,7 +1823,7 @@ public final class DatabaseQuery extends DbInitalizer {
     //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="multiple">
     private ArrayList<Field> getAvailableColumnsList(Field[] listOfFields) {
-        ArrayList<Field> returnList = new FinalArrayList<>(50);
+        ArrayList<Field> returnList = new ArrayList<>(50);
         List<String> Columns = Arrays.asList(getColumnsNames());
         for (Field field : listOfFields) {
             if (Columns.indexOf(field.getName()) > -1) {
