@@ -9,7 +9,7 @@ package CurrentDb.Tables;
  *
  * @author Alim
  */
-public class ServerSettingTable {
+public class ServerSettingTable extends DatabaseTableClass{
 
     public short ServerSettingID;
     public String ServerIP;

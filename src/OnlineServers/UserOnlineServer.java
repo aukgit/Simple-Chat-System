@@ -13,7 +13,6 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.eclipse.persistence.queries.DataModifyQuery;
 
 public class UserOnlineServer extends InheritableServer {
 
@@ -46,7 +45,7 @@ public class UserOnlineServer extends InheritableServer {
         reReadDataFromServer();
 
         System.out.println("Server Estabilsh Connection On Localhost or own ip with port : "
-                + _serverConfig.ServerPort);
+                + _serverConfig.UserOnlinePort);
 
         System.out.println("Now you can run your client app.");
 
@@ -115,26 +114,42 @@ public class UserOnlineServer extends InheritableServer {
     }
 
     public void client() {
+
         int port = _serverConfig.UserOnlinePort;
         String ip = _serverConfig.ServerIP;
-
-        try (Socket socket = new Socket(ip, port)) {
-            System.out.println("User id to load : ");
-            int id = super.getInputObjectStream(socket).readInt();
-            UserTable _u = new UserTable();
-            DatabaseQuery db2 = new DatabaseQuery(TableNames.USER);
-            db2.getResultsFirstAsObject(User.UserID, id + "", _u);
-            super.getOutputObjectStream(socket).writeObject(_u);
-            
-            
+        System.out.println("User id to load : ");
+        String idStr = "";
+        try {
+            idStr = super.getBufferedReader().readLine();
         } catch (IOException ex) {
             Logger.getLogger(UserOnlineServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        int id = Integer.parseInt(idStr);
+        UserTable _u = new UserTable();
+        DatabaseQuery db2 = new DatabaseQuery(TableNames.USER);
+        db2.getResultsFirstAsObject(User.UserID, id + "", _u);
+        tryagain:
+        try (Socket socket = new Socket(ip, port)) {
+
+            super.getOutputObjectStream(socket).writeObject(_u);
+            boolean b = super.getInputObjectStream(socket).readBoolean();
+            System.out.println(b);
+        } catch (IOException ex) {
+            Logger.getLogger(UserOnlineServer.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Sorry can't connect with " + ip + ":" + port);
+            System.out.println("trying again ...");
+            client();
+
+        }
+
     }
 
     public static void main(String[] args) {
-        Thread server = new Thread(new InheritableServer());
-        server.start();
+
+        UserOnlineServer online = new UserOnlineServer();
+        online.reReadDataFromServer();
+        online.startThread();
+
     }
 
 }

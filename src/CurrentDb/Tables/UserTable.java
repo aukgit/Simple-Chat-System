@@ -7,13 +7,12 @@ package CurrentDb.Tables;
 
 import java.util.Date;
 
-
-
 /**
  *
  * @author Alim
  */
-public class UserTable {
+public class UserTable extends DatabaseTableClass {
+
     public int UserID;
     public String Username;
     public String Email;
@@ -24,5 +23,5 @@ public class UserTable {
     public boolean IsActive;
     public boolean IsAdmin;
     public boolean IsOnline;
-    
+
 }

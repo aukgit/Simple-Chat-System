@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 
 public class InheritableServer implements Runnable {
 
-    protected static Scanner _scanner;
+    protected static Scanner _scanner = new Scanner(System.in);
     protected int _serverRefershAfterHits;
     protected int _serverHitCounter = 0;
     protected DatabaseQuery db;
@@ -126,6 +126,12 @@ public class InheritableServer implements Runnable {
         db.getResultsFirstAsObject(_serverConfig);
     }
 
+    /**
+     * Output to the server
+     *
+     * @param socket
+     * @return
+     */
     public DataOutputStream getDataOutputObjectStream(Socket socket) {
         DataOutputStream reader = null;
         try {
@@ -136,6 +142,12 @@ public class InheritableServer implements Runnable {
         return reader;
     }
 
+    /**
+     * Output to the server
+     *
+     * @param socket
+     * @return
+     */
     public ObjectOutputStream getOutputObjectStream(Socket socket) {
         ObjectOutputStream reader = null;
         try {
@@ -146,6 +158,12 @@ public class InheritableServer implements Runnable {
         return reader;
     }
 
+    /**
+     * Getting input from modified things from server.
+     *
+     * @param socket
+     * @return
+     */
     public ObjectInputStream getInputObjectStream(Socket socket) {
         ObjectInputStream reader = null;
         try {
@@ -156,6 +174,12 @@ public class InheritableServer implements Runnable {
         return reader;
     }
 
+    /**
+     * Getting input from modified things from server.
+     *
+     * @param socket
+     * @return
+     */
     public BufferedReader getBufferedReader(Socket socket) {
         BufferedReader reader = null;
         try {
@@ -163,6 +187,16 @@ public class InheritableServer implements Runnable {
         } catch (IOException ex) {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return reader;
+    }
+
+    /**
+     * Taking client input from console.
+     *
+     * @return
+     */
+    public BufferedReader getBufferedReader() {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         return reader;
     }
 
