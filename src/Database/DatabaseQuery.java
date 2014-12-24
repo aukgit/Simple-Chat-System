@@ -2550,12 +2550,12 @@ public final class DatabaseQuery extends DbInitalizer {
 //        q.getResultsAsObject(_user, 1);
 //
 //        Console.writeLine(_user.toString());
-        DatabaseQuery q = new DatabaseQuery();
-        q.setTableName(TableNames.USER);
-        ArrayList<UserTable> rows = q.readAndGetResultsAsORM(new UserTable());
-        for (UserTable row : rows) {
-
-        }
+//        DatabaseQuery q = new DatabaseQuery();
+//        q.setTableName(TableNames.USER);
+//        ArrayList<UserTable> rows = q.readAndGetResultsAsORM(new UserTable());
+//        for (UserTable row : rows) {
+//
+//        }
     }
 //
 //    public static void main(String args[]) {
