@@ -11,6 +11,7 @@ import java.util.Date;
  *
  * @author Alim
  */
+@SuppressWarnings("serial")
 public class UserTable extends DatabaseTableClass {
 
     public int UserID;

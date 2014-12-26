@@ -227,8 +227,7 @@ public final class DatabaseQuery extends DbInitalizer {
             setJoiningArray(null);
             setQueryTypes(null);
             setQueryTypeInitalized(false);
-            queryEndLimit = 0;
-            queryStartLimit = 0;
+
             _tableColumnsGlobal = null;
         }
     }
@@ -250,6 +249,11 @@ public final class DatabaseQuery extends DbInitalizer {
             _tableColumnsGlobal = null;
 
         }
+    }
+
+    private void cleanUpLimit() {
+        setQueryEndLimit(0);
+        setQueryStartLimit(0);
     }
 // </editor-fold>
 
@@ -635,7 +639,9 @@ public final class DatabaseQuery extends DbInitalizer {
             LastSQL = sql;
             rs = getStmt().executeQuery(sql);
             rowCount();
-
+            if (isCleanUpNecessaryWhenQueryDone) {
+                cleanUpLimit();
+            }
         } catch (Exception ex) {
             ErrorMessage(ex, LastSQL, "ExecuteReadQuery(String sql)");
             LastSQL = "";
@@ -842,8 +848,8 @@ public final class DatabaseQuery extends DbInitalizer {
      * point
      */
     public void setLimitsOnQuery(int start, int end) {
-        queryStartLimit = start;
-        queryEndLimit = end;
+        this.setQueryStartLimit(start);
+        this.setQueryEndLimit(end);
     }
 
     /**
@@ -854,12 +860,10 @@ public final class DatabaseQuery extends DbInitalizer {
     public String getLimitSQLBottom() {
         String returnSql = "";
         if (dbAttr.getCurrentDatabaseConfig() == DbAttribute.MYSQL) {
-            if (queryStartLimit > 0 && queryEndLimit > 0) {
-                returnSql = " Limit " + queryStartLimit + "," + queryEndLimit;
-            } else if (queryStartLimit > 0) {
-                returnSql = " Limit " + queryStartLimit;
-            } else if (queryEndLimit > 0) {
-                returnSql = " Limit " + 0 + "," + queryEndLimit;
+            if (this.getQueryStartLimit() > 0 && this.getQueryEndLimit() > 0) {
+                returnSql = " LIMIT " + this.getQueryStartLimit() + "," + this.getQueryEndLimit();
+            } else if (this.getQueryEndLimit() > 0) {
+                returnSql = " LIMIT " + this.getQueryEndLimit();
             }
         }
         return returnSql;
@@ -873,12 +877,12 @@ public final class DatabaseQuery extends DbInitalizer {
     public String getLimitSQLTop() {
         String returnSql = "";
         if (dbAttr.getCurrentDatabaseConfig() == DbAttribute.MICROSOFT_SQL_SERVER) {
-            if (queryStartLimit > 0 && queryEndLimit > 0) {
-                returnSql = " TOP " + queryEndLimit; //end at
-            } else if (queryStartLimit > 0) {
+            if (getQueryStartLimit() > 0 && getQueryEndLimit() > 0) {
+                returnSql = " TOP " + getQueryEndLimit(); //end at
+            } else if (getQueryStartLimit() > 0) {
 
-            } else if (queryEndLimit > 0) {
-                returnSql = " TOP " + queryEndLimit; //end at
+            } else if (getQueryEndLimit() > 0) {
+                returnSql = " TOP " + getQueryEndLimit(); //end at
             }
         }
         return returnSql;
@@ -1000,6 +1004,14 @@ public final class DatabaseQuery extends DbInitalizer {
             ErrorMessage(ex, this.getSelectSQL(), "isExist(String Columns, String valuesSearchInFields)");
         }
         return false;
+    }
+
+    public <T> boolean isExist(String Columns, String valuesSearchInFields, T entityObject) {
+        boolean isFound = isExist(Columns, valuesSearchInFields);
+        if (isFound) {
+            getResultsAsObject(entityObject);
+        }
+        return isFound;
     }
 
     /**
@@ -1736,7 +1748,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param classObject: class itself
      */
     public <T> void getResultsAsObject(T classObject, int row) {
-
+        
         Field[] fieldsInClass = Codes.getAllFields(classObject.getClass());
         List<String> Columns = Arrays.asList(getColumnsNames());
         moveToRow(row);
@@ -1841,12 +1853,12 @@ public final class DatabaseQuery extends DbInitalizer {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <T> ArrayList<T> getResultsAsORM(ResultSet result, T classObject) {
+    public <T> List<T> getResultsAsORM(ResultSet result, T classObject) {
         if (result != null) {
             int rows = rowCount(result);
             Field[] fieldsInClass = Codes.getAllFields(classObject.getClass());
             ArrayList<Field> availableFieldsToWorkWith = getAvailableColumnsList(fieldsInClass);
-            ArrayList<T> returnList = new ArrayList<>(rows + 40);
+            List<T> returnList = new ArrayList<>(rows + 40);
 
             for (int cursor = 0; cursor < rows; cursor++) {
                 T eachObject = null;
@@ -1903,7 +1915,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param classObject: new class object
      * @return
      */
-    public <T> ArrayList<T> getResultsAsORM(T classObject) {
+    public <T> List<T> getResultsAsORM(T classObject) {
         return getResultsAsORM(getRs(), classObject);
     }
 
@@ -1913,7 +1925,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param classObject : new class object
      * @return
      */
-    public <T> ArrayList<T> readAndGetResultsAsORM(T classObject) {
+    public <T> List<T> readAndGetResultsAsORM(T classObject) {
         readData();
         return getResultsAsORM(getRs(), classObject);
     }
@@ -2599,4 +2611,31 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
 //</editor-fold>
+    /**
+     * @return the queryStartLimit
+     */
+    public int getQueryStartLimit() {
+        return queryStartLimit;
+    }
+
+    /**
+     * @param queryStartLimit the queryStartLimit to set
+     */
+    public void setQueryStartLimit(int queryStartLimit) {
+        this.queryStartLimit = queryStartLimit;
+    }
+
+    /**
+     * @return the queryEndLimit
+     */
+    public int getQueryEndLimit() {
+        return queryEndLimit;
+    }
+
+    /**
+     * @param queryEndLimit the queryEndLimit to set
+     */
+    public void setQueryEndLimit(int queryEndLimit) {
+        this.queryEndLimit = queryEndLimit;
+    }
 }

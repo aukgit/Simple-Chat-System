@@ -15,7 +15,7 @@ public class ClientToCheckUserOnline {
 
         UserOnlineServer online = new UserOnlineServer();
         online.reReadDataFromServer();
-        online.client();
+//        online.sendUserOnlineRequestToServer();
 
     }
 }

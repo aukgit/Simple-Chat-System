@@ -5,6 +5,7 @@
  */
 package SimpleChatSystem;
 
+import CurrentDb.CommonData;
 import CurrentDb.TableColumns.UserStatus;
 import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
@@ -16,9 +17,9 @@ import InputValidation.Validate;
  * @author Alim
  */
 public class UpdateStatus extends JFrameInheritable {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     UserTable _user;
     ListOfFriends _listOfFiendsForm;
 
@@ -34,17 +35,17 @@ public class UpdateStatus extends JFrameInheritable {
         _listOfFiendsForm = listOfFiendsForm;
         this.UsernameLabel.setText(_user.Username);
         String userID = _user.UserID + "";
-        
+        this.getDb().setLimitsOnQuery(0, 4);
         this.getDb().readData(UserStatus.UserID, userID);
-   
+
         this.getDbData().setDb(this.getDb());
         this.getDbData().setResultSet(this.getDb().getRs());
         String[] statuses = this.getDbData().getSingleColumnValues(UserStatus.Status);
         this.getDbData().populateListFromDBColumn(statuses, jList1);
     }
-    
+
     private UpdateStatus() {
-        
+
     }
 
     /**
@@ -71,6 +72,11 @@ public class UpdateStatus extends JFrameInheritable {
         UsernameLabel.setText("jLabel1");
 
         UserStatusTextbox.setToolTipText("new ststus");
+        UserStatusTextbox.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                UserStatusTextboxKeyPressed(evt);
+            }
+        });
 
         jLabel1.setText("New status");
 
@@ -140,21 +146,25 @@ public class UpdateStatus extends JFrameInheritable {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        UpdateUserStatusAndLeave();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    public void UpdateUserStatusAndLeave() {
         byte numberOFCol = 3;
         String status = this.UserStatusTextbox.getText();
         if (Validate.sqlSearchValid(UserStatusTextbox, jLabel1)) {
             String[] columns = new String[numberOFCol];
             String[] values = new String[numberOFCol];
-            
+
             columns[--numberOFCol] = UserStatus.Dated;
             values[numberOFCol] = this.getDb().getCurrentInDbFormat();
-            
+
             columns[--numberOFCol] = UserStatus.UserID;
             values[numberOFCol] = _user.UserID + "";
-            
+
             columns[--numberOFCol] = UserStatus.Status;
             values[numberOFCol] = this.UserStatusTextbox.getText();
-            
+
             if (this.getDb().insertData(columns, values)) {
                 this.hide();
                 this.getPreviousForm().show(true);
@@ -163,14 +173,20 @@ public class UpdateStatus extends JFrameInheritable {
                 this.getMessageBox().show(this, "Sorry can't update your status.");
             }
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
-
+    }
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
         // TODO add your handling code here:
-        if(evt.getClickCount() == 2){
+        if (evt.getClickCount() == 2) {
             this.UserStatusTextbox.setText(this.jList1.getSelectedValue().toString());
         }
     }//GEN-LAST:event_jList1MouseClicked
+
+    private void UserStatusTextboxKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_UserStatusTextboxKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == CommonData.ENTER_KEY) {
+            UpdateUserStatusAndLeave();
+        }
+    }//GEN-LAST:event_UserStatusTextboxKeyPressed
 
     /**
      * @param args the command line arguments
@@ -219,6 +235,6 @@ public class UpdateStatus extends JFrameInheritable {
 
     @Override
     public void initalizeTableName() {
-        this.getDb().setTableName(TableNames.USERSTATUS);
+        this.getDb().setTableName(TableNames.USER_RECENT_STATUS);
     }
 }

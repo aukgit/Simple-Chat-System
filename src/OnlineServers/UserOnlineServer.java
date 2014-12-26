@@ -1,13 +1,9 @@
 package OnlineServers;
 
 import ConsolePackage.Console;
-import CurrentDb.TableColumns.User;
-import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
-import Database.DatabaseQuery;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
@@ -82,7 +78,7 @@ public class UserOnlineServer extends InheritableServer {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        // for taking input from client
+        // for taking input from sendUserOnlineRequestToServer
         ObjectInputStream inputFromClient = super.getInputObjectStream(socket);
         boolean returnResult = false;
         UserTable userReturnedfromClient = null;
@@ -95,13 +91,13 @@ public class UserOnlineServer extends InheritableServer {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
 
         }
-        // sending data to client
+        // sending data to sendUserOnlineRequestToServer
 
-        // for giving output to the client.
-        // output to client, to send data to the server
+        // for giving output to the sendUserOnlineRequestToServer.
+        // output to sendUserOnlineRequestToServer, to send data to the server
         // get output from server
         try {
-            // send data to client
+            // send data to sendUserOnlineRequestToServer
             System.out.println("Writing to client : " + returnResult);
             if (returnResult) {
                 super.getOutputObjectStream(socket).writeObject(userReturnedfromClient);
@@ -113,25 +109,13 @@ public class UserOnlineServer extends InheritableServer {
         }
     }
 
-    public void client() throws ClassNotFoundException {
+    public void sendUserOnlineRequestToServer(UserTable sendingUser) {
 
         int port = _serverConfig.UserOnlinePort;
-        String ip = _serverConfig.ServerIP;
-        System.out.println(ip + ":" + port);
-        System.out.println("User id to load : ");
-        String idStr = "";
-        try {
-            idStr = super.getBufferedReader().readLine();
-        } catch (IOException ex) {
-            Logger.getLogger(UserOnlineServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        int id = Integer.parseInt(idStr);
-        UserTable _u = new UserTable();
-        DatabaseQuery db2 = new DatabaseQuery(TableNames.USER);
+        String ip = _serverConfig.ServerIP;       
         tryagain:
         try (Socket socket = new Socket(ip, port)) {
-            db2.getResultsFirstAsObject(User.UserID, id + "", _u);
-            super.getOutputObjectStream(socket).writeObject(_u);
+            super.getOutputObjectStream(socket).writeObject(sendingUser);
             UserTable gotUser = (UserTable)super.getInputObjectStream(socket).readObject();
             if(gotUser != null){
                 gotUser.Print();
@@ -143,6 +127,9 @@ public class UserOnlineServer extends InheritableServer {
             System.out.println("Sorry can't connect with " + ip + ":" + port);
             System.out.println("trying again ...");
 
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UserOnlineServer.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Object not found :  " + ip + ":" + port);
         }
 
     }

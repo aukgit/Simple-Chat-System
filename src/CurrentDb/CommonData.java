@@ -8,6 +8,7 @@ package CurrentDb;
 import CurrentDb.TableColumns.ActiveState;
 import Database.DatabaseQuery;
 import Database.DbData;
+import java.awt.event.KeyEvent;
 
 /**
  *
@@ -17,7 +18,8 @@ public class CommonData {
 
     static String[] _activeStateList;
     static DatabaseQuery _db;
-
+    public static int ENTER_KEY = KeyEvent.VK_ENTER;
+    
     /**
      * Creates db if necessary
      */

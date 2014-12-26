@@ -27,7 +27,7 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="list1" max="32767" attributes="0"/>
+                  <Component id="friendsDisplayList" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="UserPicLabel" min="-2" pref="65" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -59,7 +59,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="list1" min="-2" pref="450" max="-2" attributes="0"/>
+              <Component id="friendsDisplayList" min="-2" pref="450" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -134,11 +134,14 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTextPane" name="jTextPane1">
+        <Component class="javax.swing.JTextPane" name="searchBox">
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="searchBoxKeyReleased"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
-    <Component class="java.awt.List" name="list1">
+    <Component class="java.awt.List" name="friendsDisplayList">
     </Component>
     <Component class="javax.swing.JLabel" name="editProfile">
       <Properties>

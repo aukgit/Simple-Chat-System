@@ -20,5 +20,6 @@ public interface TableNames {
     // Ctrl + U, U upppercase in netbeans
     // https://forums.netbeans.org/ntopic3947.html
     public String USERSTATUS = "USERSTATUS";
+    public String USER_RECENT_STATUS = "UserRecentStatus";
 
 }
