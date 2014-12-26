@@ -118,7 +118,7 @@ public class UserOnlineServer extends InheritableServer {
             super.getOutputObjectStream(socket).writeObject(sendingUser);
             UserTable gotUser = (UserTable)super.getInputObjectStream(socket).readObject();
             if(gotUser != null){
-                gotUser.Print();
+                gotUser.print();
             } else {
                 System.out.println("user already exist.");
             }

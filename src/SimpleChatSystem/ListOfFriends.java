@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.ListModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -64,6 +65,7 @@ public class ListOfFriends extends JFrameInheritable {
 
     }
 
+    @SuppressWarnings("unchecked")
     public void customInit(UserTable u) {
         initComponents();
         setUser(u);
@@ -83,6 +85,13 @@ public class ListOfFriends extends JFrameInheritable {
         online.sendUserOnlineRequestToServer(u);
         allfriendsList = dbChatLists.getResultsAsORM(chatList);
         onlineFriendsList = new ArrayList<ChatListTable>(500);
+
+        this.friendsDisplayList.setCellRenderer(new JLabelForListCell());
+        this.friendsDisplayList.removeAll();
+        ArrayList<UserTable> allUsers = dbUsers.readAndGetResultsAsORM(new UserTable());
+        friendsDisplayList.setModel((ListModel) allUsers);
+        
+
         if (allfriendsList != null) {
             for (ChatListTable chatListUser : allfriendsList) {
 //            for (UserTable onlineUser : UserOnlineServer._UsersOnline) {
@@ -98,12 +107,6 @@ public class ListOfFriends extends JFrameInheritable {
                 }
             }
         }
-        this.friendsDisplayList.removeAll();
-        JLabel label = new JLabel("Hello");
-
-        ImageIcon icon = new ImageIcon(AppConfig.getPictureUploadPath() + "hello.jpg");
-        label.setIcon(icon);
-        Component add = this.friendsDisplayList.add(label);
 
     }
 

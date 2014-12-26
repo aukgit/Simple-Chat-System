@@ -5,10 +5,10 @@
  */
 package SimpleChatSystem;
 
-
 import CurrentDb.Tables.UserTable;
 import java.awt.Color;
 import java.awt.Component;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -18,7 +18,8 @@ import javax.swing.ListCellRenderer;
  * @author Alim
  */
 public class JLabelForListCell extends JLabel implements ListCellRenderer {
-     private static final Color HIGHLIGHT_COLOR = new Color(0, 0, 128);
+
+    private static final Color HIGHLIGHT_COLOR = new Color(0, 0, 128);
     private static final long serialVersionUID = 1L;
 
     public JLabelForListCell() {
@@ -26,12 +27,14 @@ public class JLabelForListCell extends JLabel implements ListCellRenderer {
         setIconTextGap(12);
     }
 
-     @Override
+    @Override
     public Component getListCellRendererComponent(JList list, Object value,
             int index, boolean isSelected, boolean cellHasFocus) {
-        UserTable entry = (UserTable) value;
-        setText(entry.Username);
-        setIcon(entry.getImage());
+        UserTable user = (UserTable) value;
+        setText(user.Username);
+        if (user.isImageExist()) {
+            setIcon(new ImageIcon(user.getPathForThumbChatListPic()));
+        }
         if (isSelected) {
             setBackground(HIGHLIGHT_COLOR);
             setForeground(Color.white);

@@ -51,7 +51,7 @@ public class InheritableServer implements Runnable {
             if (!isUserAlreadyOnline(userGotOnline)) {
                 _UsersOnline.add(userGotOnline);
                 System.out.println("user added:");
-                userGotOnline.Print();
+                userGotOnline.print();
                 return true;
             } else {
                 System.out.println("user already online.");
