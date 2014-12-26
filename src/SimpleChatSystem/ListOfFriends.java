@@ -15,9 +15,14 @@ import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
 import OnlineServers.UserOnlineServer;
 import java.io.IOException;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -32,7 +37,7 @@ public class ListOfFriends extends JFrameInheritable {
     private boolean _isAdmin;
     private UserTable _user; // load from previous form , startup
     private List<ChatListTable> friendsList;
-    private List<ChatListTable> onlineFriendsList;
+    private ArrayList<ChatListTable> onlineFriendsList;
     DatabaseQuery dbChatLists = new DatabaseQuery(TableNames.CHATLIST);
     DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
     ChatListTable chatList = new ChatListTable();
@@ -71,12 +76,16 @@ public class ListOfFriends extends JFrameInheritable {
 
         online.sendUserOnlineRequestToServer(u);
         friendsList = dbChatLists.getResultsAsORM(chatList);
+        onlineFriendsList = new ArrayList<ChatListTable>(100);
         for (ChatListTable chatListUser : friendsList) {
-            UserOnlineServer._UsersOnline.stream().filter(e -> e.UserID == chatListUser.RelatedUserID);
 //            for (UserTable onlineUser : UserOnlineServer._UsersOnline) {
 //                            if(chatListUser.RelatedUserID  )
 //
 //            }
+            boolean isUserOnline = UserOnlineServer._UsersOnline.stream().filter(e -> chatListUser.RelatedUserID.equals(e.UserID)).findAny().isPresent();
+            if(isUserOnline){
+                onlineFriendsList.add(chatListUser);
+            }
         }
     }
 
