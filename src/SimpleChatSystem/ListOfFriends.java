@@ -36,7 +36,6 @@ public class ListOfFriends extends JFrameInheritable {
     DatabaseQuery dbChatLists = new DatabaseQuery(TableNames.CHATLIST);
     DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
     ChatListTable chatList = new ChatListTable();
-   
 
     /**
      * Creates new form ListOfFriends
@@ -73,7 +72,7 @@ public class ListOfFriends extends JFrameInheritable {
         online.sendUserOnlineRequestToServer(u);
         friendsList = dbChatLists.getResultsAsORM(chatList);
         for (ChatListTable chatListUser : friendsList) {
-            onlineFriendsList = UserOnlineServer._UsersOnline.stream().filter(u -> u. == chatListUser.RelatedUserID);
+            UserOnlineServer._UsersOnline.stream().filter(e -> e.UserID == chatListUser.RelatedUserID);
 //            for (UserTable onlineUser : UserOnlineServer._UsersOnline) {
 //                            if(chatListUser.RelatedUserID  )
 //
@@ -258,6 +257,7 @@ public class ListOfFriends extends JFrameInheritable {
 
             }
         }
+        return false;
     }
 
     /**
@@ -277,6 +277,8 @@ public class ListOfFriends extends JFrameInheritable {
 //        columns[--fields] = ChatList.RelatedUserID;
 //        values[fields] = userID;
 //        return dbChatLists.isExist(userID, userID, aliasFound);
+
+        return true;
     }
 
     /**
