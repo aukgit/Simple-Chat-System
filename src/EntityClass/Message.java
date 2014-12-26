@@ -152,7 +152,7 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return "EntityClass.Message[ messageID=" + messageID + " ]";
+        return "EntityClass.Forms.Message[ messageID=" + messageID + " ]";
     }
     
 }

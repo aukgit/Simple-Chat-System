@@ -5,8 +5,6 @@
  */
 package EntityClass;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -20,7 +18,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -39,10 +36,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "User.findByLastLogin", query = "SELECT u FROM User u WHERE u.lastLogin = :lastLogin"),
     @NamedQuery(name = "User.findByIsBlocked", query = "SELECT u FROM User u WHERE u.isBlocked = :isBlocked"),
     @NamedQuery(name = "User.findByIsActive", query = "SELECT u FROM User u WHERE u.isActive = :isActive"),
-    @NamedQuery(name = "User.findByIsAdmin", query = "SELECT u FROM User u WHERE u.isAdmin = :isAdmin")})
+    @NamedQuery(name = "User.findByIsAdmin", query = "SELECT u FROM User u WHERE u.isAdmin = :isAdmin"),
+    @NamedQuery(name = "User.findByIsOnline", query = "SELECT u FROM User u WHERE u.isOnline = :isOnline"),
+    @NamedQuery(name = "User.findByCurrentActiveState", query = "SELECT u FROM User u WHERE u.currentActiveState = :currentActiveState")})
 public class User implements Serializable {
-    @Transient
-    private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,6 +67,12 @@ public class User implements Serializable {
     @Basic(optional = false)
     @Column(name = "IsAdmin")
     private boolean isAdmin;
+    @Basic(optional = false)
+    @Column(name = "IsOnline")
+    private boolean isOnline;
+    @Basic(optional = false)
+    @Column(name = "CurrentActiveState")
+    private short currentActiveState;
 
     public User() {
     }
@@ -78,7 +81,7 @@ public class User implements Serializable {
         this.userID = userID;
     }
 
-    public User(Integer userID, String username, String email, String password, boolean isBlocked, boolean isActive, boolean isAdmin) {
+    public User(Integer userID, String username, String email, String password, boolean isBlocked, boolean isActive, boolean isAdmin, boolean isOnline, short currentActiveState) {
         this.userID = userID;
         this.username = username;
         this.email = email;
@@ -86,6 +89,8 @@ public class User implements Serializable {
         this.isBlocked = isBlocked;
         this.isActive = isActive;
         this.isAdmin = isAdmin;
+        this.isOnline = isOnline;
+        this.currentActiveState = currentActiveState;
     }
 
     public Integer getUserID() {
@@ -93,9 +98,7 @@ public class User implements Serializable {
     }
 
     public void setUserID(Integer userID) {
-        Integer oldUserID = this.userID;
         this.userID = userID;
-        changeSupport.firePropertyChange("userID", oldUserID, userID);
     }
 
     public String getUsername() {
@@ -103,9 +106,7 @@ public class User implements Serializable {
     }
 
     public void setUsername(String username) {
-        String oldUsername = this.username;
         this.username = username;
-        changeSupport.firePropertyChange("username", oldUsername, username);
     }
 
     public String getEmail() {
@@ -113,9 +114,7 @@ public class User implements Serializable {
     }
 
     public void setEmail(String email) {
-        String oldEmail = this.email;
         this.email = email;
-        changeSupport.firePropertyChange("email", oldEmail, email);
     }
 
     public String getPassword() {
@@ -123,9 +122,7 @@ public class User implements Serializable {
     }
 
     public void setPassword(String password) {
-        String oldPassword = this.password;
         this.password = password;
-        changeSupport.firePropertyChange("password", oldPassword, password);
     }
 
     public Date getLastLogin() {
@@ -133,9 +130,7 @@ public class User implements Serializable {
     }
 
     public void setLastLogin(Date lastLogin) {
-        Date oldLastLogin = this.lastLogin;
         this.lastLogin = lastLogin;
-        changeSupport.firePropertyChange("lastLogin", oldLastLogin, lastLogin);
     }
 
     public boolean getIsBlocked() {
@@ -143,9 +138,7 @@ public class User implements Serializable {
     }
 
     public void setIsBlocked(boolean isBlocked) {
-        boolean oldIsBlocked = this.isBlocked;
         this.isBlocked = isBlocked;
-        changeSupport.firePropertyChange("isBlocked", oldIsBlocked, isBlocked);
     }
 
     public boolean getIsActive() {
@@ -153,9 +146,7 @@ public class User implements Serializable {
     }
 
     public void setIsActive(boolean isActive) {
-        boolean oldIsActive = this.isActive;
         this.isActive = isActive;
-        changeSupport.firePropertyChange("isActive", oldIsActive, isActive);
     }
 
     public boolean getIsAdmin() {
@@ -163,9 +154,23 @@ public class User implements Serializable {
     }
 
     public void setIsAdmin(boolean isAdmin) {
-        boolean oldIsAdmin = this.isAdmin;
         this.isAdmin = isAdmin;
-        changeSupport.firePropertyChange("isAdmin", oldIsAdmin, isAdmin);
+    }
+
+    public boolean getIsOnline() {
+        return isOnline;
+    }
+
+    public void setIsOnline(boolean isOnline) {
+        this.isOnline = isOnline;
+    }
+
+    public short getCurrentActiveState() {
+        return currentActiveState;
+    }
+
+    public void setCurrentActiveState(short currentActiveState) {
+        this.currentActiveState = currentActiveState;
     }
 
     @Override
@@ -190,15 +195,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "EntityClass.User[ userID=" + userID + " ]";
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        changeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        changeSupport.removePropertyChangeListener(listener);
+        return "EntityClass.Forms.User[ userID=" + userID + " ]";
     }
     
 }

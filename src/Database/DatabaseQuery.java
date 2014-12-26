@@ -1005,14 +1005,14 @@ public final class DatabaseQuery extends DbInitalizer {
         }
         return false;
     }
-    
+
     /**
-     * 
+     *
      * @param <T>
      * @param Columns
      * @param valuesSearchInFields
      * @param entityObject if not found any result then make it to null.
-     * @return 
+     * @return
      */
     public <T> boolean isExist(String Columns, String valuesSearchInFields, T entityObject) {
         boolean isFound = isExist(Columns, valuesSearchInFields);
@@ -1863,12 +1863,12 @@ public final class DatabaseQuery extends DbInitalizer {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <T> List<T> getResultsAsORM(ResultSet result, T classObject) {
+    public <T> ArrayList<T> getResultsAsORM(ResultSet result, T classObject) {
         if (result != null) {
             int rows = rowCount(result);
             Field[] fieldsInClass = Codes.getAllFields(classObject.getClass());
             ArrayList<Field> availableFieldsToWorkWith = getAvailableColumnsList(fieldsInClass);
-            List<T> returnList = new ArrayList<>(rows + 40);
+            ArrayList<T> returnList = new ArrayList<>(rows + 40);
 
             for (int cursor = 0; cursor < rows; cursor++) {
                 T eachObject = null;
@@ -1921,21 +1921,23 @@ public final class DatabaseQuery extends DbInitalizer {
 
     /**
      * No reading , have to it before executing this.
+     *
      * @param <T>
      * @param classObject: new class object
      * @return
      */
-    public <T> List<T> getResultsAsORM(T classObject) {
+    public <T> ArrayList<T> getResultsAsORM(T classObject) {
         return getResultsAsORM(getRs(), classObject);
     }
 
     /**
      * reads and then get all the results
+     *
      * @param <T>
      * @param classObject : new class object
      * @return
      */
-    public <T> List<T> readAndGetResultsAsORM(T classObject) {
+    public <T> ArrayList<T> readAndGetResultsAsORM(T classObject) {
         readData();
         return getResultsAsORM(getRs(), classObject);
     }

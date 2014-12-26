@@ -28,7 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Chatlist.findAll", query = "SELECT c FROM Chatlist c"),
     @NamedQuery(name = "Chatlist.findByChatListID", query = "SELECT c FROM Chatlist c WHERE c.chatListID = :chatListID"),
     @NamedQuery(name = "Chatlist.findByOriginalUserID", query = "SELECT c FROM Chatlist c WHERE c.originalUserID = :originalUserID"),
-    @NamedQuery(name = "Chatlist.findByRelatedUserID", query = "SELECT c FROM Chatlist c WHERE c.relatedUserID = :relatedUserID")})
+    @NamedQuery(name = "Chatlist.findByRelatedUserID", query = "SELECT c FROM Chatlist c WHERE c.relatedUserID = :relatedUserID"),
+    @NamedQuery(name = "Chatlist.findByAliasAs", query = "SELECT c FROM Chatlist c WHERE c.aliasAs = :aliasAs")})
 public class Chatlist implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -42,6 +43,9 @@ public class Chatlist implements Serializable {
     @Basic(optional = false)
     @Column(name = "RelatedUserID")
     private int relatedUserID;
+    @Basic(optional = false)
+    @Column(name = "AliasAs")
+    private String aliasAs;
 
     public Chatlist() {
     }
@@ -50,10 +54,11 @@ public class Chatlist implements Serializable {
         this.chatListID = chatListID;
     }
 
-    public Chatlist(Long chatListID, int originalUserID, int relatedUserID) {
+    public Chatlist(Long chatListID, int originalUserID, int relatedUserID, String aliasAs) {
         this.chatListID = chatListID;
         this.originalUserID = originalUserID;
         this.relatedUserID = relatedUserID;
+        this.aliasAs = aliasAs;
     }
 
     public Long getChatListID() {
@@ -80,6 +85,14 @@ public class Chatlist implements Serializable {
         this.relatedUserID = relatedUserID;
     }
 
+    public String getAliasAs() {
+        return aliasAs;
+    }
+
+    public void setAliasAs(String aliasAs) {
+        this.aliasAs = aliasAs;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -102,7 +115,7 @@ public class Chatlist implements Serializable {
 
     @Override
     public String toString() {
-        return "EntityClass.Chatlist[ chatListID=" + chatListID + " ]";
+        return "EntityClass.Forms.Chatlist[ chatListID=" + chatListID + " ]";
     }
     
 }

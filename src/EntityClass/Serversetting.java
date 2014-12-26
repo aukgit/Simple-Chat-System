@@ -30,7 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Serversetting.findByServerIP", query = "SELECT s FROM Serversetting s WHERE s.serverIP = :serverIP"),
     @NamedQuery(name = "Serversetting.findByServerPort", query = "SELECT s FROM Serversetting s WHERE s.serverPort = :serverPort"),
     @NamedQuery(name = "Serversetting.findByIsActive", query = "SELECT s FROM Serversetting s WHERE s.isActive = :isActive"),
-    @NamedQuery(name = "Serversetting.findByConnectionString", query = "SELECT s FROM Serversetting s WHERE s.connectionString = :connectionString")})
+    @NamedQuery(name = "Serversetting.findByConnectionString", query = "SELECT s FROM Serversetting s WHERE s.connectionString = :connectionString"),
+    @NamedQuery(name = "Serversetting.findByUserOnlinePort", query = "SELECT s FROM Serversetting s WHERE s.userOnlinePort = :userOnlinePort")})
 public class Serversetting implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -43,12 +44,15 @@ public class Serversetting implements Serializable {
     private String serverIP;
     @Basic(optional = false)
     @Column(name = "ServerPort")
-    private int serverPort;
+    private short serverPort;
     @Basic(optional = false)
     @Column(name = "IsActive")
     private boolean isActive;
     @Column(name = "ConnectionString")
     private String connectionString;
+    @Basic(optional = false)
+    @Column(name = "UserOnlinePort")
+    private short userOnlinePort;
 
     public Serversetting() {
     }
@@ -57,11 +61,12 @@ public class Serversetting implements Serializable {
         this.serverSettingID = serverSettingID;
     }
 
-    public Serversetting(Short serverSettingID, String serverIP, int serverPort, boolean isActive) {
+    public Serversetting(Short serverSettingID, String serverIP, short serverPort, boolean isActive, short userOnlinePort) {
         this.serverSettingID = serverSettingID;
         this.serverIP = serverIP;
         this.serverPort = serverPort;
         this.isActive = isActive;
+        this.userOnlinePort = userOnlinePort;
     }
 
     public Short getServerSettingID() {
@@ -80,11 +85,11 @@ public class Serversetting implements Serializable {
         this.serverIP = serverIP;
     }
 
-    public int getServerPort() {
+    public short getServerPort() {
         return serverPort;
     }
 
-    public void setServerPort(int serverPort) {
+    public void setServerPort(short serverPort) {
         this.serverPort = serverPort;
     }
 
@@ -102,6 +107,14 @@ public class Serversetting implements Serializable {
 
     public void setConnectionString(String connectionString) {
         this.connectionString = connectionString;
+    }
+
+    public short getUserOnlinePort() {
+        return userOnlinePort;
+    }
+
+    public void setUserOnlinePort(short userOnlinePort) {
+        this.userOnlinePort = userOnlinePort;
     }
 
     @Override
@@ -126,7 +139,7 @@ public class Serversetting implements Serializable {
 
     @Override
     public String toString() {
-        return "EntityClass.Serversetting[ serverSettingID=" + serverSettingID + " ]";
+        return "EntityClass.Forms.Serversetting[ serverSettingID=" + serverSettingID + " ]";
     }
     
 }

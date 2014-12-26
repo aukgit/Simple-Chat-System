@@ -106,7 +106,7 @@ public class Chatsession implements Serializable {
 
     @Override
     public String toString() {
-        return "EntityClass.Chatsession[ chatSessionID=" + chatSessionID + " ]";
+        return "EntityClass.Forms.Chatsession[ chatSessionID=" + chatSessionID + " ]";
     }
     
 }

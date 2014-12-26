@@ -57,13 +57,10 @@ public class CommonData {
     public static Color getColorForActiveStatus(int index) {
         if (_activeStateList == null) {
             setTableName(TableNames.ACTIVESTATE);
-            ActiveStateTable table = new ActiveStateTable();
-
-            _activeStateList = _db.readAndGetResultsAsORM(table);
+            _activeStateList = _db.readAndGetResultsAsORM(new ActiveStateTable());
         }
 
         ActiveStateTable indexState = _activeStateList.get(index);
         return new Color(indexState.colorRed, indexState.colorGreen, indexState.colorBlue);
-
     }
 }
