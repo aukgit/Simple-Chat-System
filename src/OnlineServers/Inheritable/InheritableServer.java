@@ -77,7 +77,7 @@ public class InheritableServer implements Runnable {
      * @return
      */
     @SuppressWarnings("deprecation")
-    public Thread stopThread(InheritableServer server) {
+    protected Thread stopThread(InheritableServer server) {
         if (_serverThread == null) {
             _serverThread = new Thread(server);
         }
@@ -100,7 +100,7 @@ public class InheritableServer implements Runnable {
      * @param server
      * @return
      */
-    public Thread startThread(InheritableServer server) {
+    protected Thread startThread(InheritableServer server) {
         if (_serverThread == null) {
             _serverThread = new Thread(server);
         }

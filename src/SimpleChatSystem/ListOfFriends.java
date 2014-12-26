@@ -13,7 +13,7 @@ import CurrentDb.Tables.ChatListTable;
 import CurrentDb.Tables.UserTable;
 import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
-import OnlineServers.UserOnlineServer;
+import OnlineServers.UserOnline;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public class ListOfFriends extends JFrameInheritable {
             this.UserActiveState.add(item);
         }
         loadCurrentStatus();
-        UserOnlineServer online = new UserOnlineServer();
+        UserOnline online = new UserOnline();
         online.reReadDataFromServer();
 
         online.sendUserOnlineRequestToServer(u);
@@ -96,11 +96,11 @@ public class ListOfFriends extends JFrameInheritable {
 
         if (allfriendsList != null) {
             for (ChatListTable chatListUser : allfriendsList) {
-//            for (UserTable onlineUser : UserOnlineServer._UsersOnline) {
+//            for (UserTable onlineUser : UserOnline._UsersOnline) {
 //                            if(chatListUser.RelatedUserID  )
 //
 //            }
-                boolean isUserOnline = UserOnlineServer._UsersOnline.stream()
+                boolean isUserOnline = UserOnline._UsersOnline.stream()
                         .filter(e -> chatListUser.RelatedUserID.equals(e.UserID))
                         .findAny()
                         .isPresent();
@@ -247,7 +247,7 @@ public class ListOfFriends extends JFrameInheritable {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(editProfile)
                     .addComponent(adminConfigBtn)
-                    .addComponent(UserPicLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(UserPicLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(UserActiveState, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -411,7 +411,6 @@ public class ListOfFriends extends JFrameInheritable {
     private javax.swing.JList friendsDisplayList;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextPane searchBox;
     // End of variables declaration//GEN-END:variables

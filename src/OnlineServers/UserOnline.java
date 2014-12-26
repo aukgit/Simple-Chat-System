@@ -11,7 +11,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PictureUploadServer extends InheritableServer {
+public class UserOnline extends InheritableServer {
 
     /**
      * checks if not null and alive
@@ -124,12 +124,12 @@ public class PictureUploadServer extends InheritableServer {
                 System.out.println("user already exist.");
             }
         } catch (IOException ex) {
-            Logger.getLogger(PictureUploadServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UserOnline.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Sorry can't connect with " + ip + ":" + port);
             System.out.println("trying again ...");
 
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PictureUploadServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UserOnline.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Object not found :  " + ip + ":" + port);
         }
 
@@ -137,7 +137,7 @@ public class PictureUploadServer extends InheritableServer {
 
     public static void main(String[] args) {
 
-        PictureUploadServer online = new PictureUploadServer();
+        UserOnline online = new UserOnline();
         online.reReadDataFromServer();
         online.startThread();
 

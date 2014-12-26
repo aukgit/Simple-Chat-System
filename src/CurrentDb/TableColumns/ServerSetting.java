@@ -17,4 +17,14 @@ public interface ServerSetting {
     public String ServerPort = "ServerPort";
     public String IsActive = "IsActive";
     public String UserOnlinePort = "UserOnlinePort";
+
+    public String PictureUploaderPort = "PictureUploaderPort";
+    public String ProfilePicWidth = "ProfilePicWidth";
+    public String ProfilePicHeight = "ProfilePicHeight";
+    public String ChatingThumbWidth = "ChatingThumbWidth";
+    public String ChatingThumbHeight = "ChatingThumbHeight";
+    public String ChatListThumbWidth = "ChatListThumbWidth";
+
+    public String ChatListThumbHeight = "ChatListThumbHeight";
+
 }

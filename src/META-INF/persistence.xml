@@ -7,13 +7,14 @@
     <class>EntityClass.Chatlist</class>
     <class>EntityClass.Chatsession</class>
     <class>EntityClass.Message</class>
-    <class>OnlineServers.UserOnlineServer</class>
     <class>TestingCode.SwingListExample</class>
     <class>EntityClass.Forms.Chatlist</class>
     <class>EntityClass.Userstatus</class>
     <class>EntityClass.Userrecentstatus</class>
     <class>EntityClass.Chatsessionrelateduser</class>
     <class>EntityClass.Activestate</class>
+    <class>OnlineServers.PictureUploadServer</class>
+    <class>OnlineServers.UserOnline</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://locahost:3306/chatdatabase"/>
       <property name="javax.persistence.jdbc.password" value=""/>

@@ -9,7 +9,7 @@ package CurrentDb.Tables;
  *
  * @author Alim
  */
-public class ServerSettingTable extends DatabaseTableClass{
+public class ServerSettingTable extends DatabaseTableClass {
 
     public short ServerSettingID;
     public String ServerIP;
@@ -17,5 +17,14 @@ public class ServerSettingTable extends DatabaseTableClass{
     public boolean IsActive;
 
     public String ConnectionString;
-    public int UserOnlinePort;
+    public short UserOnlinePort;
+    public short PictureUploaderPort;
+    public short ProfilePicWidth;
+    public short ProfilePicHeight;
+    public short ChatingThumbWidth;
+    public short ChatingThumbHeight;
+    public short ChatListThumbWidth;
+    public short ChatListThumbHeight;
+    
+
 }

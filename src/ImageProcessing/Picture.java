@@ -61,19 +61,19 @@ public final class Picture implements ActionListener, ISoftwareInformation {
     //Written By Alim UL Karim, using http://code.google.com/p/thumbnailator/
     public BufferedImage ResizeImage(String imageLocation, int w, int h) {
         try {
-            image = ImageIO.read(new File(imageLocation));
+            setImage(ImageIO.read(new File(imageLocation)));
         } catch (Exception e) {
             System.out.println("Can't find the image path file: " + imageLocation);
             return null;
         }
-        if (image.getHeight() == h && image.getWidth() == w) {
-            imageResized = image;
+        if (getImage().getHeight() == h && getImage().getWidth() == w) {
+            imageResized = getImage();
             return imageResized;
         }
 
         try {
 
-            imageResized = Thumbnails.of(image).size(w, h).asBufferedImage();
+            imageResized = Thumbnails.of(getImage()).size(w, h).asBufferedImage();
         } catch (Exception e) {
             System.out.println("Sorry can't resize this image:" + e);
         }
@@ -84,17 +84,17 @@ public final class Picture implements ActionListener, ISoftwareInformation {
     //Written By Alim UL Karim, using http://code.google.com/p/thumbnailator/
     public BufferedImage ResizeImage(BufferedImage img, int w, int h) {
         try {
-            image = img;
+            setImage(img);
         } catch (Exception e) {
             System.out.println("Can't find the image.");
             return null;
         }
-        if (image.getHeight() == h && image.getWidth() == w) {
-            imageResized = image;
+        if (getImage().getHeight() == h && getImage().getWidth() == w) {
+            imageResized = getImage();
             return imageResized;
         }
         try {
-            imageResized = Thumbnails.of(image).size(w, h).asBufferedImage();
+            imageResized = Thumbnails.of(getImage()).size(w, h).asBufferedImage();
         } catch (Exception e) {
             System.out.println("Sorry can't resize this image:" + e);
         }
@@ -105,26 +105,30 @@ public final class Picture implements ActionListener, ISoftwareInformation {
     //Written By Alim UL Karim
     public BufferedImage generateImageFromFile(String fileName) {
         this.filename = fileName;
+        File file = new File(fileName);
+        return generateImageFromFile(file);
+    }
+
+    public BufferedImage generateImageFromFile(File file) {
         try {
             // try to read from file in working directory
-            File file = new File(fileName);
             if (file.isFile()) {
-                image = ImageIO.read(file);
+                setImage(ImageIO.read(file));
             } // now try to read from file in same directory as this .class file
             else {
                 URL url = getClass().getResource(filename);
                 if (url == null) {
                     url = new URL(filename);
                 }
-                image = ImageIO.read(url);
+                setImage(ImageIO.read(url));
             }
-            width = image.getWidth(null);
-            height = image.getHeight(null);
+            width = getImage().getWidth(null);
+            height = getImage().getHeight(null);
         } catch (IOException e) {
             // e.printStackTrace();
             throw new RuntimeException("Could not open file: " + filename);
         }
-        return image;
+        return getImage();
     }
 
     /**
@@ -140,8 +144,14 @@ public final class Picture implements ActionListener, ISoftwareInformation {
             throw new RuntimeException("Invalid image file: " + file);
         }
     }
-//Written By Alim UL Karim
-
+    //Written By Alim UL Karim
+    /**
+     * 
+     * @param ji
+     * @param imageLocation
+     * @param NotFoundText
+     * @return 
+     */
     public ImageIcon setImageIcon(JLabel ji, String imageLocation, String NotFoundText) {
         if (new File(imageLocation).exists() == false) {
             imgico = new ImageIcon();
@@ -156,8 +166,26 @@ public final class Picture implements ActionListener, ISoftwareInformation {
         }
 
     }
+    /**
+     * set current processing image to the label.
+     * @param ji
+     * @return 
+     */
+    public ImageIcon setImageIcon(JLabel ji) {
+        imgico = new ImageIcon(this.getImage());
+        ji.setText("");
+        ji.setIcon(imgico);
+        return imgico;
+    }
+    
+    public ImageIcon setImageIcon(JLabel ji, BufferedImage img) {
+        imgico = new ImageIcon(img);
+        ji.setText("");
+        ji.setIcon(imgico);
+        return imgico;
+    }
 
-    //Written By Alim UL Karim
+//Written By Alim UL Karim
     public ImageIcon setImageIconSave(Component o, JLabel ji, String imageSaveLocation) {
         if (FilterAttached == false) {
             FileFilter ft = new FileNameExtensionFilter("JPEG", "jpg");
@@ -173,7 +201,7 @@ public final class Picture implements ActionListener, ISoftwareInformation {
             try {
                 String SelectedFileName = filesaveDialog.getSelectedFile().getAbsolutePath().toString();
                 generateImageFromFile(SelectedFileName);
-                imgico = new ImageIcon(image);
+                imgico = new ImageIcon(getImage());
             } catch (Exception e) {
                 err.showError(o, e, "Image can't be proccessed");
                 return null;
@@ -200,7 +228,7 @@ public final class Picture implements ActionListener, ISoftwareInformation {
             try {
                 String SelectedFileName = filesaveDialog.getSelectedFile().getAbsolutePath().toString();
                 generateImageFromFile(SelectedFileName);
-                ResizeImage(image, w, h);
+                ResizeImage(getImage(), w, h);
                 imgico = new ImageIcon(imageResized);
             } catch (Exception e) {
                 err.showError(o, e, "Image can't be proccessed");
@@ -217,10 +245,10 @@ public final class Picture implements ActionListener, ISoftwareInformation {
      * JFrame or other GUI widget.
      */
     public JLabel getJLabel() {
-        if (image == null) {
+        if (getImage() == null) {
             return null;
         }         // no image available
-        ImageIcon icon = new ImageIcon(image);
+        ImageIcon icon = new ImageIcon(getImage());
         return new JLabel(icon);
     }
 
@@ -257,8 +285,6 @@ public final class Picture implements ActionListener, ISoftwareInformation {
             menu.add(menuItem1);
             frame.setJMenuBar(menuBar);
 
-
-
             frame.setContentPane(getJLabel());
             // f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -291,9 +317,9 @@ public final class Picture implements ActionListener, ISoftwareInformation {
      */
     public Color get(int i, int j) {
         if (isOriginUpperLeft) {
-            return new Color(image.getRGB(i, j));
+            return new Color(getImage().getRGB(i, j));
         } else {
-            return new Color(image.getRGB(i, height - j - 1));
+            return new Color(getImage().getRGB(i, height - j - 1));
         }
     }
 
@@ -305,9 +331,9 @@ public final class Picture implements ActionListener, ISoftwareInformation {
             throw new RuntimeException("can't set Color to null");
         }
         if (isOriginUpperLeft) {
-            image.setRGB(i, j, c.getRGB());
+            getImage().setRGB(i, j, c.getRGB());
         } else {
-            image.setRGB(i, height - j - 1, c.getRGB());
+            getImage().setRGB(i, height - j - 1, c.getRGB());
         }
     }
 
@@ -343,8 +369,8 @@ public final class Picture implements ActionListener, ISoftwareInformation {
     }
 
     /**
-     * Save the picture to a file in a standard image format.
-     * The filetype must be .png or .jpg.
+     * Save the picture to a file in a standard image format. The filetype must
+     * be .png or .jpg.
      */
     public void save(String name) {
         save(new File(name));
@@ -354,9 +380,15 @@ public final class Picture implements ActionListener, ISoftwareInformation {
      * Save the picture to a file in a standard image format.
      */
     public void save(File file) {
-        save(file, this.image);
+        save(file, this.getImage());
     }
 
+    /**
+     * overwrites if exist.
+     *
+     * @param file : overwrites if exist.
+     * @param image2
+     */
     public void save(File file, BufferedImage image2) {
         this.filename = file.getName();
         String suffix = filename.substring(filename.lastIndexOf('.') + 1);
@@ -365,6 +397,9 @@ public final class Picture implements ActionListener, ISoftwareInformation {
             File f2 = new File(file.getPath());
             if (f2.exists() == false) {
                 f2.mkdirs();
+            }
+            if (file.exists()) {
+                file.delete();
             }
             try {
                 ImageIO.write(image2, suffix, file);
@@ -378,8 +413,10 @@ public final class Picture implements ActionListener, ISoftwareInformation {
 
     /**
      * Opens a save dialog box when the user selects "Save As" from the menu.
+     *
+     * @param e
      */
-    public void actionPerformed(ActionEvent e) {
+    public void browseFileAndSaveFile(ActionEvent e) {
         FileDialog chooser = new FileDialog(frame,
                 "Use a .png or .jpg extension", FileDialog.SAVE);
         chooser.setVisible(true);
@@ -388,13 +425,64 @@ public final class Picture implements ActionListener, ISoftwareInformation {
         }
     }
 
+    public File browseFileAndGetFile() {
+        FileDialog chooser = new FileDialog(frame,
+                "Use a .png or .jpg extension", FileDialog.SAVE);
+        chooser.setVisible(true);
+        if (chooser.getFile() != null) {
+            return new File(chooser.getFile());
+        }
+        return null;
+    }
+
+    public String browseFileAndGetFileName() {
+        FileDialog chooser = new FileDialog(frame,
+                "Use a .png or .jpg extension", FileDialog.SAVE);
+        chooser.setVisible(true);
+        if (chooser.getFile() != null) {
+            return chooser.getFile();
+        }
+        return null;
+    }
+
     /**
-     * Test client. Reads a picture specified by the command-line argument,
-     * and shows it in a window on the screen.
+     * Test client. Reads a picture specified by the command-line argument, and
+     * shows it in a window on the screen.
      */
     public static void main(String[] args) {
         Picture pic = new Picture(args[0]);
         System.out.printf("%d-by-%d\n", pic.width(), pic.height());
         pic.show();
+    }
+
+    /**
+     * @return the image
+     */
+    public BufferedImage getImage() {
+        return image;
+    }
+
+    /**
+     * @param image the image to set
+     */
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
+
+    public File browseFile(Component whereLoadingFrom) {
+        JFileChooser filechooser = new JFileChooser();
+        filechooser.setDialogTitle("Choose Your File");
+        filechooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        //below codes for select  the file 
+        int returnval = filechooser.showOpenDialog(whereLoadingFrom);
+        if (returnval == JFileChooser.APPROVE_OPTION) {
+            return filechooser.getSelectedFile();
+        }
+        return null;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
