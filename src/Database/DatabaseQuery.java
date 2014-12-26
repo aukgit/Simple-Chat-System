@@ -1821,7 +1821,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     //</editor-fold>
-//<editor-fold defaultstate="collapsed" desc="multiple">
+    //<editor-fold defaultstate="collapsed" desc="multiple">
     private ArrayList<Field> getAvailableColumnsList(Field[] listOfFields) {
         ArrayList<Field> returnList = new ArrayList<>(50);
         List<String> Columns = Arrays.asList(getColumnsNames());
@@ -1919,7 +1919,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     //</editor-fold>
-//</editor-fold>
+    //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="row counts of result set">
     /**
      * result set cursor may move to last returns cached row result if once ran
