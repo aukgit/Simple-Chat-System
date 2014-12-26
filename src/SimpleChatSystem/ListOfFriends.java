@@ -11,12 +11,13 @@ import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
 import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
+import OnlineServers.UserOnlineServer;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
- 
+
 /**
  *
  * @author Alim
@@ -57,7 +58,13 @@ public class ListOfFriends extends JFrameInheritable {
             this.UserActiveState.add(item);
         }
         loadCurrentStatus();
-
+        UserOnlineServer online = new UserOnlineServer();
+        online.reReadDataFromServer();
+        try {
+            online.client();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ListOfFriends.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public ListOfFriends(UserTable u) {
@@ -259,8 +266,7 @@ public class ListOfFriends extends JFrameInheritable {
     private String getLatestStatusWhereSQL() {
         return UserStatus.UserID + "=" + _user.UserID + " ORDER BY DATED DESC LIMIT 1";
     }
-    
-    
+
     public static void main(String args[]) throws IOException {
         /* Set the Nimbus look and feel */
         //        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

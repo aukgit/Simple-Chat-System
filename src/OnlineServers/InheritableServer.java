@@ -45,16 +45,20 @@ public class InheritableServer implements Runnable {
         return false;
     }
 
-    public void addUsertoOnlineList(UserTable userGotOnline) {
+    public boolean addUsertoOnlineList(UserTable userGotOnline) {
         if (userGotOnline.UserID > 0) {
             if (!isUserAlreadyOnline(userGotOnline)) {
                 _UsersOnline.add(userGotOnline);
+                System.out.println("user added:");
+                userGotOnline.Print();
+                return true;
             } else {
                 System.out.println("user already online.");
             }
         } else {
             System.out.println("user id is less or equal to zero.");
         }
+        return false;
     }
 
     public void removeUserfromOnlineList(UserTable userGotOnline) {

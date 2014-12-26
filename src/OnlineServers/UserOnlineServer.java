@@ -36,35 +36,18 @@ public class UserOnlineServer extends InheritableServer {
     public Thread startThread() {
         return super.startThread(this);
     }
-    
+
     @Override
     public void run() {
         _scanner = new Scanner(System.in);
 
         //refeshes port and is active state
         reReadDataFromServer();
-        
+
         System.out.println("Server Estabilsh Connection On Localhost or own ip with port : "
                 + _serverConfig.UserOnlinePort);
-        
+
         System.out.println("Now you can run your client app.");
-        
-        while (_serverConfig.IsActive && _shouldThreadRun) {
-            Console.writeLine("Server running...." + _serverConfig.IsActive);
-            serverForAddingUser();
-            _serverHitCounter++;
-            System.err.println("Counter : " + _serverHitCounter);
-            if (_serverHitCounter >= _serverRefershAfterHits) {
-                _serverHitCounter = 0;
-                //refeshes port and is active state
-                reReadDataFromServer();
-            }
-            
-        }
-        
-    }
-    
-    private void serverForAddingUser() {
         ServerSocket severSocket = null;
         try {
             severSocket = new ServerSocket(_serverConfig.UserOnlinePort);
@@ -74,48 +57,67 @@ public class UserOnlineServer extends InheritableServer {
         } catch (IOException ex) {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Socket connectionSocket = null;
-        
+        while (_serverConfig.IsActive && _shouldThreadRun) {
+            Console.writeLine("Server running...." + _serverConfig.IsActive);
+            serverForAddingUser(severSocket);
+            _serverHitCounter++;
+            System.err.println("Counter : " + _serverHitCounter);
+            if (_serverHitCounter >= _serverRefershAfterHits) {
+                _serverHitCounter = 0;
+                //refeshes port and is active state
+                reReadDataFromServer();
+            }
+
+        }
+
+    }
+
+    private void serverForAddingUser(ServerSocket severSocket) {
+
+        Socket socket = null;
+
         try {
-            connectionSocket = severSocket.accept();
+            socket = severSocket.accept();
         } catch (IOException ex) {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // for taking input from client
-        ObjectInputStream inputFromClient = super.getInputObjectStream(connectionSocket);
-        
+        ObjectInputStream inputFromClient = super.getInputObjectStream(socket);
+        boolean returnResult = false;
         UserTable userReturnedfromClient = null;
-        UserTable _u = new UserTable();
-        DatabaseQuery db2 = new DatabaseQuery(TableNames.USER);
-        
         try {
-            int id = inputFromClient.readInt();
-            db2.getResultsFirstAsObject(User.UserID, id + "", _u);
-            super.addUsertoOnlineList(userReturnedfromClient);
-            
-        } catch (Exception ex) {
+            userReturnedfromClient = (UserTable) inputFromClient.readObject();
+
+            returnResult = super.addUsertoOnlineList(userReturnedfromClient);
+
+        } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
-            
+
         }
         // sending data to client
 
         // for giving output to the client.
         // output to client, to send data to the server
-        ObjectOutputStream objectOutputStream = super.getOutputObjectStream(connectionSocket);
         // get output from server
         try {
             // send data to client
-            objectOutputStream.writeBoolean(true);
+            System.out.println("Writing to client : " + returnResult);
+            if (returnResult) {
+                super.getOutputObjectStream(socket).writeObject(userReturnedfromClient);
+            } else {
+                super.getOutputObjectStream(socket).writeObject(null);
+            }
         } catch (IOException ex) {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void client() {
-        
+
+    public void client() throws ClassNotFoundException {
+
         int port = _serverConfig.UserOnlinePort;
         String ip = _serverConfig.ServerIP;
+        System.out.println(ip + ":" + port);
         System.out.println("User id to load : ");
         String idStr = "";
         try {
@@ -124,28 +126,33 @@ public class UserOnlineServer extends InheritableServer {
             Logger.getLogger(UserOnlineServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         int id = Integer.parseInt(idStr);
-        
+        UserTable _u = new UserTable();
+        DatabaseQuery db2 = new DatabaseQuery(TableNames.USER);
         tryagain:
         try (Socket socket = new Socket(ip, port)) {
-            
-            super.getOutputObjectStream(socket).writeInt(id);
-            boolean b = super.getInputObjectStream(socket).readBoolean();
-            System.out.println(b);
+            db2.getResultsFirstAsObject(User.UserID, id + "", _u);
+            super.getOutputObjectStream(socket).writeObject(_u);
+            UserTable gotUser = (UserTable)super.getInputObjectStream(socket).readObject();
+            if(gotUser != null){
+                gotUser.Print();
+            } else {
+                System.out.println("user already exist.");
+            }
         } catch (IOException ex) {
             Logger.getLogger(UserOnlineServer.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Sorry can't connect with " + ip + ":" + port);
             System.out.println("trying again ...");
-            
+
         }
-        
+
     }
-    
+
     public static void main(String[] args) {
-        
+
         UserOnlineServer online = new UserOnlineServer();
         online.reReadDataFromServer();
         online.startThread();
-        
+
     }
-    
+
 }

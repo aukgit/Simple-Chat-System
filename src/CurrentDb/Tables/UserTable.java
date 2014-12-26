@@ -24,4 +24,8 @@ public class UserTable extends DatabaseTableClass {
     public boolean IsAdmin;
     public boolean IsOnline;
 
+    public void Print() {
+        System.out.println("ID :" + this.UserID + " | Username: " + this.Username);
+    }
+
 }

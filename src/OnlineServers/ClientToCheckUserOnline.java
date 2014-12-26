@@ -11,7 +11,7 @@ package OnlineServers;
  */
 public class ClientToCheckUserOnline {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException {
 
         UserOnlineServer online = new UserOnlineServer();
         online.reReadDataFromServer();
