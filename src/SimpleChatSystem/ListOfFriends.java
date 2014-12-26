@@ -6,7 +6,6 @@
 package SimpleChatSystem;
 
 import CurrentDb.CommonData;
-import CurrentDb.TableColumns.ChatList;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableColumns.UserStatus;
 import CurrentDb.TableNames;
@@ -33,9 +32,11 @@ public class ListOfFriends extends JFrameInheritable {
     private boolean _isAdmin;
     private UserTable _user; // load from previous form , startup
     private List<ChatListTable> friendsList;
+    private List<ChatListTable> onlineFriendsList;
     DatabaseQuery dbChatLists = new DatabaseQuery(TableNames.CHATLIST);
     DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
     ChatListTable chatList = new ChatListTable();
+   
 
     /**
      * Creates new form ListOfFriends
@@ -72,10 +73,11 @@ public class ListOfFriends extends JFrameInheritable {
         online.sendUserOnlineRequestToServer(u);
         friendsList = dbChatLists.getResultsAsORM(chatList);
         for (ChatListTable chatListUser : friendsList) {
-            for (UserTable onlineUser : UserOnlineServer._UsersOnline) {
-                            if(chatListUser.RelatedUserID  )
-
-            }
+            onlineFriendsList = UserOnlineServer._UsersOnline.stream().filter(u -> u. == chatListUser.RelatedUserID);
+//            for (UserTable onlineUser : UserOnlineServer._UsersOnline) {
+//                            if(chatListUser.RelatedUserID  )
+//
+//            }
         }
     }
 
