@@ -1,4 +1,4 @@
-package OnlineServers;
+package OnlineServers.Inheritable;
 
 import CurrentDb.*;
 import CurrentDb.Tables.ServerSettingTable;

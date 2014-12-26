@@ -1,5 +1,6 @@
 package OnlineServers;
 
+import OnlineServers.Inheritable.InheritableServer;
 import ConsolePackage.Console;
 import CurrentDb.Tables.UserTable;
 import java.io.IOException;

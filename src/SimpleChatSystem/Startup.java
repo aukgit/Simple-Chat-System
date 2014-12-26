@@ -5,7 +5,7 @@
  */
 package SimpleChatSystem;
 
-import OnlineServers.InheritableServer;
+import OnlineServers.Inheritable.InheritableServer;
 import Common.Codes;
 import Cryptography.Hasher;
 import CurrentDb.TableColumns.User;

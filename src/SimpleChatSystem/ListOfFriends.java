@@ -13,17 +13,15 @@ import CurrentDb.Tables.ChatListTable;
 import CurrentDb.Tables.UserTable;
 import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
-import Global.AppConfig;
 import OnlineServers.UserOnlineServer;
 import java.awt.Color;
-import java.awt.Component;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.swing.ImageIcon;
+import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.ListModel;
 import javax.swing.UIManager;
@@ -89,7 +87,11 @@ public class ListOfFriends extends JFrameInheritable {
         this.friendsDisplayList.setCellRenderer(new JLabelForListCell());
         this.friendsDisplayList.removeAll();
         ArrayList<UserTable> allUsers = dbUsers.readAndGetResultsAsORM(new UserTable());
-        friendsDisplayList.setModel((ListModel) allUsers);
+        DefaultListModel<UserTable> model = new DefaultListModel();
+        for (UserTable sUser : allUsers) {
+            model.addElement(sUser);
+        }
+        friendsDisplayList.setModel(model);
         
 
         if (allfriendsList != null) {

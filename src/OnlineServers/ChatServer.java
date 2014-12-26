@@ -1,5 +1,6 @@
 package OnlineServers;
 
+import OnlineServers.Inheritable.InheritableServer;
 import ConsolePackage.Console;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
