@@ -63,13 +63,13 @@ public class AppConfig {
     }
 
     /**
-     * E:\Working\GitHub\Simple-Chat-System\PictureUpload
+     * E:\Working\GitHub\Simple-Chat-System\PictureUpload\
      *
-     * @return getAppPath() + DIRECTORY_SEPERATOR + "PictureUpload"
+     * @return getAppPath() + DIRECTORY_SEPERATOR + "PictureUpload" + DIRECTORY_SEPERATOR
      */
     public static String getPictureUploadPath() {
         if (AppConfig._pictureUploadPath == null) {
-            _pictureUploadPath = getAppPath() + DIRECTORY_SEPERATOR + "PictureUpload";
+            _pictureUploadPath = getAppPath() + DIRECTORY_SEPERATOR + "PictureUpload" + DIRECTORY_SEPERATOR;
         }
         return _pictureUploadPath;
     }

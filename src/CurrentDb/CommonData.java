@@ -6,9 +6,12 @@
 package CurrentDb;
 
 import CurrentDb.TableColumns.ActiveState;
+import CurrentDb.Tables.ActiveStateTable;
 import Database.DatabaseQuery;
 import Database.DbData;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 /**
  *
@@ -16,10 +19,11 @@ import java.awt.event.KeyEvent;
  */
 public class CommonData {
 
-    static String[] _activeStateList;
+    static String[] _activeStateStringList;
+    static ArrayList<ActiveStateTable> _activeStateList;
     static DatabaseQuery _db;
     public static int ENTER_KEY = KeyEvent.VK_ENTER;
-    
+
     /**
      * Creates db if necessary
      */
@@ -40,13 +44,26 @@ public class CommonData {
     }
 
     public static String[] getActiveStateList() {
-        if (_activeStateList == null) {
+        if (_activeStateStringList == null) {
             setTableName(TableNames.ACTIVESTATE);
             _db.readData();
             DbData dbData = new DbData(_db);
 
-            _activeStateList = dbData.getSingleColumnValues(ActiveState.State);
+            _activeStateStringList = dbData.getSingleColumnValues(ActiveState.State);
         }
-        return _activeStateList;
+        return _activeStateStringList;
+    }
+
+    public static Color getColorForActiveStatus(int index) {
+        if (_activeStateList == null) {
+            setTableName(TableNames.ACTIVESTATE);
+            ActiveStateTable table = new ActiveStateTable();
+
+            _activeStateList = _db.readAndGetResultsAsORM(table);
+        }
+
+        ActiveStateTable indexState = _activeStateList.get(index);
+        return new Color(indexState.colorRed, indexState.colorGreen, indexState.colorBlue);
+
     }
 }

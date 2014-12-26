@@ -6,8 +6,6 @@
  */
 package CurrentDb.TableColumns;
 
-
-
 /**
  *
  * @author Alim
@@ -17,5 +15,8 @@ public interface ActiveState {
     public String ActiveStateID = "ActiveStateID";
     public String State = "State";
 
-   
+    public String colorRed = "colorRed";
+    public String colorGreen = "colorGreen";
+    public String colorBlue = "colorBlue";
+
 }

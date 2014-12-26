@@ -13,16 +13,19 @@ import CurrentDb.Tables.ChatListTable;
 import CurrentDb.Tables.UserTable;
 import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
+import Global.AppConfig;
 import OnlineServers.UserOnlineServer;
+import java.awt.Color;
+import java.awt.Component;
 import java.io.IOException;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
+import javax.swing.AbstractButton;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -36,8 +39,12 @@ public class ListOfFriends extends JFrameInheritable {
     private static final long serialVersionUID = 1L;
     private boolean _isAdmin;
     private UserTable _user; // load from previous form , startup
-    private List<ChatListTable> friendsList;
+    private List<ChatListTable> allfriendsList;
     private ArrayList<ChatListTable> onlineFriendsList;
+    private ArrayList<ChatListTable> searchResultOfFriendsList = new ArrayList<>(200);
+    private UserTable userFoundByUserName = new UserTable();
+    private UserTable userFoundByEmail = new UserTable();
+
     DatabaseQuery dbChatLists = new DatabaseQuery(TableNames.CHATLIST);
     DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
     ChatListTable chatList = new ChatListTable();
@@ -75,18 +82,30 @@ public class ListOfFriends extends JFrameInheritable {
         online.reReadDataFromServer();
 
         online.sendUserOnlineRequestToServer(u);
-        friendsList = dbChatLists.getResultsAsORM(chatList);
-        onlineFriendsList = new ArrayList<ChatListTable>(100);
-        for (ChatListTable chatListUser : friendsList) {
+        allfriendsList = dbChatLists.getResultsAsORM(chatList);
+        onlineFriendsList = new ArrayList<ChatListTable>(500);
+        if (allfriendsList != null) {
+            for (ChatListTable chatListUser : allfriendsList) {
 //            for (UserTable onlineUser : UserOnlineServer._UsersOnline) {
 //                            if(chatListUser.RelatedUserID  )
 //
 //            }
-            boolean isUserOnline = UserOnlineServer._UsersOnline.stream().filter(e -> chatListUser.RelatedUserID.equals(e.UserID)).findAny().isPresent();
-            if(isUserOnline){
-                onlineFriendsList.add(chatListUser);
+                boolean isUserOnline = UserOnlineServer._UsersOnline.stream()
+                        .filter(e -> chatListUser.RelatedUserID.equals(e.UserID))
+                        .findAny()
+                        .isPresent();
+                if (isUserOnline) {
+                    onlineFriendsList.add(chatListUser);
+                }
             }
         }
+        this.friendsDisplayList.removeAll();
+        JLabel label = new JLabel("Hello");
+
+        ImageIcon icon = new ImageIcon(AppConfig.getPictureUploadPath() + "hello.jpg");
+        label.setIcon(icon);
+        Component add = this.friendsDisplayList.add(label);
+
     }
 
     public ListOfFriends(UserTable u) {
@@ -115,9 +134,10 @@ public class ListOfFriends extends JFrameInheritable {
         UserActiveState = new java.awt.Choice();
         jScrollPane1 = new javax.swing.JScrollPane();
         searchBox = new javax.swing.JTextPane();
-        friendsDisplayList = new java.awt.List();
         editProfile = new javax.swing.JLabel();
         adminConfigBtn = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        friendsDisplayList = new javax.swing.JList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -157,6 +177,12 @@ public class ListOfFriends extends JFrameInheritable {
         UserPicLabel.setText("Pic");
         UserPicLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
+        UserActiveState.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                UserActiveStateItemStateChanged(evt);
+            }
+        });
+
         searchBox.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 searchBoxKeyReleased(evt);
@@ -180,15 +206,23 @@ public class ListOfFriends extends JFrameInheritable {
             }
         });
 
+        friendsDisplayList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        friendsDisplayList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        friendsDisplayList.setVisibleRowCount(50);
+        jScrollPane3.setViewportView(friendsDisplayList);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(friendsDisplayList, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(UserPicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -196,8 +230,9 @@ public class ListOfFriends extends JFrameInheritable {
                         .addComponent(adminConfigBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(editProfile))
-                    .addComponent(UserActiveState, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addComponent(UserActiveState, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane3))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -214,7 +249,7 @@ public class ListOfFriends extends JFrameInheritable {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(friendsDisplayList, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -245,8 +280,26 @@ public class ListOfFriends extends JFrameInheritable {
 
     }//GEN-LAST:event_searchBoxKeyReleased
 
+    private void UserActiveStateItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_UserActiveStateItemStateChanged
+        // TODO add your handling code here:
+
+        int index = UserActiveState.getSelectedIndex();
+        Color color = CommonData.getColorForActiveStatus(index);
+        UsernameLabel.setForeground(color);
+
+        SaveStateInUserProfile(index);
+    }//GEN-LAST:event_UserActiveStateItemStateChanged
+
     public void filterList(String alias) {
 
+    }
+
+    public boolean isUserExist(String userName, UserTable userFound) {
+        return dbUsers.isExist(User.Username, userName, userFound);
+    }
+
+    public boolean isUserExistByEmail(String email, UserTable userFound) {
+        return dbUsers.isExist(User.Email, email, userFound);
     }
 
     /**
@@ -256,17 +309,45 @@ public class ListOfFriends extends JFrameInheritable {
      */
     public boolean searchForUserInFriendList(String input) {
         // first try to look for user name
-        UserTable userFound = new UserTable();
+        searchResultOfFriendsList.clear();
 
-        boolean userExistByUsername = dbUsers.isExist(User.Username, input, userFound);
-        if (userExistByUsername) {
+        if (isUserExist(input, userFoundByUserName)) {
             // boolean userExistByUsername = db2.isExist(User.Username, input);
             // user found by user name now check if they are friends
-            if (isCurrentUserIsFriend(userFound.UserID + "", chatList)) {
-
+            if (isCurrentUserIsFriend(userFoundByUserName.UserID, chatList)) {
+                searchResultOfFriendsList.add(chatList);
+                return true;// found by username
+            }
+        } else {
+            boolean userExistByEmail = isUserExistByEmail(input, userFoundByEmail);
+            if (userExistByEmail && isCurrentUserIsFriend(userFoundByEmail.UserID, chatList)) {
+                searchResultOfFriendsList.add(chatList);
+                return true;// found by username
             }
         }
-        return false;
+        return addSearchTextInAliasNamesBySpace(input);
+    }
+
+    public boolean addSearchTextInAliasNamesBySpace(String input) {
+        searchResultOfFriendsList.clear();
+        boolean returnResult = false;
+        if (input != null && "".equals(input) == false) {
+            String[] list = input.split(" ");
+            for (String item : list) {
+                List<ChatListTable> foundList = allfriendsList
+                        .parallelStream()
+                        .filter(f -> f.AliasAs.contains(item))
+                        .collect(Collectors.toList());
+                if (foundList != null) {
+                    for (ChatListTable singleItem : foundList) {
+                        searchResultOfFriendsList.add(singleItem);
+
+                    }
+                    returnResult = true;
+                }
+            }
+        }
+        return returnResult;
     }
 
     /**
@@ -275,7 +356,7 @@ public class ListOfFriends extends JFrameInheritable {
      * @param aliasFound
      * @return
      */
-    public boolean isCurrentUserIsFriend(String userID, ChatListTable aliasFound) {
+    public boolean isCurrentUserIsFriend(int userID, ChatListTable aliasFound) {
 //        int fields = 2;
 //        String columns[] = new String[fields];
 //        String values[] = new String[fields];
@@ -286,8 +367,13 @@ public class ListOfFriends extends JFrameInheritable {
 //        columns[--fields] = ChatList.RelatedUserID;
 //        values[fields] = userID;
 //        return dbChatLists.isExist(userID, userID, aliasFound);
+        aliasFound = allfriendsList.stream()
+                .filter(f -> f.RelatedUserID.equals(userID))
+                .findFirst()
+                .get();
 
-        return true;
+        return aliasFound != null;
+
     }
 
     /**
@@ -295,6 +381,15 @@ public class ListOfFriends extends JFrameInheritable {
      * @param input : username , alias (in chatlist table), or email
      */
     public void searchForUserOrAddUserIfFoundInDatabase(String input) {
+        // if user found in users chatlist then give the searched result view 
+        // or else if the user exist in the current db show a add user dialog
+        if (searchForUserInFriendList(input)) {
+            // true means user found in the user list by 
+            // username
+            // or email
+            // or by any alias name
+            this.friendsDisplayList.add(new JLabel("Hello"));
+        }
 
     }
 
@@ -309,9 +404,11 @@ public class ListOfFriends extends JFrameInheritable {
     private javax.swing.JLabel UsterstatusLabel;
     private javax.swing.JLabel adminConfigBtn;
     private javax.swing.JLabel editProfile;
-    private java.awt.List friendsDisplayList;
+    private javax.swing.JList friendsDisplayList;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextPane searchBox;
     // End of variables declaration//GEN-END:variables
 
@@ -389,5 +486,10 @@ public class ListOfFriends extends JFrameInheritable {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+    }
+
+    private void SaveStateInUserProfile(int index) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

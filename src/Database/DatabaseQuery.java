@@ -1005,11 +1005,21 @@ public final class DatabaseQuery extends DbInitalizer {
         }
         return false;
     }
-
+    
+    /**
+     * 
+     * @param <T>
+     * @param Columns
+     * @param valuesSearchInFields
+     * @param entityObject if not found any result then make it to null.
+     * @return 
+     */
     public <T> boolean isExist(String Columns, String valuesSearchInFields, T entityObject) {
         boolean isFound = isExist(Columns, valuesSearchInFields);
         if (isFound) {
             getResultsAsObject(entityObject);
+        } else {
+            entityObject = null;
         }
         return isFound;
     }
@@ -1748,7 +1758,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param classObject: class itself
      */
     public <T> void getResultsAsObject(T classObject, int row) {
-        
+
         Field[] fieldsInClass = Codes.getAllFields(classObject.getClass());
         List<String> Columns = Arrays.asList(getColumnsNames());
         moveToRow(row);
@@ -1910,7 +1920,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     /**
-     *
+     * No reading , have to it before executing this.
      * @param <T>
      * @param classObject: new class object
      * @return
@@ -1920,7 +1930,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     /**
-     *
+     * reads and then get all the results
      * @param <T>
      * @param classObject : new class object
      * @return
