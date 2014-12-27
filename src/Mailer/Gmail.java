@@ -59,8 +59,12 @@ public final class Gmail extends MailerConfigInheritable {
         return 0;
     }
 
-    public static void main() {
+    public static void main(String [] args) {
         Gmail mail = new Gmail("testmailer.why@gmail.com", "asdf1234@");
-        mail.SendEmail("testmailer.why@gmail.com", null, null, null)
+        final String from = "testmailer.why@gmail.com";
+        final String to = "devorg.bd@gmail.com";
+        final String subject = "Test Subject";
+        final String body = "Mail body message <h1>hello</h1>";
+        mail.SendEmail(from, to, subject, body);
     }
 }
