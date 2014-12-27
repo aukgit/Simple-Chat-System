@@ -19,6 +19,8 @@ import java.util.logging.Logger;
 public class ChatingInterface extends JFrameInheritable {
 
     private static final long serialVersionUID = 1L;
+    
+    
 
     /**
      * Creates new form ChatingInterface

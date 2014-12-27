@@ -52,7 +52,7 @@
                   <Component id="jPanel1" max="32767" attributes="0"/>
                   <Component id="editProfile" min="-2" max="-2" attributes="0"/>
                   <Component id="adminConfigBtn" min="-2" max="-2" attributes="0"/>
-                  <Component id="UserPicLabel" alignment="0" pref="65" max="32767" attributes="0"/>
+                  <Component id="UserPicLabel" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="UserActiveState" min="-2" max="-2" attributes="0"/>
@@ -87,7 +87,7 @@
                   <Component id="UsernameLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="UsterstatusLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="12" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

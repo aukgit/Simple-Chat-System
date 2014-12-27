@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 public abstract class GeneralServer<T> extends InheritableServer {
 
     private int _Port;
@@ -177,5 +178,7 @@ public abstract class GeneralServer<T> extends InheritableServer {
     public void setServerName(String _ServerName) {
         this._ServerName = _ServerName;
     }
+    
+   
 
 }
