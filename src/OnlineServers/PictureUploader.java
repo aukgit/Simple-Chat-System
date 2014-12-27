@@ -106,10 +106,10 @@ public class PictureUploader extends GeneralServer<PictureSender> {
             clientObject.setPicture(null);
             clientObject.setIsProccesedSuccessful(true);
         }
-        if (clientObject.isAskToGetPictures()) {
-            BufferedImage img = pictureProcessor.getBufferedImage(clientObject.getProfilePic());
-            pictureProcessor.save(AppConfig.getPictureUploadPath() + "hello3.jpg");
-        }
+//        if (clientObject.isAskToGetPictures()) {
+//            BufferedImage img = pictureProcessor.getBufferedImage(clientObject.getProfilePic());
+//            pictureProcessor.save(AppConfig.getPictureUploadPath() + "hello3.jpg");
+//        }
         return true;
     }
 

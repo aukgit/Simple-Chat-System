@@ -5,6 +5,7 @@
  */
 package SimpleChatSystem;
 
+//<editor-fold defaultstate="collapsed" desc="Imports">
 import CurrentDb.CommonData;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableColumns.UserStatus;
@@ -30,6 +31,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+//</editor-fold>
 
 /**
  *
@@ -38,6 +40,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class ListOfFriends extends JFrameInheritable {
 //    private static ListOfFriends Form = new ListOfFriends();
 
+    //<editor-fold defaultstate="collapsed" desc="Fields">
     private static final long serialVersionUID = 1L;
     private boolean _isAdmin;
     private UserTable _user; // load from previous form , startup
@@ -47,28 +50,32 @@ public class ListOfFriends extends JFrameInheritable {
     private UserTable userFoundByUserName = new UserTable();
     private UserTable userFoundByEmail = new UserTable();
 
-    DatabaseQuery dbChatLists = new DatabaseQuery(TableNames.CHATLIST);
-    DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
-    ChatListTable chatList = new ChatListTable();
-    Picture pictureProcessor = new Picture();
+    private DatabaseQuery dbChatLists = new DatabaseQuery(TableNames.CHATLIST);
+    private DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
+    private ChatListTable chatList = new ChatListTable();
+    private Picture pictureProcessor = new Picture();
+    
+    @SuppressWarnings("unchecked")
+    DefaultListModel<ChatListTable> friendListDisplayModel = new DefaultListModel();
 
-    PictureUploader pictureRelatedServer = new PictureUploader();
+    private PictureUploader pictureRelatedServer = new PictureUploader();
 
     private PictureSender profilePictureRequestSender;
+//</editor-fold>
 
     public void updateUserProfilePictue() {
         try {
             // TODO add your handling code here:
-            pictureRelatedServer.clientSendingMethod(profilePictureRequestSender);
+            profilePictureRequestSender = pictureRelatedServer.clientSendingMethod(profilePictureRequestSender);
             if (profilePictureRequestSender.isIsProccesedSuccessful()) {
                 pictureProcessor.setImageIcon(this.UserPicLabel, profilePictureRequestSender.getProfilePic());
-                BufferedImage bufImg = pictureProcessor.getBufferedImage(profilePictureRequestSender.getProfilePic());
-
-                pictureProcessor.setImage(bufImg);
-                String path = AppConfig.getPictureUploadPath() + "hello2.jpg";
-
-                pictureProcessor.save(path);
-                pictureProcessor.setImageIcon(this.UserPicLabel, path, "No pic");
+//                BufferedImage bufImg = pictureProcessor.getBufferedImage(profilePictureRequestSender.getProfilePic());
+//
+//                pictureProcessor.setImage(bufImg);
+//                String path = AppConfig.getPictureUploadPath() + "hello2.jpg";
+//
+//                pictureProcessor.save(path);
+//                pictureProcessor.setImageIcon(this.UserPicLabel, path, "No pic");
             }
             return;
         } catch (IOException | ClassNotFoundException ex) {
@@ -119,13 +126,13 @@ public class ListOfFriends extends JFrameInheritable {
         onlineFriendsList = new ArrayList<ChatListTable>(500);
 
         this.friendsDisplayList.setCellRenderer(new JLabelForListCell());
-        this.friendsDisplayList.removeAll();
+        //this.friendsDisplayList.removeAll();
         ArrayList<ChatListTable> allUsers = dbUsers.readAndGetResultsAsORM(new ChatListTable());
-        DefaultListModel<ChatListTable> model = new DefaultListModel();
+        
         for (ChatListTable sUser : allUsers) {
-            model.addElement(sUser);
+            friendListDisplayModel.addElement(sUser);
         }
-        friendsDisplayList.setModel(model);
+        friendsDisplayList.setModel(friendListDisplayModel);
 
         if (allfriendsList != null) {
             for (ChatListTable chatListUser : allfriendsList) {
@@ -445,6 +452,8 @@ public class ListOfFriends extends JFrameInheritable {
             // or email
             // or by any alias name
             this.friendsDisplayList.add(new JLabel("Hello"));
+        } else {
+            
         }
 
     }
