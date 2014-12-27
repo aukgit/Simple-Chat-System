@@ -4,6 +4,7 @@ import ConsolePackage.Console;
 import Global.InternetProtocol;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -75,22 +76,29 @@ public abstract class GeneralServer<T> extends InheritableServer {
     @SuppressWarnings("unchecked")
     private void serverRun(ServerSocket severSocket) {
 
-
-        try (Socket socket  = severSocket.accept()) {
+        try (Socket socket = severSocket.accept()) {
 
             // for taking input from sendUserOnlineRequestToServer
-            ObjectInputStream inputFromClient = super.getInputObjectStream(socket);
-            T objectReturnFromClient = (T) inputFromClient.readObject();
+            ObjectInputStream takingRequestFromClient = super.getObjectInputStream(socket);
+            T objectReturnFromClient = (T) takingRequestFromClient.readObject();
+            boolean sendObjectToClient = false;
             if (objectReturnFromClient != null) {
-                doProcessInServer(objectReturnFromClient);
+                sendObjectToClient = doProcessInServer(objectReturnFromClient);
             } else {
                 System.out.println("Server got an empty object.");
             }
+            ObjectOutputStream severResponseSender = super.getOutputObjectStream(socket);
 
             // send data to sendUserOnlineRequestToServer
             System.out.println("Writing to client : " + objectReturnFromClient.toString());
-
-            super.getOutputObjectStream(socket).writeObject(objectReturnFromClient);
+            if (sendObjectToClient) {
+                severResponseSender.writeObject(objectReturnFromClient);
+            } else {
+                severResponseSender.writeObject(null);
+            }
+            severResponseSender.flush();
+            severResponseSender.close();
+            socket.close();
 
         } catch (IOException ex) {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -99,32 +107,33 @@ public abstract class GeneralServer<T> extends InheritableServer {
         }
     }
 
-    public T clientSendingMethod(T sendingObject) {
+    public T clientSendingMethod(T sendingObject) throws IOException, ClassNotFoundException {
 
         int port = this.getPort();
         String ip = this.getServerIp();
-        tryagain:
-        try (Socket socket = new Socket(ip, port)) {
-            // send request to server
-            super.getOutputObjectStream(socket).writeObject(sendingObject);
-            @SuppressWarnings("unchecked")
-            T gotResponseObjectFromServer = (T) super.getInputObjectStream(socket).readObject();
-            if (gotResponseObjectFromServer != null) {
-                System.out.println(gotResponseObjectFromServer.toString());
-                return gotResponseObjectFromServer;
+        Socket socket = new Socket(ip, port);
+        // send request to server
+        ObjectOutputStream serverRequestSender = super.getOutputObjectStream(socket);
+        serverRequestSender.writeObject(sendingObject);
 
-            } else {
-                System.out.println("object response null.");
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(GeneralServer.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("Sorry can't connect with " + ip + ":" + port);
-            System.out.println("trying again ...");
+        @SuppressWarnings("unchecked")
+        ObjectInputStream serverResponseReceiver = super.getObjectInputStream(socket);
 
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(GeneralServer.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("Object not found :  " + ip + ":" + port);
+        serverRequestSender.flush();
+
+        @SuppressWarnings("unchecked")
+        T gotResponseObjectFromServer = (T) serverResponseReceiver.readObject();
+
+        if (gotResponseObjectFromServer != null) {
+            System.out.println(gotResponseObjectFromServer.toString());
+            return gotResponseObjectFromServer;
+
+        } else {
+            System.out.println("object response null.");
         }
+        socket.close();
+        serverRequestSender.close();
+
         return null;
     }
 

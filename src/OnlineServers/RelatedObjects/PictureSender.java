@@ -5,9 +5,8 @@
  */
 package OnlineServers.RelatedObjects;
 
+import CurrentDb.Tables.ChatListTable;
 import CurrentDb.Tables.UserTable;
-import ImageProcessing.Picture;
-import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import javax.swing.ImageIcon;
 
@@ -15,39 +14,115 @@ import javax.swing.ImageIcon;
  *
  * @author Alim
  */
-public class PictureSender implements Serializable{
+public final class PictureSender implements Serializable {
+
+    public interface IAskPicture {
+
+        byte Profile = 0;
+        byte Chating = 1;
+        byte ChatList = 2;
+        byte All = 3;
+    }
+
     private static final long serialVersionUID = 1L;
 
-    private String _path;
     private ImageIcon _picture;
-    
+
     private UserTable _user;
+    private ChatListTable _chatListTable;
     private boolean _isProccesedSuccessful;
-    
+
     private boolean _askToGetPictures;
     private boolean _sendAllPictures;
-    
+
     private ImageIcon _profilePic;
     private ImageIcon _chattingPic;
     private ImageIcon _chatListPic;
-    
-    
 
-    /**
-     * @return the _path
-     */
-    public String getPath() {
-        return _path;
+    private int _requestedUserId;
+
+    private byte _AskedPictured;
+
+    public PictureSender(UserTable user) {
+        _user = user;
+        _requestedUserId = user.UserID;
+
+    }
+
+    public PictureSender(ImageIcon img, UserTable user) {
+        _picture = img;
+        _user = user;
+        _requestedUserId = user.UserID;
+        setAskToGetPictures(false);
+
     }
 
     /**
-     * @param relativePath the _path to set
+     *
+     * @param chat
+     * @param ask set by IAskPicture
+     * @param userid
      */
-    public void setPath(String relativePath) {
-        this._path = relativePath;
+    public PictureSender(ChatListTable chat, byte ask, int userid) {
+        setChatListTable(chat);
+        setAskedPictured(ask);
+        setRequestedUserId(userid);
+        setAskToGetPictures(true);
     }
-    
 
+    public PictureSender(UserTable user, byte ask) {
+        setUser(user);
+        setAskedPictured(ask);
+        setRequestedUserId(user.UserID);
+        setAskToGetPictures(true);
+    }
+
+    /**
+     * @return the _AskedPictured
+     */
+    public byte getAskedPictured() {
+        return _AskedPictured;
+    }
+
+    /**
+     * @param _AskedPictured the _AskedPictured to set
+     */
+    public void setAskedPictured(byte _AskedPictured) {
+        this._AskedPictured = _AskedPictured;
+    }
+
+    /**
+     * @return the _chatListTable
+     */
+    public ChatListTable getChatListTable() {
+        return _chatListTable;
+    }
+
+    /**
+     * @param _chatListTable the _chatListTable to set
+     */
+    public void setChatListTable(ChatListTable _chatListTable) {
+        this._chatListTable = _chatListTable;
+    }
+
+    /**
+     * @return the _requestedUserId
+     */
+    public int getRequestedUserId() {
+        if (_requestedUserId == 0) {
+            if (getUser() != null) {
+                _requestedUserId = getUser().UserID;
+            }
+        }
+        return _requestedUserId;
+    }
+
+    /**
+     * @param _requestedUserId the _requestedUserId to set
+     */
+    public void setRequestedUserId(int _requestedUserId) {
+        this._requestedUserId = _requestedUserId;
+    }
 
     /**
      * @return the _picture
@@ -101,7 +176,7 @@ public class PictureSender implements Serializable{
     /**
      * @param _askToGetPictures the _askToGetPictures to set
      */
-    public void setAskToGetPictures(boolean _askToGetPictures) {
+    public final void setAskToGetPictures(boolean _askToGetPictures) {
         this._askToGetPictures = _askToGetPictures;
     }
 

@@ -12,6 +12,9 @@ import OnlineServers.PictureUploader;
 import OnlineServers.RelatedObjects.PictureSender;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -22,15 +25,19 @@ public class PictureUploaderForm extends JFrameInheritable {
     private static final long serialVersionUID = 1L;
 
     private UserTable _user;
-    PictureSender sender = new PictureSender();
+    PictureSender sender;
     PictureUploader server = new PictureUploader();
+    public ListOfFriends listOfFriendsForm;
 
     /**
      * Creates new form PictureUploaderForm
      */
-    public PictureUploaderForm(UserTable user) {
+    public PictureUploaderForm(UserTable user, ListOfFriends callingFrom) {
         initComponents();
         this._user = user;
+        this.setTitle("Picture Uploader to the server");
+        sender = new PictureSender(user);
+        listOfFriendsForm = callingFrom;
     }
 
     /**
@@ -45,6 +52,7 @@ public class PictureUploaderForm extends JFrameInheritable {
         PictureDisplayLabel = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -67,6 +75,9 @@ public class PictureUploaderForm extends JFrameInheritable {
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel1.setText("Upload Picture to the Server");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -74,6 +85,7 @@ public class PictureUploaderForm extends JFrameInheritable {
             .addGroup(layout.createSequentialGroup()
                 .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -84,13 +96,15 @@ public class PictureUploaderForm extends JFrameInheritable {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(39, 39, 39)
+                .addGap(19, 19, 19)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(PictureDisplayLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         pack();
@@ -112,13 +126,22 @@ public class PictureUploaderForm extends JFrameInheritable {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        sender = server.clientSendingMethod(sender);
-        if (sender.isIsProccesedSuccessful()) {
-            this.getMessageBox().show(this, "Congrats! Image has been uploaded successfully.");
-            this.hide();
-
+        try {
+            // TODO add your handling code here:
+            sender = server.clientSendingMethod(sender);
+            if (sender.isIsProccesedSuccessful()) {
+                this.getMessageBox().show(this, "Congrats! Image has been uploaded successfully.");
+                this.hide();
+                listOfFriendsForm.updateUserProfilePictue();
+                return;
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(PictureUploaderForm.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PictureUploaderForm.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.getMessageBox().showError(this, "Sorry! Server may not running or can't process the picture.");
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
@@ -160,6 +183,7 @@ public class PictureUploaderForm extends JFrameInheritable {
     private javax.swing.JLabel PictureDisplayLabel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 
     @Override

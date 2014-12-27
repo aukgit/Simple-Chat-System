@@ -184,7 +184,7 @@ public class InheritableServer implements Runnable {
      * @param socket
      * @return
      */
-    public ObjectInputStream getInputObjectStream(Socket socket) {
+    public ObjectInputStream getObjectInputStream(Socket socket) {
         ObjectInputStream reader = null;
         try {
             reader = new ObjectInputStream(socket.getInputStream());

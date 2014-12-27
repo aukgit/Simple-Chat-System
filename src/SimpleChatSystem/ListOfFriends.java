@@ -13,9 +13,13 @@ import CurrentDb.Tables.ChatListTable;
 import CurrentDb.Tables.UserTable;
 import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
+import Global.AppConfig;
 import ImageProcessing.Picture;
+import OnlineServers.PictureUploader;
+import OnlineServers.RelatedObjects.PictureSender;
 import OnlineServers.UserOnline;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +50,38 @@ public class ListOfFriends extends JFrameInheritable {
     DatabaseQuery dbChatLists = new DatabaseQuery(TableNames.CHATLIST);
     DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
     ChatListTable chatList = new ChatListTable();
+    Picture pictureProcessor = new Picture();
+
+    PictureUploader pictureRelatedServer = new PictureUploader();
+
+    private PictureSender profilePictureRequestSender;
+
+    public void updateUserProfilePictue() {
+        try {
+            // TODO add your handling code here:
+            pictureRelatedServer.clientSendingMethod(profilePictureRequestSender);
+            if (profilePictureRequestSender.isIsProccesedSuccessful()) {
+                pictureProcessor.setImageIcon(this.UserPicLabel, profilePictureRequestSender.getProfilePic());
+                BufferedImage bufImg = pictureProcessor.getBufferedImage(profilePictureRequestSender.getProfilePic());
+
+                pictureProcessor.setImage(bufImg);
+                String path = AppConfig.getPictureUploadPath() + "hello2.jpg";
+
+                pictureProcessor.save(path);
+                pictureProcessor.setImageIcon(this.UserPicLabel, path, "No pic");
+            }
+            return;
+        } catch (IOException ex) {
+            Logger.getLogger(PictureUploaderForm.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PictureUploaderForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("Sorry! Server may not running or no pictures");
+//        String path = _user.getPathForProfilePic(_user.UserID);
+//        System.out.println(path);
+//        pictureProcessor.setImageIcon(this.UserPicLabel, _user.getPathForProfilePic(_user.UserID), "No pic");
+
+    }
 
     /**
      * Creates new form ListOfFriends
@@ -64,9 +100,9 @@ public class ListOfFriends extends JFrameInheritable {
     }
 
     @SuppressWarnings("unchecked")
-    public void customInit(UserTable u) {
+    public void customInit(UserTable givenUser) {
         initComponents();
-        setUser(u);
+        setUser(givenUser);
         if (getUser().IsAdmin) {
             adminConfigBtn.setVisible(true);
         } else {
@@ -80,7 +116,7 @@ public class ListOfFriends extends JFrameInheritable {
         UserOnline online = new UserOnline();
         online.reReadDataFromServer();
 
-        online.sendUserOnlineRequestToServer(u);
+        online.sendUserOnlineRequestToServer(givenUser);
         allfriendsList = dbChatLists.getResultsAsORM(chatList);
         onlineFriendsList = new ArrayList<ChatListTable>(500);
 
@@ -108,10 +144,10 @@ public class ListOfFriends extends JFrameInheritable {
                 }
             }
         }
-        Picture processor = new Picture();
-        processor.setImageIcon(this.UserPicLabel, _user.getPathForProfilePic(_user.UserID), "");
-        this.UsernameLabel.setText(_user.Username);
 
+        this.UsernameLabel.setText(getUser().Username);
+        profilePictureRequestSender = new PictureSender(givenUser, PictureSender.IAskPicture.Profile);
+        updateUserProfilePictue();
     }
 
     public ListOfFriends(UserTable u) {
@@ -257,7 +293,7 @@ public class ListOfFriends extends JFrameInheritable {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(editProfile)
                     .addComponent(adminConfigBtn)
-                    .addComponent(UserPicLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE))
+                    .addComponent(UserPicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(UserActiveState, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -283,7 +319,7 @@ public class ListOfFriends extends JFrameInheritable {
         // TODO add your handling code here:
         if (evt.getClickCount() == 2) {
             UpdateStatus updateStatus;
-            updateStatus = new UpdateStatus(_user, this);
+            updateStatus = new UpdateStatus(getUser(), this);
             updateStatus.setTitle("Update your status");
             loadNewForm(updateStatus);
         }
@@ -307,7 +343,8 @@ public class ListOfFriends extends JFrameInheritable {
     private void UserPicLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UserPicLabelMouseClicked
         // TODO add your handling code here:
         if (evt.getClickCount() == 2) {
-            loadNewForm(new PictureUploaderForm(_user));
+            PictureUploaderForm pictureUploaderForm = new PictureUploaderForm(getUser(), this);
+            loadNewForm(pictureUploaderForm);
         }
     }//GEN-LAST:event_UserPicLabelMouseClicked
 
@@ -466,7 +503,7 @@ public class ListOfFriends extends JFrameInheritable {
     }
 
     private String getLatestStatusWhereSQL() {
-        return UserStatus.UserID + "=" + _user.UserID + " ORDER BY DATED DESC LIMIT 1";
+        return UserStatus.UserID + "=" + getUser().UserID + " ORDER BY DATED DESC LIMIT 1";
     }
 
     public static void main(String args[]) throws IOException {
@@ -513,6 +550,6 @@ public class ListOfFriends extends JFrameInheritable {
         int id = CommonData.ActiveStateList.get(index).ActiveStateID;
         _user.CurrentActiveState = id;
 
-        this.getDb().updateData("CurrentActiveState=" + id, User.UserID + "=" + _user.UserID);
+        this.getDb().updateData("CurrentActiveState=" + id, User.UserID + "=" + getUser().UserID);
     }
 }

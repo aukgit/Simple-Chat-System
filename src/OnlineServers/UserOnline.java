@@ -80,7 +80,7 @@ public class UserOnline extends InheritableServer {
         }
 
         // for taking input from sendUserOnlineRequestToServer
-        ObjectInputStream inputFromClient = super.getInputObjectStream(socket);
+        ObjectInputStream inputFromClient = super.getObjectInputStream(socket);
         boolean returnResult = false;
         UserTable userReturnedfromClient = null;
         try {
@@ -117,7 +117,7 @@ public class UserOnline extends InheritableServer {
         tryagain:
         try (Socket socket = new Socket(ip, port)) {
             super.getOutputObjectStream(socket).writeObject(sendingUser);
-            UserTable gotUser = (UserTable)super.getInputObjectStream(socket).readObject();
+            UserTable gotUser = (UserTable)super.getObjectInputStream(socket).readObject();
             if(gotUser != null){
                 gotUser.print();
             } else {

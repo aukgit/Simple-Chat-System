@@ -69,18 +69,18 @@ public final class Picture implements ActionListener, ISoftwareInformation {
             return null;
         }
         if (getImage().getHeight() == h && getImage().getWidth() == w) {
-            imageResized = getImage();
-            return imageResized;
+            setImageResized(getImage());
+            return getImageResized();
         }
 
         try {
 
-            imageResized = Thumbnails.of(getImage()).size(w, h).asBufferedImage();
+            setImageResized(Thumbnails.of(getImage()).size(w, h).asBufferedImage());
         } catch (Exception e) {
             System.out.println("Sorry can't resize this image:" + e);
         }
 
-        return imageResized;
+        return getImageResized();
     }
 
     //Written By Alim UL Karim, using http://code.google.com/p/thumbnailator/
@@ -92,16 +92,16 @@ public final class Picture implements ActionListener, ISoftwareInformation {
             return null;
         }
         if (getImage().getHeight() == h && getImage().getWidth() == w) {
-            imageResized = getImage();
-            return imageResized;
+            setImageResized(getImage());
+            return getImageResized();
         }
         try {
-            imageResized = Thumbnails.of(getImage()).size(w, h).asBufferedImage();
+            setImageResized(Thumbnails.of(getImage()).size(w, h).asBufferedImage());
         } catch (Exception e) {
             System.out.println("Sorry can't resize this image:" + e);
         }
 
-        return imageResized;
+        return getImageResized();
     }
 
     //Written By Alim UL Karim
@@ -167,7 +167,6 @@ public final class Picture implements ActionListener, ISoftwareInformation {
             ji.setIcon(imgico);
             return imgico;
         }
-
     }
 
     /**
@@ -187,6 +186,13 @@ public final class Picture implements ActionListener, ISoftwareInformation {
         imgico = new ImageIcon(img);
         ji.setText("");
         ji.setIcon(imgico);
+        return imgico;
+    }
+
+    public ImageIcon setImageIcon(JLabel ji, ImageIcon img) {
+
+        ji.setText("");
+        ji.setIcon(img);
         return imgico;
     }
 
@@ -234,13 +240,13 @@ public final class Picture implements ActionListener, ISoftwareInformation {
                 String SelectedFileName = filesaveDialog.getSelectedFile().getAbsolutePath().toString();
                 generateImageFromFile(SelectedFileName);
                 ResizeImage(getImage(), w, h);
-                imgico = new ImageIcon(imageResized);
+                imgico = new ImageIcon(getImageResized());
             } catch (Exception e) {
                 err.showError(o, e, "Image can't be proccessed");
                 return null;
             }
             ji.setIcon(imgico);
-            save(new File(imageSaveLocation), imageResized);
+            save(new File(imageSaveLocation), getImageResized());
         }
         return imgico;
     }
@@ -494,6 +500,22 @@ public final class Picture implements ActionListener, ISoftwareInformation {
         return image;
     }
 
+    public BufferedImage getImage(String fileName) {
+        generateImageFromFile(fileName);
+
+        return getImage();
+    }
+
+    public BufferedImage getImage(File file) {
+        generateImageFromFile(file);
+
+        return getImage();
+    }
+
+    public ImageIcon getImageIcon(String fileName) {
+        return new ImageIcon(fileName);
+    }
+
     /**
      * @param image the image to set
      */
@@ -517,5 +539,19 @@ public final class Picture implements ActionListener, ISoftwareInformation {
     @Override
     public void actionPerformed(ActionEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * @return the imageResized
+     */
+    public BufferedImage getImageResized() {
+        return imageResized;
+    }
+
+    /**
+     * @param imageResized the imageResized to set
+     */
+    public void setImageResized(BufferedImage imageResized) {
+        this.imageResized = imageResized;
     }
 }

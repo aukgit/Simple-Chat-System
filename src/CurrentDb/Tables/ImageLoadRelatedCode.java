@@ -26,7 +26,7 @@ public class ImageLoadRelatedCode extends DatabaseTableClass {
         return path;
     }
 
-    public String getPathForThumbChatPic(int id) {
+    public String getPathForThumbChatingPic(int id) {
         String path = AppConfig.getPictureUploadPath() + id + "_chat.jpg";
         return path;
     }

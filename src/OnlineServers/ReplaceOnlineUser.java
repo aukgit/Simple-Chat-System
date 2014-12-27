@@ -7,7 +7,6 @@ package OnlineServers;
 
 import CurrentDb.Tables.UserTable;
 import OnlineServers.Inheritable.GeneralServer;
-import OnlineServers.RelatedObjects.PictureSender;
 
 /**
  *
@@ -25,4 +24,11 @@ public class ReplaceOnlineUser extends GeneralServer<UserTable> {
         return true;
     }
 
+    public static void main(String[] args) {
+
+        ReplaceOnlineUser server = new ReplaceOnlineUser();
+        server.reReadDataFromServer();
+        server.startThread();
+
+    }
 }
