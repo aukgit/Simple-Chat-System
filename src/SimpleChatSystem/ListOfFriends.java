@@ -46,7 +46,6 @@ public class ListOfFriends extends JFrameInheritable {
     DatabaseQuery dbChatLists = new DatabaseQuery(TableNames.CHATLIST);
     DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
     ChatListTable chatList = new ChatListTable();
-    DefaultListModel<ChatListTable> listModel = new DefaultListModel();
 
     /**
      * Creates new form ListOfFriends
@@ -88,10 +87,11 @@ public class ListOfFriends extends JFrameInheritable {
         this.friendsDisplayList.setCellRenderer(new JLabelForListCell());
         this.friendsDisplayList.removeAll();
         ArrayList<ChatListTable> allUsers = dbUsers.readAndGetResultsAsORM(new ChatListTable());
+        DefaultListModel<ChatListTable> model = new DefaultListModel();
         for (ChatListTable sUser : allUsers) {
-            listModel.addElement(sUser);
+            model.addElement(sUser);
         }
-        friendsDisplayList.setModel(listModel);
+        friendsDisplayList.setModel(model);
 
         if (allfriendsList != null) {
             for (ChatListTable chatListUser : allfriendsList) {
@@ -178,7 +178,7 @@ public class ListOfFriends extends JFrameInheritable {
                 .addComponent(UsernameLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(UsterstatusLabel)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         UserPicLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -257,7 +257,7 @@ public class ListOfFriends extends JFrameInheritable {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(editProfile)
                     .addComponent(adminConfigBtn)
-                    .addComponent(UserPicLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(UserPicLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(UserActiveState, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -409,18 +409,9 @@ public class ListOfFriends extends JFrameInheritable {
             // username
             // or email
             // or by any alias name
-            displaySearchList();
+            this.friendsDisplayList.add(new JLabel("Hello"));
         }
 
-    }
-
-    public void displaySearchList() {
-        if (searchResultOfFriendsList != null && searchResultOfFriendsList.size() > 0) {
-            listModel.removeAllElements();
-            for (ChatListTable sUser : searchResultOfFriendsList) {
-                listModel.addElement(sUser);
-            }
-        }
     }
 
     /**
