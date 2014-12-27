@@ -5,7 +5,17 @@
  */
 package Mailer;
 
+import java.util.Date;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 /**
  *
@@ -18,6 +28,7 @@ public class MailerConfigInheritable {
     private String username;
     private String password;
     private Properties systemPropertise;
+    private Authenticator authenticator;
 
     public void setup(String host, String user, String password, int port) {
         this.setHost(host);
@@ -28,13 +39,54 @@ public class MailerConfigInheritable {
     }
 
     public void initializePropertise() {
-        setSystemPropertise(System.getProperties());
-        getSystemPropertise().put("mail.smtp.starttls.enable", "true");
-        getSystemPropertise().put("mail.smtp.host", getHost());
-        getSystemPropertise().put("mail.smtp.user", getUsername());
-        getSystemPropertise().put("mail.smtp.password", getPassword());
-        getSystemPropertise().put("mail.smtp.port", getPort());
-        getSystemPropertise().put("mail.smtp.auth", "true");
+        setPropertise(new Properties());
+        getPropertise().put("mail.smtp.starttls.enable", "true");
+        getPropertise().put("mail.smtp.host", getHost());
+        getPropertise().put("mail.smtp.user", getUsername());
+        getPropertise().put("mail.smtp.password", getPassword());
+        getPropertise().put("mail.smtp.port", getPort());
+        getPropertise().put("mail.smtp.auth", "true");
+        // creates a new session with an authenticator
+        authenticator = new Authenticator() {
+            @Override
+            public PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(getUsername(), getPassword());
+            }
+        };
+    }
+
+    public boolean sendEmail(String to, String subject, String message) {
+        return sendEmail(getUsername(), to, subject, message);
+    }
+
+    public boolean sendEmail(String from, String to, String subject, String message) {
+        try {
+
+            // sets SMTP server properties
+         
+            // creates a new session with an authenticator
+     
+            Session session = Session.getInstance(getPropertise(), authenticator);
+
+            // creates a new e-mail message
+            Message msg = new MimeMessage(session);
+
+            msg.setFrom(new InternetAddress(getUsername()));
+            InternetAddress[] toAddresses = {new InternetAddress(to)};
+            msg.setRecipients(Message.RecipientType.TO, toAddresses);
+            msg.setSubject(subject);
+            msg.setSentDate(new Date());
+            // set plain text message
+            msg.setContent(message, "text/html");
+
+            // sends the e-mail
+            Transport.send(msg);
+
+            return true;
+        } catch (javax.mail.MessagingException ex) {
+            Logger.getLogger(Gmail.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
     /**
@@ -96,14 +148,28 @@ public class MailerConfigInheritable {
     /**
      * @return the systemPropertise
      */
-    public Properties getSystemPropertise() {
+    public Properties getPropertise() {
         return systemPropertise;
     }
 
     /**
      * @param systemPropertise the systemPropertise to set
      */
-    public void setSystemPropertise(Properties systemPropertise) {
+    public void setPropertise(Properties systemPropertise) {
         this.systemPropertise = systemPropertise;
+    }
+
+    /**
+     * @return the authenticator
+     */
+    public Authenticator getAuthenticator() {
+        return authenticator;
+    }
+
+    /**
+     * @param authenticator the authenticator to set
+     */
+    public void setAuthenticator(Authenticator authenticator) {
+        this.authenticator = authenticator;
     }
 }
