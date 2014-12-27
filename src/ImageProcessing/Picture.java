@@ -4,6 +4,7 @@ import Database.Components.ISoftwareInformation;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FileDialog;
+import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +39,7 @@ public final class Picture implements ActionListener, ISoftwareInformation {
     private ImageIcon imgico;
     private JFileChooser filesaveDialog = new JFileChooser();
     private boolean FilterAttached = false;
+    private String previousDirectory;
 
     public Picture() {
     }
@@ -144,13 +146,14 @@ public final class Picture implements ActionListener, ISoftwareInformation {
             throw new RuntimeException("Invalid image file: " + file);
         }
     }
+
     //Written By Alim UL Karim
     /**
-     * 
+     *
      * @param ji
      * @param imageLocation
      * @param NotFoundText
-     * @return 
+     * @return
      */
     public ImageIcon setImageIcon(JLabel ji, String imageLocation, String NotFoundText) {
         if (new File(imageLocation).exists() == false) {
@@ -166,10 +169,12 @@ public final class Picture implements ActionListener, ISoftwareInformation {
         }
 
     }
+
     /**
      * set current processing image to the label.
+     *
      * @param ji
-     * @return 
+     * @return
      */
     public ImageIcon setImageIcon(JLabel ji) {
         imgico = new ImageIcon(this.getImage());
@@ -177,7 +182,7 @@ public final class Picture implements ActionListener, ISoftwareInformation {
         ji.setIcon(imgico);
         return imgico;
     }
-    
+
     public ImageIcon setImageIcon(JLabel ji, BufferedImage img) {
         imgico = new ImageIcon(img);
         ji.setText("");
@@ -420,27 +425,38 @@ public final class Picture implements ActionListener, ISoftwareInformation {
         FileDialog chooser = new FileDialog(frame,
                 "Use a .png or .jpg extension", FileDialog.SAVE);
         chooser.setVisible(true);
+        if (previousDirectory != null) {
+            chooser.setDirectory(previousDirectory);
+        }
         if (chooser.getFile() != null) {
+            previousDirectory = chooser.getFile();
+
             save(chooser.getDirectory() + File.separator + chooser.getFile());
         }
     }
 
-    public File browseFileAndGetFile() {
-        FileDialog chooser = new FileDialog(frame,
-                "Use a .png or .jpg extension", FileDialog.SAVE);
-        chooser.setVisible(true);
-        if (chooser.getFile() != null) {
-            return new File(chooser.getFile());
+    private String GetFullPath(FileDialog f) {
+        if (f != null && f.getFile() != null) {
+            return f.getDirectory() + File.separator + f.getFile();
         }
         return null;
     }
 
+    public File browseFileAndGetFile() {
+        return new File(browseFileAndGetFileName());
+    }
+
     public String browseFileAndGetFileName() {
         FileDialog chooser = new FileDialog(frame,
-                "Use a .png or .jpg extension", FileDialog.SAVE);
+                "Use a .png or .jpg extension", FileDialog.LOAD);
         chooser.setVisible(true);
+        if (previousDirectory != null) {
+            chooser.setDirectory(previousDirectory);
+        }
         if (chooser.getFile() != null) {
-            return chooser.getFile();
+            previousDirectory = chooser.getDirectory();
+
+            return GetFullPath(chooser);
         }
         return null;
     }
@@ -453,6 +469,22 @@ public final class Picture implements ActionListener, ISoftwareInformation {
         Picture pic = new Picture(args[0]);
         System.out.printf("%d-by-%d\n", pic.width(), pic.height());
         pic.show();
+    }
+
+    public BufferedImage getBufferedImage(ImageIcon icon) {
+        BufferedImage bi = new BufferedImage(
+                icon.getIconWidth(),
+                icon.getIconHeight(),
+                BufferedImage.TYPE_INT_RGB);
+        Graphics g = bi.createGraphics();
+        // paint the Icon to the BufferedImage.
+        icon.paintIcon(null, g, 0, 0);
+        g.dispose();
+        return bi;
+    }
+
+    public ImageIcon getImageIcon(BufferedImage img) {
+        return new ImageIcon(img);
     }
 
     /**
@@ -473,6 +505,7 @@ public final class Picture implements ActionListener, ISoftwareInformation {
         JFileChooser filechooser = new JFileChooser();
         filechooser.setDialogTitle("Choose Your File");
         filechooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
         //below codes for select  the file 
         int returnval = filechooser.showOpenDialog(whereLoadingFrom);
         if (returnval == JFileChooser.APPROVE_OPTION) {

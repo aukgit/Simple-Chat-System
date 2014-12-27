@@ -13,6 +13,7 @@ import CurrentDb.Tables.ChatListTable;
 import CurrentDb.Tables.UserTable;
 import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
+import ImageProcessing.Picture;
 import OnlineServers.UserOnline;
 import java.awt.Color;
 import java.io.IOException;
@@ -23,7 +24,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
-import javax.swing.ListModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -86,13 +86,12 @@ public class ListOfFriends extends JFrameInheritable {
 
         this.friendsDisplayList.setCellRenderer(new JLabelForListCell());
         this.friendsDisplayList.removeAll();
-        ArrayList<UserTable> allUsers = dbUsers.readAndGetResultsAsORM(new UserTable());
-        DefaultListModel<UserTable> model = new DefaultListModel();
-        for (UserTable sUser : allUsers) {
+        ArrayList<ChatListTable> allUsers = dbUsers.readAndGetResultsAsORM(new ChatListTable());
+        DefaultListModel<ChatListTable> model = new DefaultListModel();
+        for (ChatListTable sUser : allUsers) {
             model.addElement(sUser);
         }
         friendsDisplayList.setModel(model);
-        
 
         if (allfriendsList != null) {
             for (ChatListTable chatListUser : allfriendsList) {
@@ -101,7 +100,7 @@ public class ListOfFriends extends JFrameInheritable {
 //
 //            }
                 boolean isUserOnline = UserOnline._UsersOnline.stream()
-                        .filter(e -> chatListUser.RelatedUserID.equals(e.UserID))
+                        .filter(e -> chatListUser.RelatedUserID == e.UserID)
                         .findAny()
                         .isPresent();
                 if (isUserOnline) {
@@ -109,6 +108,9 @@ public class ListOfFriends extends JFrameInheritable {
                 }
             }
         }
+        Picture processor = new Picture();
+        processor.setImageIcon(this.UserPicLabel, _user.getPathForProfilePic(_user.UserID), "");
+        this.UsernameLabel.setText(_user.Username);
 
     }
 
@@ -118,7 +120,10 @@ public class ListOfFriends extends JFrameInheritable {
 
     public ListOfFriends() {
         _user = new UserTable();
-        this.getDb().getResultsFirstAsObject(_user);
+        this.getDb().setLimitsOnQuery(2, 1);
+        this.getDb().readData();
+
+        this.getDb().getResultsAsObject(_user);
         customInit(_user);
     }
 
@@ -180,6 +185,11 @@ public class ListOfFriends extends JFrameInheritable {
         UserPicLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IconsCollections/base_picture_32.png"))); // NOI18N
         UserPicLabel.setText("Pic");
         UserPicLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        UserPicLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                UserPicLabelMouseClicked(evt);
+            }
+        });
 
         UserActiveState.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -294,6 +304,13 @@ public class ListOfFriends extends JFrameInheritable {
         SaveStateInUserProfile(index);
     }//GEN-LAST:event_UserActiveStateItemStateChanged
 
+    private void UserPicLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UserPicLabelMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            loadNewForm(new PictureUploaderForm(_user));
+        }
+    }//GEN-LAST:event_UserPicLabelMouseClicked
+
     public void filterList(String alias) {
 
     }
@@ -372,7 +389,7 @@ public class ListOfFriends extends JFrameInheritable {
 //        values[fields] = userID;
 //        return dbChatLists.isExist(userID, userID, aliasFound);
         aliasFound = allfriendsList.stream()
-                .filter(f -> f.RelatedUserID.equals(userID))
+                .filter(f -> f.RelatedUserID == userID)
                 .findFirst()
                 .get();
 
@@ -493,6 +510,9 @@ public class ListOfFriends extends JFrameInheritable {
     }
 
     private void SaveStateInUserProfile(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int id = CommonData.ActiveStateList.get(index).ActiveStateID;
+        _user.CurrentActiveState = id;
+
+        this.getDb().updateData("CurrentActiveState=" + id, User.UserID + "=" + _user.UserID);
     }
 }

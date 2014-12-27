@@ -2,12 +2,10 @@ package OnlineServers.Inheritable;
 
 import ConsolePackage.Console;
 import Global.InternetProtocol;
-import static OnlineServers.Inheritable.InheritableServer._UsersOnline;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,16 +37,13 @@ public abstract class GeneralServer<T> extends InheritableServer {
     }
 
     protected void initialize(String serverName, int port, String ip) {
-        this._ServerName = serverName + "Server";
+        this._ServerName = serverName + " Server";
         this._Port = port;
         this._ServerIp = ip;
     }
 
     @Override
     public void run() {
-
-        //refeshes port and is active state
-        reReadDataFromServer();
 
         System.out.println(getServerName() + " connected through own ip(" + InternetProtocol.getIp() + ") or localhost with port : " + getPort());
 
@@ -57,7 +52,7 @@ public abstract class GeneralServer<T> extends InheritableServer {
         try {
             severSocket = new ServerSocket(getPort());
             if (severSocket != null) {
-                System.out.println(getServerName() + " connected through :" + _serverConfig.UserOnlinePort);
+                System.out.println(getServerName() + " connected through :" + this._Port);
             }
         } catch (IOException ex) {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -80,43 +75,31 @@ public abstract class GeneralServer<T> extends InheritableServer {
     @SuppressWarnings("unchecked")
     private void serverRun(ServerSocket severSocket) {
 
-        Socket socket = null;
 
-        try {
-            socket = severSocket.accept();
-        } catch (IOException ex) {
-            Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        try (Socket socket  = severSocket.accept()) {
 
-        // for taking input from sendUserOnlineRequestToServer
-        ObjectInputStream inputFromClient = super.getInputObjectStream(socket);
-        boolean returnResult = false;
-        T objectReturnFromClient = null;
-        try {
-            objectReturnFromClient = (T) inputFromClient.readObject();
+            // for taking input from sendUserOnlineRequestToServer
+            ObjectInputStream inputFromClient = super.getInputObjectStream(socket);
+            T objectReturnFromClient = (T) inputFromClient.readObject();
+            if (objectReturnFromClient != null) {
+                doProcessInServer(objectReturnFromClient);
+            } else {
+                System.out.println("Server got an empty object.");
+            }
 
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(GeneralServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        // sending data to sendUserOnlineRequestToServer
-
-        // for giving output to the sendUserOnlineRequestToServer.
-        // output to sendUserOnlineRequestToServer, to send data to the server
-        // get output from server
-        try {
             // send data to sendUserOnlineRequestToServer
             System.out.println("Writing to client : " + objectReturnFromClient.toString());
-            if (returnResult) {
-                super.getOutputObjectStream(socket).writeObject(objectReturnFromClient);
-            } else {
-                super.getOutputObjectStream(socket).writeObject(null);
-            }
+
+            super.getOutputObjectStream(socket).writeObject(objectReturnFromClient);
+
         } catch (IOException ex) {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GeneralServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void clientSendingMethod(T sendingObject) {
+    public T clientSendingMethod(T sendingObject) {
 
         int port = this.getPort();
         String ip = this.getServerIp();
@@ -127,7 +110,9 @@ public abstract class GeneralServer<T> extends InheritableServer {
             @SuppressWarnings("unchecked")
             T gotResponseObjectFromServer = (T) super.getInputObjectStream(socket).readObject();
             if (gotResponseObjectFromServer != null) {
-                gotResponseObjectFromServer.toString();
+                System.out.println(gotResponseObjectFromServer.toString());
+                return gotResponseObjectFromServer;
+
             } else {
                 System.out.println("object response null.");
             }
@@ -140,13 +125,14 @@ public abstract class GeneralServer<T> extends InheritableServer {
             Logger.getLogger(GeneralServer.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Object not found :  " + ip + ":" + port);
         }
-
+        return null;
     }
-    
+
     /**
      * Do the server processing
+     *
      * @param clientObject
-     * @return 
+     * @return
      */
     public abstract boolean doProcessInServer(T clientObject);
 

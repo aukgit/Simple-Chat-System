@@ -7,6 +7,7 @@ package CurrentDb;
 
 import CurrentDb.TableColumns.ActiveState;
 import CurrentDb.Tables.ActiveStateTable;
+import CurrentDb.Tables.UserTable;
 import Database.DatabaseQuery;
 import Database.DbData;
 import java.awt.Color;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 public class CommonData {
 
     static String[] _activeStateStringList;
-    static ArrayList<ActiveStateTable> _activeStateList;
+    public static ArrayList<ActiveStateTable> ActiveStateList;
     static DatabaseQuery _db;
     public static int ENTER_KEY = KeyEvent.VK_ENTER;
 
@@ -54,13 +55,22 @@ public class CommonData {
         return _activeStateStringList;
     }
 
+    public static Color getColorForActiveStatus(UserTable user) {
+        return getColorForActiveStatus(user.CurrentActiveState - 1);
+    }
+
     public static Color getColorForActiveStatus(int index) {
-        if (_activeStateList == null) {
+        if (ActiveStateList == null) {
             setTableName(TableNames.ACTIVESTATE);
-            _activeStateList = _db.readAndGetResultsAsORM(new ActiveStateTable());
+            ActiveStateList = _db.readAndGetResultsAsORM(new ActiveStateTable());
         }
 
-        ActiveStateTable indexState = _activeStateList.get(index);
+        ActiveStateTable indexState;
+        indexState = ActiveStateList.get(index);
         return new Color(indexState.colorRed, indexState.colorGreen, indexState.colorBlue);
     }
+
+    /**
+     * @param aActiveStateList the _activeStateList to set
+     */
 }

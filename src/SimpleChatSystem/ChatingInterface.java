@@ -5,14 +5,19 @@
  */
 package SimpleChatSystem;
 
+import CurrentDb.CommonData;
 import CurrentDb.TableNames;
 import DesignPattern.JFrameInheritable;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Alim
  */
 public class ChatingInterface extends JFrameInheritable {
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -58,6 +63,11 @@ public class ChatingInterface extends JFrameInheritable {
         });
 
         jTextField1.setText("jTextField1");
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField1KeyReleased(evt);
+            }
+        });
 
         UsernameLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         UsernameLabel.setText("Friend : Username");
@@ -108,6 +118,17 @@ public class ChatingInterface extends JFrameInheritable {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == CommonData.ENTER_KEY) {
+            try {
+                this.MessageDisplay.setPage(this.jTextField1.getText());
+            } catch (IOException ex) {
+                Logger.getLogger(ChatingInterface.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jTextField1KeyReleased
 
     /**
      * @param args the command line arguments

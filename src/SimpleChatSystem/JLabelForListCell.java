@@ -5,6 +5,7 @@
  */
 package SimpleChatSystem;
 
+import CurrentDb.Tables.ChatListTable;
 import CurrentDb.Tables.UserTable;
 import java.awt.Color;
 import java.awt.Component;
@@ -24,16 +25,17 @@ public class JLabelForListCell extends JLabel implements ListCellRenderer {
 
     public JLabelForListCell() {
         setOpaque(true);
-        setIconTextGap(12);
+        setIconTextGap(6);
     }
 
     @Override
     public Component getListCellRendererComponent(JList list, Object value,
             int index, boolean isSelected, boolean cellHasFocus) {
-        UserTable user = (UserTable) value;
-        setText(user.Username);
-        if (user.isImageExist()) {
-            setIcon(new ImageIcon(user.getPathForThumbChatListPic()));
+        ChatListTable user = (ChatListTable) value;
+        setText(user.AliasAs);
+        setIcon(null);
+        if (user.isImageExist(user.RelatedUserID)) {
+            setIcon(new ImageIcon(user.getPathForProfilePic(user.RelatedUserID)));
         }
         if (isSelected) {
             setBackground(HIGHLIGHT_COLOR);

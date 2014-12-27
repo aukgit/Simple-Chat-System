@@ -9,6 +9,7 @@ import CurrentDb.Tables.UserTable;
 import ImageProcessing.Picture;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -18,10 +19,17 @@ public class PictureSender implements Serializable{
     private static final long serialVersionUID = 1L;
 
     private String _path;
-    private BufferedImage _picture;
+    private ImageIcon _picture;
     
     private UserTable _user;
     private boolean _isProccesedSuccessful;
+    
+    private boolean _askToGetPictures;
+    private boolean _sendAllPictures;
+    
+    private ImageIcon _profilePic;
+    private ImageIcon _chattingPic;
+    private ImageIcon _chatListPic;
     
     
 
@@ -39,22 +47,19 @@ public class PictureSender implements Serializable{
         this._path = relativePath;
     }
     
-    public void generatePictureFromPaths(){
-        Picture pic = new Picture(getPath());
-        setPicture(pic.getImage());
-    }
+
 
     /**
      * @return the _picture
      */
-    public BufferedImage getPicture() {
+    public ImageIcon getPicture() {
         return _picture;
     }
 
     /**
      * @param picture the _picture to set
      */
-    public void setPicture(BufferedImage picture) {
+    public void setPicture(ImageIcon picture) {
         this._picture = picture;
     }
 
@@ -84,6 +89,76 @@ public class PictureSender implements Serializable{
      */
     public void setIsProccesedSuccessful(boolean _isProccesedSuccessful) {
         this._isProccesedSuccessful = _isProccesedSuccessful;
+    }
+
+    /**
+     * @return the _askToGetPictures
+     */
+    public boolean isAskToGetPictures() {
+        return _askToGetPictures;
+    }
+
+    /**
+     * @param _askToGetPictures the _askToGetPictures to set
+     */
+    public void setAskToGetPictures(boolean _askToGetPictures) {
+        this._askToGetPictures = _askToGetPictures;
+    }
+
+    /**
+     * @return the _sendAllPictures
+     */
+    public boolean isSendAllPictures() {
+        return _sendAllPictures;
+    }
+
+    /**
+     * @param _sendAllPictures the _sendAllPictures to set
+     */
+    public void setSendAllPictures(boolean _sendAllPictures) {
+        this._sendAllPictures = _sendAllPictures;
+    }
+
+    /**
+     * @return the _profilePic
+     */
+    public ImageIcon getProfilePic() {
+        return _profilePic;
+    }
+
+    /**
+     * @param _profilePic the _profilePic to set
+     */
+    public void setProfilePic(ImageIcon _profilePic) {
+        this._profilePic = _profilePic;
+    }
+
+    /**
+     * @return the _chattingPic
+     */
+    public ImageIcon getChattingPic() {
+        return _chattingPic;
+    }
+
+    /**
+     * @param _chattingPic the _chattingPic to set
+     */
+    public void setChattingPic(ImageIcon _chattingPic) {
+        this._chattingPic = _chattingPic;
+    }
+
+    /**
+     * @return the _chatListPic
+     */
+    public ImageIcon getChatListPic() {
+        return _chatListPic;
+    }
+
+    /**
+     * @param _chatListPic the _chatListPic to set
+     */
+    public void setChatListPic(ImageIcon _chatListPic) {
+        this._chatListPic = _chatListPic;
     }
 
 }

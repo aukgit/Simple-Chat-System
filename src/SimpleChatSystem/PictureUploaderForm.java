@@ -8,6 +8,7 @@ package SimpleChatSystem;
 import CurrentDb.Tables.UserTable;
 import DesignPattern.JFrameInheritable;
 import ImageProcessing.Picture;
+import OnlineServers.PictureUploader;
 import OnlineServers.RelatedObjects.PictureSender;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -21,6 +22,8 @@ public class PictureUploaderForm extends JFrameInheritable {
     private static final long serialVersionUID = 1L;
 
     private UserTable _user;
+    PictureSender sender = new PictureSender();
+    PictureUploader server = new PictureUploader();
 
     /**
      * Creates new form PictureUploaderForm
@@ -58,6 +61,11 @@ public class PictureUploaderForm extends JFrameInheritable {
 
         jButton2.setText("Upload and Save");
         jButton2.setToolTipText("");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -92,13 +100,26 @@ public class PictureUploaderForm extends JFrameInheritable {
         // TODO add your handling code here:
         Picture processor = new Picture();
         File file = processor.browseFileAndGetFile();
-        PictureSender sender = new PictureSender();
         BufferedImage img = processor.generateImageFromFile(file);
+        int w = PictureDisplayLabel.getWidth();
+        int h = PictureDisplayLabel.getHeight();
+        img = processor.ResizeImage(img, w, h);
+
         processor.setImageIcon(PictureDisplayLabel, img);
         sender.setUser(getUser());
-        sender.setPicture(img);
+        sender.setPicture(processor.getImageIcon(img));
 
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        sender = server.clientSendingMethod(sender);
+        if (sender.isIsProccesedSuccessful()) {
+            this.getMessageBox().show(this, "Congrats! Image has been uploaded successfully.");
+            this.hide();
+
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments

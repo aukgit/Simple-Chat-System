@@ -26,17 +26,23 @@ public class PictureUploader extends GeneralServer<PictureSender> {
     @Override
     public boolean doProcessInServer(PictureSender clientObject) {
         Picture pictureProcessor = new Picture();
-        if (clientObject.getPicture() != null) {
-            UserTable user = clientObject.getUser();
-            BufferedImage img = clientObject.getPicture();
+        if (clientObject.isAskToGetPictures()) {
+            // pictures are already uploaded 
 
+        } else if (clientObject.getPicture() != null) {
+            UserTable user = clientObject.getUser();
+            BufferedImage img = pictureProcessor.getBufferedImage(clientObject.getPicture());
+            System.out.println("ase");
             BufferedImage profile = pictureProcessor.ResizeImage(img, super._serverConfig.ProfilePicWidth, _serverConfig.ProfilePicHeight);
             BufferedImage chatList = pictureProcessor.ResizeImage(img, super._serverConfig.ChatListThumbWidth, _serverConfig.ChatListThumbHeight);
             BufferedImage chatting = pictureProcessor.ResizeImage(img, super._serverConfig.ChatingThumbWidth, _serverConfig.ChatingThumbHeight);
-
-            String profilePath = user.getPathForProfilePic();
-            String chatListPath = user.getPathForThumbChatListPic();
-            String chattingPath = user.getPathForThumbChatPic();
+            System.out.println("ase2");
+            String profilePath = user.getPathForProfilePic(user.UserID);
+            String chatListPath = user.getPathForThumbChatListPic(user.UserID);
+            String chattingPath = user.getPathForThumbChatPic(user.UserID);
+            System.out.println(profilePath);
+            System.out.println(chatListPath);
+            System.out.println(chattingPath);
 
             pictureProcessor.save(new File(profilePath), profile);
             pictureProcessor.save(new File(chatListPath), chatList);

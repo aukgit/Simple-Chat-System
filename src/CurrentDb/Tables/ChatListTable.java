@@ -10,13 +10,13 @@ package CurrentDb.Tables;
  * @author Alim
  */
 @SuppressWarnings("serial")
-public class ChatListTable extends DatabaseTableClass {
+public class ChatListTable extends ImageLoadRelatedCode {
 
     public int ChatListID;
-    public String OriginalUserID;
-    public String RelatedUserID;
+    public int OriginalUserID;
+    public int RelatedUserID;
     public String AliasAs;
-    
+
     public boolean IsOnline;
 
 }

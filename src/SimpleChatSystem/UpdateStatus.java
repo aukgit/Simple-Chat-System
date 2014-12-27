@@ -6,6 +6,7 @@
 package SimpleChatSystem;
 
 import CurrentDb.CommonData;
+import CurrentDb.TableColumns.User;
 import CurrentDb.TableColumns.UserStatus;
 import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
@@ -163,10 +164,12 @@ public class UpdateStatus extends JFrameInheritable {
             values[numberOFCol] = _user.UserID + "";
 
             columns[--numberOFCol] = UserStatus.Status;
-            values[numberOFCol] = this.UserStatusTextbox.getText();
+            values[numberOFCol] = status;
 
             if (this.getDb().insertData(columns, values)) {
                 this.hide();
+
+                this.getDb().updateData(TableNames.USER, "`" + User.CurrentStatus + "`='" + status + "'", User.UserID + "=" + _user.UserID);
                 this.getPreviousForm().show(true);
                 _listOfFiendsForm.loadCurrentStatus();
             } else {

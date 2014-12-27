@@ -35,6 +35,7 @@ public class InheritableServer implements Runnable {
     public InheritableServer() {
         this._serverRefershAfterHits = 100;
         initalizeQuery();
+
     }
 
     public boolean isUserAlreadyOnline(UserTable userGotOnline) {
@@ -44,6 +45,17 @@ public class InheritableServer implements Runnable {
             }
         }
         return false;
+    }
+
+    public int userAlreadyOnline(UserTable userGotOnline) {
+        int i = 0;
+        for (UserTable alreadyOnline : _UsersOnline) {
+            if (alreadyOnline.UserID == userGotOnline.UserID) {
+                return i;
+            }
+            i++;
+        }
+        return -1;
     }
 
     public boolean addUsertoOnlineList(UserTable userGotOnline) {
@@ -120,6 +132,9 @@ public class InheritableServer implements Runnable {
         db = new DatabaseQuery();
         // setting table name
         db.setTableName(TableNames.SERVERSETTING);
+
+        //refeshes port and is active state
+        reReadDataFromServer();
     }
 
     /**

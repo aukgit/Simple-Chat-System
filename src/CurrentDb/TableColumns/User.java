@@ -22,5 +22,5 @@ public interface User {
     public String IsActive = "IsActive";
     public String IsAdmin = "IsAdmin";
     public String IsOnline = "IsOnline";
-
+    public String CurrentStatus = "CurrentStatus";
 }
