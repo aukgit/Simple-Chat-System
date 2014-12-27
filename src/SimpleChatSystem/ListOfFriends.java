@@ -71,9 +71,7 @@ public class ListOfFriends extends JFrameInheritable {
                 pictureProcessor.setImageIcon(this.UserPicLabel, path, "No pic");
             }
             return;
-        } catch (IOException ex) {
-            Logger.getLogger(PictureUploaderForm.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
+        } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(PictureUploaderForm.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("Sorry! Server may not running or no pictures");

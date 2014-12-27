@@ -106,7 +106,14 @@ public abstract class GeneralServer<T> extends InheritableServer {
             Logger.getLogger(GeneralServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
+    /** 
+     * 
+     * @param sendingObject
+     * @return always catch  the returning object. Sending object is not same as it is.
+     * @throws IOException
+     * @throws ClassNotFoundException 
+     */
     public T clientSendingMethod(T sendingObject) throws IOException, ClassNotFoundException {
 
         int port = this.getPort();

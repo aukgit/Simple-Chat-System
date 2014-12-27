@@ -15,6 +15,7 @@
     <class>EntityClass.Activestate</class>
     <class>OnlineServers.PictureUploadServer</class>
     <class>OnlineServers.UserOnline</class>
+    <class>Mailer.Gmail</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://locahost:3306/chatdatabase"/>
       <property name="javax.persistence.jdbc.password" value=""/>
