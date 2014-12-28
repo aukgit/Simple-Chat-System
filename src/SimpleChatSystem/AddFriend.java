@@ -185,7 +185,7 @@ public class AddFriend extends JFrameInheritable {
 
     public void sendMailToUser() {
         String body = "";
-        body += "Hello " + _sendingToUser + ", <br>";
+        body += "Hello " + _sendingToUser.Name + ", <br>";
         body += "How you doing? Someone personal try to add you in his/her friend list. <br>";
         body += "<br>";
         body += "<h3>A short message from " + _sendingFromUser.Username + "</h3>";

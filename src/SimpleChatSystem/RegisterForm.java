@@ -48,6 +48,8 @@ public class RegisterForm extends JFrameInheritable {
         emailLabel = new javax.swing.JLabel();
         PasswrodLabel = new javax.swing.JLabel();
         ConfirmPasswordLabel = new javax.swing.JLabel();
+        NameTextBox = new javax.swing.JTextField();
+        NameLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -87,47 +89,60 @@ public class RegisterForm extends JFrameInheritable {
 
         ConfirmPasswordLabel.setText("Confirm");
 
+        NameTextBox.setName("EmailText"); // NOI18N
+
+        NameLabel.setText("Name");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(23, 23, 23)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(usernameLabel)
-                        .addGap(10, 10, 10)
-                        .addComponent(UsernameTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(emailLabel)
-                        .addGap(34, 34, 34)
-                        .addComponent(EmailTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(PasswrodLabel)
-                        .addGap(12, 12, 12)
-                        .addComponent(PasswordTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(ConfirmPasswordLabel)
-                        .addGap(21, 21, 21)
-                        .addComponent(ConfrimPasswordTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(311, 311, 311)
-                        .addComponent(jButton1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addComponent(jLabel1)))
-                .addContainerGap(30, Short.MAX_VALUE))
+                        .addComponent(NameLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(NameTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(usernameLabel)
+                            .addGap(10, 10, 10)
+                            .addComponent(UsernameTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addComponent(emailLabel)
+                            .addGap(34, 34, 34)
+                            .addComponent(EmailTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(PasswrodLabel)
+                            .addGap(12, 12, 12)
+                            .addComponent(PasswordTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(ConfirmPasswordLabel)
+                            .addGap(21, 21, 21)
+                            .addComponent(ConfrimPasswordTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(311, 311, 311)
+                            .addComponent(jButton1))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(21, 21, 21)
+                            .addComponent(jLabel1))))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(34, 34, 34)
+                .addGap(23, 23, 23)
                 .addComponent(jLabel1)
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(usernameLabel)
                     .addComponent(UsernameTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(6, 6, 6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(NameLabel)
+                    .addComponent(NameTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(EmailTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(emailLabel))
@@ -141,7 +156,7 @@ public class RegisterForm extends JFrameInheritable {
                     .addComponent(ConfirmPasswordLabel))
                 .addGap(6, 6, 6)
                 .addComponent(jButton1)
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addGap(34, 34, 34))
         );
 
         ConfrimPasswordTextBox.getAccessibleContext().setAccessibleName("confirmPasswordAccess");
@@ -159,7 +174,7 @@ public class RegisterForm extends JFrameInheritable {
 
         String passwordError = "Password doesn't match.";
         String passwordNormal = "Password is fine.";
-        int numberOfFields = 6;
+        int numberOfFields = 7;
         String Columns[] = new String[numberOfFields];
         String Values[] = new String[numberOfFields];
         int i = 0;
@@ -177,7 +192,6 @@ public class RegisterForm extends JFrameInheritable {
         if (isEmailValid) {
             isNotEmailExist = !this.getDb().isExist(User.Email, this.EmailTextBox.getText());
             ErrorHighLight.ErrorValidate(!isNotEmailExist, this.emailLabel, this.EmailTextBox, "Email already exist.", "Email doesn't exist.");
-
         }
 
         if (isUsernameValid) {
@@ -191,8 +205,10 @@ public class RegisterForm extends JFrameInheritable {
             ErrorHighLight.ErrorValidate(passwordNotMatch, this.PasswrodLabel, this.PasswordTextBox, passwordError, passwordNormal);
         }
         ErrorHighLight.ErrorValidate(passwordNotMatch, this.ConfirmPasswordLabel, this.ConfrimPasswordTextBox, passwordError, passwordNormal);
+        boolean isNameValid = Validate.minMaxCheck(this.NameTextBox, NameLabel, 5, 50, false, passwordNormal, "(Min,Max) = (3,20)");
+        ErrorHighLight.ErrorValidate(isNameValid, this.NameLabel, this.NameTextBox, "Name is not valid", "Name");
 
-        if (!passwordNotMatch && isPasswordSatisfyMinMax && isNotEmailExist && isNotUsernameExist && isUsernameValid && isEmailValid) {
+        if (!passwordNotMatch && isPasswordSatisfyMinMax && isNotEmailExist && isNotUsernameExist && isUsernameValid && isEmailValid && isNameValid) {
             String hashSh1Password = Hasher.getShA1Hash(this.ConfrimPasswordTextBox.getText());
             //0
             Columns[i] = User.Username;
@@ -217,6 +233,10 @@ public class RegisterForm extends JFrameInheritable {
             //5
             Columns[i] = User.IsBlocked;
             Values[i++] = "0";
+            
+            //6
+            Columns[i] = User.Name;
+            Values[i++] = this.NameTextBox.getText();
             if (this.getDb().insertData(Columns, Values)) {
                 OnSuccess();
             } else {
@@ -276,6 +296,8 @@ public class RegisterForm extends JFrameInheritable {
     private javax.swing.JLabel ConfirmPasswordLabel;
     public javax.swing.JPasswordField ConfrimPasswordTextBox;
     public javax.swing.JTextField EmailTextBox;
+    private javax.swing.JLabel NameLabel;
+    public javax.swing.JTextField NameTextBox;
     public javax.swing.JPasswordField PasswordTextBox;
     private javax.swing.JLabel PasswrodLabel;
     public javax.swing.JTextField UsernameTextBox;

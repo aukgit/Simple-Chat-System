@@ -25,6 +25,7 @@ public class UserTable extends ImageLoadRelatedCode {
     public int UserID;
 
     public String Username;
+    public String Name;
     public String Email;
     public String Password;
 
@@ -75,7 +76,7 @@ public class UserTable extends ImageLoadRelatedCode {
     public void displayUser(JLabel username, JLabel status, JLabel email, JLabel labelPicture) {
 
         if (username != null) {
-            username.setText(this.Username);
+            username.setText(this.Name);
         }
         if (status != null) {
             status.setText(this.CurrentStatus);

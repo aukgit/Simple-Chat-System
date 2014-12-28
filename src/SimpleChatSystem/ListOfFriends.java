@@ -151,10 +151,10 @@ public class ListOfFriends extends JFrameInheritable {
             }
         }
 
-        this.UsernameLabel.setText(getUser().Username);
+        this.UsernameLabel.setText(getUser().Name);
         profilePictureRequestSender = new PictureSender(givenUser, PictureSender.IAskPicture.Profile);
         updateUserProfilePictue();
-        this.setTitle(_user.Username + ": Friends List");
+        this.setTitle(_user.Name + " : Friends List");
     }
 
     public ListOfFriends(UserTable u) {

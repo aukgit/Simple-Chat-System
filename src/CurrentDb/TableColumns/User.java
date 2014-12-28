@@ -14,7 +14,9 @@ public interface User {
 
     public String UserID = "UserID";
     public String Username = "Username";
+    public String Name = "Name";
     public String Email = "Email";
+    
     public String Password = "Password";
 
     public String LastLogin = "LastLogin";
