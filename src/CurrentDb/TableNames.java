@@ -23,5 +23,6 @@ public interface TableNames {
     public String USER_RECENT_STATUS = "UserRecentStatus";
     public String MESSAGES_RECENT = "MessageRecent";
     public String CHAT_SESSION_RELATED_USERS = "chatsessionrelateduser";
+    public String FRIEND_REQUEST = "FriendRequest";
 
 }

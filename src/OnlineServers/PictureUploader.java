@@ -127,7 +127,6 @@ public class PictureUploader extends GeneralServer<PictureSender> {
     public static void main(String[] args) {
         PictureUploader uploaderServer = new PictureUploader();
         uploaderServer.startThread();
-
     }
 
 }

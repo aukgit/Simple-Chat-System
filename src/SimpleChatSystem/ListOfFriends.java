@@ -54,6 +54,7 @@ public class ListOfFriends extends JFrameInheritable {
     private DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
     private ChatListTable chatList = new ChatListTable();
     private Picture pictureProcessor = new Picture();
+    String previousSearch = "";
 
     @SuppressWarnings("unchecked")
     DefaultListModel<ChatListTable> friendListDisplayModel = new DefaultListModel();
@@ -153,6 +154,7 @@ public class ListOfFriends extends JFrameInheritable {
         this.UsernameLabel.setText(getUser().Username);
         profilePictureRequestSender = new PictureSender(givenUser, PictureSender.IAskPicture.Profile);
         updateUserProfilePictue();
+        this.setTitle(_user.Username + ": Friends List");
     }
 
     public ListOfFriends(UserTable u) {
@@ -287,6 +289,11 @@ public class ListOfFriends extends JFrameInheritable {
                 SearchOrAddFriendTextBoxMouseReleased(evt);
             }
         });
+        SearchOrAddFriendTextBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SearchOrAddFriendTextBoxActionPerformed(evt);
+            }
+        });
         SearchOrAddFriendTextBox.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 SearchOrAddFriendTextBoxKeyReleased(evt);
@@ -387,6 +394,10 @@ public class ListOfFriends extends JFrameInheritable {
             searchForUserOrAddUserIfFoundInDatabase(this.SearchOrAddFriendTextBox.getText());
         }
     }//GEN-LAST:event_SearchOrAddFriendTextBoxKeyReleased
+
+    private void SearchOrAddFriendTextBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchOrAddFriendTextBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_SearchOrAddFriendTextBoxActionPerformed
 
     public void filterList(String alias) {
 
@@ -506,7 +517,8 @@ public class ListOfFriends extends JFrameInheritable {
 
             }
             if (foundedUser != null) {
-                loadNewForm(new AddFriend(foundedUser, this._user), true);
+                AddFriend addfriendForm = new AddFriend(foundedUser, this._user);
+                loadNewForm(addfriendForm, true);
                 userFoundByEmail.UserID = -1;
                 userFoundByUserName.UserID = -1;
             } else {

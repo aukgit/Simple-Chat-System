@@ -21,13 +21,13 @@ import javax.swing.JLabel;
  */
 @SuppressWarnings("serial")
 public class UserTable extends ImageLoadRelatedCode {
-    
+
     public int UserID;
-    
+
     public String Username;
     public String Email;
     public String Password;
-    
+
     public Date LastLogin;
     public boolean IsBlocked;
     public boolean IsActive;
@@ -35,7 +35,7 @@ public class UserTable extends ImageLoadRelatedCode {
     public boolean IsOnline;
     public String CurrentStatus;
     public int CurrentActiveState;
-    
+
     public ImageIcon Picture;
 
     /**
@@ -47,9 +47,10 @@ public class UserTable extends ImageLoadRelatedCode {
     public boolean loadProfilePicFromServer() {
         return loadImageFromServer(PictureSender.IAskPicture.Profile);
     }
-    
+
     private boolean loadImageFromServer(byte ask) {
         PictureSender pictureSender = new PictureSender(this, ask);
+        pictureSender.setRequestForUserPicture(this, ask);
         PictureUploader server = new PictureUploader();
         try {
             pictureSender = server.clientSendingMethod(pictureSender);
@@ -62,37 +63,39 @@ public class UserTable extends ImageLoadRelatedCode {
         }
         return false;
     }
+
     /**
      * if any null then don't load
+     *
      * @param username
      * @param status
      * @param email
-     * @param labelPicture 
+     * @param labelPicture
      */
     public void displayUser(JLabel username, JLabel status, JLabel email, JLabel labelPicture) {
-        
+
         if (username != null) {
             username.setText(this.Username);
         }
         if (status != null) {
             status.setText(this.CurrentStatus);
         }
-        
+
         if (email != null) {
             email.setText(this.Email);
             email.setForeground(Color.blue);
         }
-        
+
         if (labelPicture != null) {
-            if (loadProfilePicFromServer()) {
+            if (this.loadProfilePicFromServer()) {
                 labelPicture.setIcon(Picture);
                 labelPicture.setText("");
             }
         }
     }
-    
+
     public void print() {
         System.out.println("ID :" + this.UserID + " | Username: " + this.Username);
     }
-    
+
 }

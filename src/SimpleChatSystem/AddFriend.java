@@ -5,6 +5,8 @@
  */
 package SimpleChatSystem;
 
+import CurrentDb.TableColumns.FriendRequest;
+import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
 import DesignPattern.JFrameInheritable;
 import Mailer.OwnGmail;
@@ -31,6 +33,53 @@ public class AddFriend extends JFrameInheritable {
         _sendingFromUser = sendingFromUser;
         _sendingToUser.displayUser(this.ToUser_UsernameLabel, this.ToUser_UserStatusLabel, null, this.ToUser_ProfilePicture);
         this.setTitle("Add friend : " + _sendingToUser.Username);
+    }
+
+    public boolean isFriendRequsetAlreadySent() {
+        this.getDb().setTableName(TableNames.FRIEND_REQUEST);
+        byte row = 2;
+        String[] columns = new String[row];
+        String[] values = new String[row];
+
+        columns[--row] = FriendRequest.SenderUserID;
+        values[row] = _sendingFromUser.UserID + "";
+
+        columns[--row] = FriendRequest.ToWhomUserID;
+        values[row] = _sendingToUser.UserID + "";
+
+        return this.getDb().isExist(columns, values);
+
+    }
+
+    /**
+     *
+     * @return true means just sent. false means request is already sent or
+     * failed.
+     */
+    public boolean addFriendRequesToUserDb() {
+        if (isFriendRequsetAlreadySent() == false) {
+            byte row = 4;
+            String[] columns = new String[row];
+            String[] values = new String[row];
+
+            columns[--row] = FriendRequest.SenderUserID;
+            values[row] = _sendingFromUser.UserID + "";
+
+            columns[--row] = FriendRequest.ToWhomUserID;
+            values[row] = _sendingToUser.UserID + "";
+
+            columns[--row] = FriendRequest.IsAccept;
+            values[row] = "0";
+
+            columns[--row] = FriendRequest.Message;
+            values[row] = this.quoteTextBox.getText();
+            if (this.getDb().insertData(columns, values)) {
+                this.getMessageBox().show(this, "Successfully friend request sent!");
+                return true;
+            }
+
+        }
+        return false;
     }
 
     /**
@@ -134,7 +183,7 @@ public class AddFriend extends JFrameInheritable {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    public void sendMailToUser() {
         String body = "";
         body += "Hello " + _sendingToUser + ", <br>";
         body += "How you doing? Someone personal try to add you in his/her friend list. <br>";
@@ -146,6 +195,13 @@ public class AddFriend extends JFrameInheritable {
         body += "<strong>" + _sendingFromUser.Username + "</strong>";
         body += "<a href='mailto:" + _sendingFromUser.Email + "'>" + _sendingFromUser.Email + "</strong>";
         mailer.sendEmail(_sendingToUser.Email, "A friend request is send by " + _sendingFromUser.Username, body);
+    }
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if (addFriendRequesToUserDb()) {
+            sendMailToUser();
+            this.hide();
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
