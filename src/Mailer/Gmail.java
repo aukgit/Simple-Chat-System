@@ -11,7 +11,7 @@ import ConsolePackage.Console;
  *
  * @author Alim
  */
-public final class Gmail extends MailerConfigInheritable {
+public class Gmail extends MailerConfigInheritable {
     
     private final String HOST = "smtp.gmail.com";
     

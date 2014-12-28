@@ -54,7 +54,7 @@ public class ListOfFriends extends JFrameInheritable {
     private DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
     private ChatListTable chatList = new ChatListTable();
     private Picture pictureProcessor = new Picture();
-    
+
     @SuppressWarnings("unchecked")
     DefaultListModel<ChatListTable> friendListDisplayModel = new DefaultListModel();
 
@@ -128,7 +128,7 @@ public class ListOfFriends extends JFrameInheritable {
         this.friendsDisplayList.setCellRenderer(new JLabelForListCell());
         //this.friendsDisplayList.removeAll();
         ArrayList<ChatListTable> allUsers = dbUsers.readAndGetResultsAsORM(new ChatListTable());
-        
+
         for (ChatListTable sUser : allUsers) {
             friendListDisplayModel.addElement(sUser);
         }
@@ -161,7 +161,7 @@ public class ListOfFriends extends JFrameInheritable {
 
     public ListOfFriends() {
         _user = new UserTable();
-        this.getDb().setLimitsOnQuery(2, 1);
+        this.getDb().setLimitsOnQuery(1, 1);
         this.getDb().readData();
 
         this.getDb().getResultsAsObject(_user);
@@ -186,12 +186,11 @@ public class ListOfFriends extends JFrameInheritable {
         UsterstatusLabel = new javax.swing.JLabel();
         UserPicLabel = new javax.swing.JLabel();
         UserActiveState = new java.awt.Choice();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        searchBox = new javax.swing.JTextPane();
         editProfile = new javax.swing.JLabel();
         adminConfigBtn = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         friendsDisplayList = new javax.swing.JList();
+        SearchOrAddFriendTextBox = new javax.swing.JTextField();
 
         jMenu1.setText("Menu");
 
@@ -254,13 +253,6 @@ public class ListOfFriends extends JFrameInheritable {
             }
         });
 
-        searchBox.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                searchBoxKeyReleased(evt);
-            }
-        });
-        jScrollPane1.setViewportView(searchBox);
-
         editProfile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IconsCollections/pencil_32.png"))); // NOI18N
         editProfile.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         editProfile.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -285,15 +277,30 @@ public class ListOfFriends extends JFrameInheritable {
         friendsDisplayList.setVisibleRowCount(30);
         jScrollPane3.setViewportView(friendsDisplayList);
 
+        SearchOrAddFriendTextBox.setText("Search or add friend...");
+        SearchOrAddFriendTextBox.setToolTipText("search or add friend");
+        SearchOrAddFriendTextBox.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SearchOrAddFriendTextBoxMouseClicked(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                SearchOrAddFriendTextBoxMouseReleased(evt);
+            }
+        });
+        SearchOrAddFriendTextBox.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                SearchOrAddFriendTextBoxKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(UserPicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -301,8 +308,9 @@ public class ListOfFriends extends JFrameInheritable {
                         .addComponent(adminConfigBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(editProfile))
-                    .addComponent(UserActiveState, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addComponent(UserActiveState, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3)
+                    .addComponent(SearchOrAddFriendTextBox))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -316,10 +324,10 @@ public class ListOfFriends extends JFrameInheritable {
                     .addComponent(UserPicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(UserActiveState, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(7, 7, 7)
+                .addComponent(SearchOrAddFriendTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -345,11 +353,6 @@ public class ListOfFriends extends JFrameInheritable {
         }
     }//GEN-LAST:event_UsterstatusLabelMouseClicked
 
-    private void searchBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchBoxKeyReleased
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_searchBoxKeyReleased
-
     private void UserActiveStateItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_UserActiveStateItemStateChanged
         // TODO add your handling code here:
 
@@ -367,6 +370,23 @@ public class ListOfFriends extends JFrameInheritable {
             loadNewForm(pictureUploaderForm);
         }
     }//GEN-LAST:event_UserPicLabelMouseClicked
+
+    private void SearchOrAddFriendTextBoxMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SearchOrAddFriendTextBoxMouseReleased
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_SearchOrAddFriendTextBoxMouseReleased
+
+    private void SearchOrAddFriendTextBoxMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SearchOrAddFriendTextBoxMouseClicked
+        if (this.SearchOrAddFriendTextBox.getText().equals("Search or add friend...")) {
+            this.SearchOrAddFriendTextBox.setText("");
+        }
+    }//GEN-LAST:event_SearchOrAddFriendTextBoxMouseClicked
+
+    private void SearchOrAddFriendTextBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SearchOrAddFriendTextBoxKeyReleased
+        if (evt.getKeyCode() == CommonData.ENTER_KEY) {
+            searchForUserOrAddUserIfFoundInDatabase(this.SearchOrAddFriendTextBox.getText());
+        }
+    }//GEN-LAST:event_SearchOrAddFriendTextBoxKeyReleased
 
     public void filterList(String alias) {
 
@@ -411,17 +431,19 @@ public class ListOfFriends extends JFrameInheritable {
         boolean returnResult = false;
         if (input != null && "".equals(input) == false) {
             String[] list = input.split(" ");
-            for (String item : list) {
-                List<ChatListTable> foundList = allfriendsList
-                        .parallelStream()
-                        .filter(f -> f.AliasAs.contains(item))
-                        .collect(Collectors.toList());
-                if (foundList != null) {
-                    for (ChatListTable singleItem : foundList) {
-                        searchResultOfFriendsList.add(singleItem);
+            if (allfriendsList != null && allfriendsList.size() > 0) {
+                for (String item : list) {
+                    List<ChatListTable> foundList = allfriendsList
+                            .parallelStream()
+                            .filter(f -> f.AliasAs.contains(item))
+                            .collect(Collectors.toList());
+                    if (foundList != null) {
+                        for (ChatListTable singleItem : foundList) {
+                            searchResultOfFriendsList.add(singleItem);
 
+                        }
+                        returnResult = true;
                     }
-                    returnResult = true;
                 }
             }
         }
@@ -445,10 +467,15 @@ public class ListOfFriends extends JFrameInheritable {
 //        columns[--fields] = ChatList.RelatedUserID;
 //        values[fields] = userID;
 //        return dbChatLists.isExist(userID, userID, aliasFound);
-        aliasFound = allfriendsList.stream()
-                .filter(f -> f.RelatedUserID == userID)
-                .findFirst()
-                .get();
+
+        if (allfriendsList != null && allfriendsList.size() > 0) {
+            aliasFound = allfriendsList.stream()
+                    .filter(f -> f.RelatedUserID == userID)
+                    .findFirst()
+                    .get();
+        } else {
+            aliasFound = null;
+        }
 
         return aliasFound != null;
 
@@ -468,7 +495,23 @@ public class ListOfFriends extends JFrameInheritable {
             // or by any alias name
             this.friendsDisplayList.add(new JLabel("Hello"));
         } else {
-            
+            UserTable foundedUser = null;
+
+            // this two objects are manipulated from searchForUserInFriendList()
+            // based on that we are going to work with one.
+            if (userFoundByUserName.UserID > 0) {
+                foundedUser = userFoundByUserName;
+            } else if (userFoundByEmail.UserID > 0) {
+                foundedUser = userFoundByEmail;
+
+            }
+            if (foundedUser != null) {
+                loadNewForm(new AddFriend(foundedUser, this._user), true);
+                userFoundByEmail.UserID = -1;
+                userFoundByUserName.UserID = -1;
+            } else {
+                this.getMessageBox().show(this, "Sorry ! The user that you are looking for doesn't exist in the system you can also try to search for it by email.", "User doesn't exist.");
+            }
         }
 
     }
@@ -480,6 +523,7 @@ public class ListOfFriends extends JFrameInheritable {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem MultiChatBtn;
     private javax.swing.JMenuItem RemoveFriendBtn;
+    private javax.swing.JTextField SearchOrAddFriendTextBox;
     private javax.swing.JMenuItem SendEmailBtn;
     private java.awt.Choice UserActiveState;
     private javax.swing.JLabel UserPicLabel;
@@ -490,9 +534,7 @@ public class ListOfFriends extends JFrameInheritable {
     private javax.swing.JList friendsDisplayList;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextPane searchBox;
     // End of variables declaration//GEN-END:variables
 
     @Override

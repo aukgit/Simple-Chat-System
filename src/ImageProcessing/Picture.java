@@ -517,6 +517,20 @@ public final class Picture implements ActionListener, ISoftwareInformation {
     }
 
     /**
+     *
+     * @param fileName
+     * @param safeLoadIfExist: any safe load image if only exist.
+     * @return ImageIcon or null if none exist.
+     */
+    public ImageIcon getImageIcon(String fileName, boolean safeLoadIfExist) {
+        File f = new File(fileName);
+        if (f.exists()) {
+            return new ImageIcon(fileName);
+        }
+        return null;
+    }
+
+    /**
      * @param image the image to set
      */
     public void setImage(BufferedImage image) {

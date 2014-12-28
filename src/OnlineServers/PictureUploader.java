@@ -7,7 +7,6 @@ package OnlineServers;
 
 import CurrentDb.Tables.ImageLoadRelatedCode;
 import CurrentDb.Tables.UserTable;
-import Global.AppConfig;
 import ImageProcessing.Picture;
 import OnlineServers.Inheritable.GeneralServer;
 import OnlineServers.RelatedObjects.PictureSender;
@@ -34,24 +33,36 @@ public class PictureUploader extends GeneralServer<PictureSender> {
      * @param pictureProcessor
      */
     public void setProfilePicture(PictureSender clientObject, Picture pictureProcessor, ImageLoadRelatedCode imageLoader) {
-        String path = imageLoader.getPathForProfilePic(clientObject.getRequestedUserId());
-        System.out.println("Profile pic path :" + path);
-        ImageIcon icon = pictureProcessor.getImageIcon(path);
-        BufferedImage img = pictureProcessor.getImage(path);
-        pictureProcessor.save(AppConfig.getPictureUploadPath() + "hello.jpg");
-        clientObject.setProfilePic(icon);
+        if (clientObject.isAskToAttachImageWithListUser() == false) {
+            String path = imageLoader.getPathForProfilePic(clientObject.getRequestedUserId());
+
+            ImageIcon icon = pictureProcessor.getImageIcon(path, true);
+            clientObject.setProfilePic(icon);
+            if (clientObject.isAskToAttachImageWithUser()) {
+                clientObject.getUser().Picture = icon;
+            }
+        } else {
+            // ask to get pictures servered on list of users
+            for (UserTable user : clientObject.getListOfUsers()) {
+                int id = user.UserID;
+                String path = imageLoader.getPathForProfilePic(id);
+                ImageIcon icon = pictureProcessor.getImageIcon(path);
+                user.Picture = icon;
+            }
+        }
     }
 
     public void setChattingPicture(PictureSender clientObject, Picture pictureProcessor, ImageLoadRelatedCode imageLoader) {
         String path = imageLoader.getPathForThumbChatingPic(clientObject.getRequestedUserId());
-        System.out.println("Chatting pic path :" + path);
+
+        ImageIcon icon = pictureProcessor.getImageIcon(path, true);
         clientObject.setChattingPic(pictureProcessor.getImageIcon(path));
     }
 
     public void setChatListPicture(PictureSender clientObject, Picture pictureProcessor, ImageLoadRelatedCode imageLoader) {
         String path = imageLoader.getPathForThumbChatListPic(clientObject.getRequestedUserId());
-        System.out.println("ChatList pic path :" + path);
-        clientObject.setChatListPic(pictureProcessor.getImageIcon(path));
+//        System.out.println("ChatList pic path :" + path);
+        clientObject.setChatListPic(pictureProcessor.getImageIcon(path, true));
     }
 
     @Override

@@ -8,6 +8,7 @@ package OnlineServers.RelatedObjects;
 import CurrentDb.Tables.ChatListTable;
 import CurrentDb.Tables.UserTable;
 import java.io.Serializable;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 /**
@@ -15,6 +16,49 @@ import javax.swing.ImageIcon;
  * @author Alim
  */
 public final class PictureSender implements Serializable {
+
+    /**
+     * @return the askToAttachImageWithUser
+     */
+    public boolean isAskToAttachImageWithUser() {
+        return askToAttachImageWithUser;
+    }
+
+    /**
+     * @param askToAttachImageWithUser the askToAttachImageWithUser to set
+     */
+    public void setAskToAttachImageWithUser(boolean askToAttachImageWithUser) {
+        this.askToAttachImageWithUser = askToAttachImageWithUser;
+    }
+
+    /**
+     * @return the askToAttachImageWithListUser
+     */
+    public boolean isAskToAttachImageWithListUser() {
+        return askToAttachImageWithListUser;
+    }
+
+    /**
+     * @param askToAttachImageWithListUser the askToAttachImageWithListUser to
+     * set
+     */
+    public void setAskToAttachImageWithListUser(boolean askToAttachImageWithListUser) {
+        this.askToAttachImageWithListUser = askToAttachImageWithListUser;
+    }
+
+    /**
+     * @return the _users
+     */
+    public ArrayList<UserTable> getListOfUsers() {
+        return _users;
+    }
+
+    /**
+     * @param listOfUsers the _users to set
+     */
+    public void setListOfUsers(ArrayList<UserTable> listOfUsers) {
+        this._users = listOfUsers;
+    }
 
     public interface IAskPicture {
 
@@ -43,10 +87,40 @@ public final class PictureSender implements Serializable {
 
     private byte _AskedPictured;
 
+    private boolean askToAttachImageWithUser = false;
+    private boolean askToAttachImageWithListUser = false;
+    private ArrayList<UserTable> _users = null;
+
     public PictureSender(UserTable user) {
         _user = user;
         _requestedUserId = user.UserID;
 
+    }
+
+    /**
+     * get all listed user profile pic
+     *
+     * @param users
+     * @param ask
+     */
+    public PictureSender(ArrayList<UserTable> users, byte ask) {
+        setRequestForUserPicture(users, ask);
+    }
+
+    public void setRequestForUserPicture(ArrayList<UserTable> users, byte ask) {
+        _users = users;
+        setAskToAttachImageWithListUser(true);
+        setAskToAttachImageWithUser(false);
+        setAskToGetPictures(true);
+        setAskedPictured(ask);
+    }
+
+    public void setRequestForUserPicture(UserTable user, byte ask) {
+        _user = user;
+        setAskToAttachImageWithListUser(false);
+        setAskToAttachImageWithUser(true);
+        setAskToGetPictures(true);
+        setAskedPictured(ask);
     }
 
     public PictureSender(ImageIcon img, UserTable user) {
@@ -54,7 +128,6 @@ public final class PictureSender implements Serializable {
         _user = user;
         _requestedUserId = user.UserID;
         setAskToGetPictures(false);
-
     }
 
     /**
