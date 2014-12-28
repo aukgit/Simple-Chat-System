@@ -15,7 +15,7 @@ public class MessageTable extends DatabaseTableClass {
     public long MessageID;
 
     public int SendFromUserID;
-    public String ChatSessionID;
+    public int ChatSessionID;
     public String Message1;
 
     public String Message2;

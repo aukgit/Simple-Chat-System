@@ -6,8 +6,6 @@
  */
 package CurrentDb.TableColumns;
 
-
-
 /**
  *
  * @author Alim
@@ -16,10 +14,12 @@ public interface Message {
 
     public String MessageID = "MessageID";
     public String SendFromUserID = "SendFromUserID";
-    public String SendToUserID = "SendToUserID";
-    public String IsReceivedByUser = "IsReceivedByUser";
-    public String Message = "Message";
+    public String ChatSessionID = "ChatSessionID";
+
+    public String Message1 = "Message1";
+    public String Message2 = "Message2";
     public String IsFileExit = "IsFileExit";
-    public String FileLocation = "FileLocation";
-   
+
+
+
 }
