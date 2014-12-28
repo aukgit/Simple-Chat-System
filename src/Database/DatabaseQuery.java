@@ -309,7 +309,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param list
      * @param fields
      */
-    public void addSpecialFieldsToIntList(boolean append, ArrayList<Integer> list, int... fields) {
+    public ArrayList<Integer> addSpecialFieldsToIntList(boolean append, ArrayList<Integer> list, int... fields) {
         list = initializeListIntIfNecessary(list);
         if (append == false) {
             list.clear();
@@ -318,6 +318,8 @@ public final class DatabaseQuery extends DbInitalizer {
         for (int field : fields) {
             list.add(field);
         }
+
+        return list;
         //</editor-fold>
     }
     //</editor-fold>
@@ -405,7 +407,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param values :Query Values ie.: where ... column = *value*
      */
     public void setSpecialQueryValues_(boolean append, String... values) {
-        addSpecialFieldsToList(append, getQueryValues(), values);
+        this.queryValues = addSpecialFieldsToList(append, getQueryValues(), values);
     }
 
     /**
@@ -415,7 +417,8 @@ public final class DatabaseQuery extends DbInitalizer {
      * , 3 = Word based Query
      */
     public void setSpecialTypes_(boolean append, int... values) {
-        addSpecialFieldsToIntList(append, getQueryTypes(), values);
+        this.queryTypes = addSpecialFieldsToIntList(append, getQueryTypes(), values);
+        this.setQueryTypeInitalized(true);
 
     }
 
@@ -451,7 +454,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param values :Query joining(AND,OR) types ie.: where ... column = value
      */
     public void setSpecialUpdateFields_(boolean append, String... values) {
-        addSpecialFieldsToList(append, getUpdateFields(), values);
+        this.updateFields = addSpecialFieldsToList(append, getUpdateFields(), values);
 //        setUpdateFields(new String[values.length]);
 //        for (int i = 0; i < values.length; i++) {
 //            getUpdateFields()[i] = values[i];
@@ -459,7 +462,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     public void setSpecialUpdateFieldsValues_(boolean append, String... values) {
-        addSpecialFieldsToList(append, getUpdateFieldsValues(), values);
+        this.updateFieldsValues = addSpecialFieldsToList(append, getUpdateFieldsValues(), values);
 //        setUpdateFieldsValues(new String[values.length]);
 //        for (int i = 0; i < values.length; i++) {
 //            getUpdateFieldsValues()[i] = values[i];
@@ -467,7 +470,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
     public void setSpecialCreateFields_(boolean append, String... values) {
-        addSpecialFieldsToList(append, getCreateFields(), values);
+        this.createFields = addSpecialFieldsToList(append, getCreateFields(), values);
 //        setCreateFields(new String[values.length]);
 //        for (int i = 0; i < values.length; i++) {
 //            getCreateFields()[i] = values[i];
@@ -480,7 +483,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param values
      */
     public void setSpecialCreateFieldsValues_(boolean append, String... values) {
-        addSpecialFieldsToList(append, getCreateFieldsValues(), values);
+        this.createFieldsValues = addSpecialFieldsToList(append, getCreateFieldsValues(), values);
 //        setCreateFieldsValues(new String[values.length]);
 //        for (int i = 0; i < values.length; i++) {
 //            getCreateFieldsValues()[i] = values[i];
@@ -582,7 +585,7 @@ public final class DatabaseQuery extends DbInitalizer {
     //6
     private String inQuery(String Field, String Search, boolean isResultForEntity) {
         String queryReturn;
-        if (Search == null || "".equals(Search.trim()) || Search.contains(";") == false) {
+        if (Search == null || "".equals(Search.trim())) {
             return "";
         }
         if (isResultForEntity == false) {
