@@ -20,6 +20,8 @@ import OnlineServers.PictureUploader;
 import OnlineServers.RelatedObjects.PictureSender;
 import OnlineServers.UserOnline;
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,6 +65,23 @@ public class ListOfFriends extends JFrameInheritable {
 
     private PictureSender profilePictureRequestSender;
 //</editor-fold>
+
+    public void closeApplication() {
+        // this will make sure WindowListener.windowClosing() et al. will be called.
+        WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
+
+        // this will hide and dispose the frame, so that the application quits by
+        // itself if there is nothing else around. 
+        setVisible(false);
+        dispose();
+    // if you have other similar frames around, you should dispose them, too.
+
+        // finally, call this to really exit. 
+        // i/o libraries such as WiiRemoteJ need this. 
+        // also, this is what swing does for JFrame.EXIT_ON_CLOSE
+        System.exit(0);
+    }
 
     public void updateUserProfilePictue() {
         try {
@@ -197,6 +216,12 @@ public class ListOfFriends extends JFrameInheritable {
         jScrollPane3 = new javax.swing.JScrollPane();
         friendsDisplayList = new javax.swing.JList();
         SearchOrAddFriendTextBox = new javax.swing.JTextField();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu2 = new javax.swing.JMenu();
+        FriendsRequestsMenu = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        ExitBtn = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
 
         jMenu1.setText("Menu");
 
@@ -304,6 +329,30 @@ public class ListOfFriends extends JFrameInheritable {
             }
         });
 
+        jMenu2.setText("Menu");
+
+        FriendsRequestsMenu.setText("Friends Requests");
+        jMenu2.add(FriendsRequestsMenu);
+
+        jMenuItem1.setText("Offline Messages");
+        jMenu2.add(jMenuItem1);
+
+        ExitBtn.setText("Exit");
+        ExitBtn.setToolTipText("");
+        ExitBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ExitBtnActionPerformed(evt);
+            }
+        });
+        jMenu2.add(ExitBtn);
+
+        jMenuBar1.add(jMenu2);
+
+        jMenu3.setText("Edit");
+        jMenuBar1.add(jMenu3);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -402,6 +451,10 @@ public class ListOfFriends extends JFrameInheritable {
     private void SearchOrAddFriendTextBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchOrAddFriendTextBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_SearchOrAddFriendTextBoxActionPerformed
+
+    private void ExitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitBtnActionPerformed
+        this.closeApplication();
+    }//GEN-LAST:event_ExitBtnActionPerformed
 
     public void filterList(String alias) {
 
@@ -539,7 +592,7 @@ public class ListOfFriends extends JFrameInheritable {
             } else {
                 this.getMessageBox().show(this, "Sorry ! The user that you are looking for doesn't exist in the system you can also try to search for it by email.", "User doesn't exist.");
             }
-            
+
         }
 
     }
@@ -549,6 +602,8 @@ public class ListOfFriends extends JFrameInheritable {
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem ExitBtn;
+    private javax.swing.JMenu FriendsRequestsMenu;
     private javax.swing.JMenuItem MultiChatBtn;
     private javax.swing.JMenuItem RemoveFriendBtn;
     private javax.swing.JTextField SearchOrAddFriendTextBox;
@@ -561,6 +616,10 @@ public class ListOfFriends extends JFrameInheritable {
     private javax.swing.JLabel editProfile;
     private javax.swing.JList friendsDisplayList;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane3;
     // End of variables declaration//GEN-END:variables

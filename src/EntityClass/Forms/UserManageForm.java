@@ -5,6 +5,7 @@
  */
 package EntityClass.Forms;
 
+import ConsolePackage.Console;
 import CurrentDb.TableNames;
 import DesignPattern.JPanelDbInheritable;
 import Global.AppConfig;
@@ -22,14 +23,14 @@ import javax.swing.JFrame;
  *
  * @author Alim
  */
-public class UserManage extends JPanelDbInheritable {
+public class UserManageForm extends JPanelDbInheritable {
 
     private static final long serialVersionUID = 1L;
 
-    public UserManage() {
- 
+    public UserManageForm() {
+
         initComponents();
-        
+
         if (!Beans.isDesignTime()) {
             entityManager.getTransaction().begin();
         }
@@ -249,22 +250,22 @@ public class UserManage extends JPanelDbInheritable {
         FormListener() {}
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             if (evt.getSource() == saveButton) {
-                UserManage.this.saveButtonActionPerformed(evt);
+                UserManageForm.this.saveButtonActionPerformed(evt);
             }
             else if (evt.getSource() == refreshButton) {
-                UserManage.this.refreshButtonActionPerformed(evt);
+                UserManageForm.this.refreshButtonActionPerformed(evt);
             }
             else if (evt.getSource() == newButton) {
-                UserManage.this.newButtonActionPerformed(evt);
+                UserManageForm.this.newButtonActionPerformed(evt);
             }
             else if (evt.getSource() == deleteButton) {
-                UserManage.this.deleteButtonActionPerformed(evt);
+                UserManageForm.this.deleteButtonActionPerformed(evt);
             }
             else if (evt.getSource() == searchTextBox) {
-                UserManage.this.searchTextBoxActionPerformed(evt);
+                UserManageForm.this.searchTextBoxActionPerformed(evt);
             }
             else if (evt.getSource() == searchBtn) {
-                UserManage.this.searchBtnActionPerformed(evt);
+                UserManageForm.this.searchBtnActionPerformed(evt);
             }
         }
 
@@ -273,7 +274,7 @@ public class UserManage extends JPanelDbInheritable {
 
         public void keyReleased(java.awt.event.KeyEvent evt) {
             if (evt.getSource() == searchTextBox) {
-                UserManage.this.searchTextBoxKeyReleased(evt);
+                UserManageForm.this.searchTextBoxKeyReleased(evt);
             }
         }
 
@@ -351,6 +352,7 @@ public class UserManage extends JPanelDbInheritable {
         if (Validate.sqlSearchValid(searchTextBox, this.searchLabel)) {
             input = this.getDb().setSameInputValueForOrQuery(input, 2);
             this.getDb().searchInEntity("Username,Email", input, entityManager, list, query);
+            Console.writeLine(this.getDb().LastSQL);
         }
     }
 
@@ -391,21 +393,22 @@ public class UserManage extends JPanelDbInheritable {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(UserManage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UserManageForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(UserManage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UserManageForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(UserManage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UserManageForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(UserManage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UserManageForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 JFrame frame = new JFrame();
-                frame.setContentPane(new UserManage());
+                frame.setContentPane(new UserManageForm());
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.pack();
                 frame.setVisible(true);
@@ -416,7 +419,7 @@ public class UserManage extends JPanelDbInheritable {
     @Override
     public void initalizeTableName() {
         this.getDb().setTableName(TableNames.USER);
-                this.getDb().setConnectinStringToEntity(entityManager, AppConfig.PERSISTENSE_CONNECTION_STRING);
+        this.getDb().setConnectinStringToEntity(entityManager, AppConfig.PERSISTENSE_CONNECTION_STRING);
 
     }
 

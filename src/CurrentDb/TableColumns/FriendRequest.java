@@ -17,5 +17,6 @@ public interface FriendRequest {
     public String ToWhomUserID = "ToWhomUserID";
     public String IsAccept = "IsAccept";
     public String Message = "Message";
+    public String IsSeen = "IsSeen";
 
 }

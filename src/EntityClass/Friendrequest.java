@@ -5,6 +5,8 @@
  */
 package EntityClass;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -15,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -30,8 +33,11 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Friendrequest.findBySenderUserID", query = "SELECT f FROM Friendrequest f WHERE f.senderUserID = :senderUserID"),
     @NamedQuery(name = "Friendrequest.findByToWhomUserID", query = "SELECT f FROM Friendrequest f WHERE f.toWhomUserID = :toWhomUserID"),
     @NamedQuery(name = "Friendrequest.findByIsAccept", query = "SELECT f FROM Friendrequest f WHERE f.isAccept = :isAccept"),
-    @NamedQuery(name = "Friendrequest.findByMessage", query = "SELECT f FROM Friendrequest f WHERE f.message = :message")})
+    @NamedQuery(name = "Friendrequest.findByMessage", query = "SELECT f FROM Friendrequest f WHERE f.message = :message"),
+    @NamedQuery(name = "Friendrequest.findByIsSeen", query = "SELECT f FROM Friendrequest f WHERE f.isSeen = :isSeen")})
 public class Friendrequest implements Serializable {
+    @Transient
+    private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,6 +56,9 @@ public class Friendrequest implements Serializable {
     @Basic(optional = false)
     @Column(name = "Message")
     private String message;
+    @Basic(optional = false)
+    @Column(name = "IsSeen")
+    private boolean isSeen;
 
     public Friendrequest() {
     }
@@ -58,12 +67,13 @@ public class Friendrequest implements Serializable {
         this.friendRequestID = friendRequestID;
     }
 
-    public Friendrequest(Long friendRequestID, int senderUserID, int toWhomUserID, short isAccept, String message) {
+    public Friendrequest(Long friendRequestID, int senderUserID, int toWhomUserID, short isAccept, String message, boolean isSeen) {
         this.friendRequestID = friendRequestID;
         this.senderUserID = senderUserID;
         this.toWhomUserID = toWhomUserID;
         this.isAccept = isAccept;
         this.message = message;
+        this.isSeen = isSeen;
     }
 
     public Long getFriendRequestID() {
@@ -71,7 +81,9 @@ public class Friendrequest implements Serializable {
     }
 
     public void setFriendRequestID(Long friendRequestID) {
+        Long oldFriendRequestID = this.friendRequestID;
         this.friendRequestID = friendRequestID;
+        changeSupport.firePropertyChange("friendRequestID", oldFriendRequestID, friendRequestID);
     }
 
     public int getSenderUserID() {
@@ -79,7 +91,9 @@ public class Friendrequest implements Serializable {
     }
 
     public void setSenderUserID(int senderUserID) {
+        int oldSenderUserID = this.senderUserID;
         this.senderUserID = senderUserID;
+        changeSupport.firePropertyChange("senderUserID", oldSenderUserID, senderUserID);
     }
 
     public int getToWhomUserID() {
@@ -87,7 +101,9 @@ public class Friendrequest implements Serializable {
     }
 
     public void setToWhomUserID(int toWhomUserID) {
+        int oldToWhomUserID = this.toWhomUserID;
         this.toWhomUserID = toWhomUserID;
+        changeSupport.firePropertyChange("toWhomUserID", oldToWhomUserID, toWhomUserID);
     }
 
     public short getIsAccept() {
@@ -95,7 +111,9 @@ public class Friendrequest implements Serializable {
     }
 
     public void setIsAccept(short isAccept) {
+        short oldIsAccept = this.isAccept;
         this.isAccept = isAccept;
+        changeSupport.firePropertyChange("isAccept", oldIsAccept, isAccept);
     }
 
     public String getMessage() {
@@ -103,7 +121,19 @@ public class Friendrequest implements Serializable {
     }
 
     public void setMessage(String message) {
+        String oldMessage = this.message;
         this.message = message;
+        changeSupport.firePropertyChange("message", oldMessage, message);
+    }
+
+    public boolean getIsSeen() {
+        return isSeen;
+    }
+
+    public void setIsSeen(boolean isSeen) {
+        boolean oldIsSeen = this.isSeen;
+        this.isSeen = isSeen;
+        changeSupport.firePropertyChange("isSeen", oldIsSeen, isSeen);
     }
 
     @Override
@@ -129,6 +159,14 @@ public class Friendrequest implements Serializable {
     @Override
     public String toString() {
         return "EntityClass.Friendrequest[ friendRequestID=" + friendRequestID + " ]";
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.removePropertyChangeListener(listener);
     }
     
 }

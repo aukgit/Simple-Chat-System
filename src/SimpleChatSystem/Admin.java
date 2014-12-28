@@ -7,7 +7,7 @@ package SimpleChatSystem;
 
 import EntityClass.Forms.ServerConfigForm;
 import DesignPattern.JFrameInheritable;
-import EntityClass.Forms.UserManage;
+import EntityClass.Forms.UserManageForm;
 
 
 /**
@@ -94,7 +94,7 @@ public class Admin extends JFrameInheritable {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        UserManage panel = new UserManage();
+        UserManageForm panel = new UserManageForm();
         JFrameInheritable frame = getFrame(panel);
         //form.show(true);
         loadNewForm(frame, true);

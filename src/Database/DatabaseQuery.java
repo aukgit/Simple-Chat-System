@@ -1491,7 +1491,7 @@ public final class DatabaseQuery extends DbInitalizer {
     public <T> void searchInEntity(String columns, String values, EntityManager em, List<T> list, Query queryQ) {
         String[] _columns = getColumnsSplited(columns);
         String[] _values = getValuesSplited(values);
-        searchInEntity(_columns, _values, null, em, list, queryQ);
+        searchInEntity(_columns, _values, null, null, em, list, queryQ);
     }
 
     /**
@@ -1506,7 +1506,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param list
      * @param queryQ
      */
-    public <T> void searchInEntity(String columns[], String values[], int queryTypes[], EntityManager em, List<T> list, Query queryQ) {
+    public <T> void searchInEntity(String columns[], String values[], int queryTypes[], String[] queryJoinType, EntityManager em, List<T> list, Query queryQ) {
         setQueryFieldNames(columns);
         setQueryValues(values);
 
@@ -1516,7 +1516,14 @@ public final class DatabaseQuery extends DbInitalizer {
                 queryTypes[i] = IQueryType.EXACT_FROM_FRIST;
             }
         }
+        if (queryJoinType == null) {
+            queryJoinType = new String[columns.length];
+            for (int i = 0; i < columns.length; i++) {
+                queryJoinType[i] = "OR";
+            }
+        }
         setQueryTypes(queryTypes);
+        setJoiningArray(queryJoinType);
         String sql = completeReadQueryForEntity();
         searchInEntity(sql, em, list, queryQ);
     }
