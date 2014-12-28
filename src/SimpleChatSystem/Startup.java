@@ -15,8 +15,7 @@ import DesignPattern.JFrameInheritable;
 import Global.AppConfig;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -178,7 +177,7 @@ public class Startup extends JFrameInheritable {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-     
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     @SuppressWarnings("deprecation")
@@ -275,7 +274,7 @@ public class Startup extends JFrameInheritable {
      * @param args the command line arguments
      * @throws java.io.IOException
      */
-    public static void main(String args[]) throws IOException {
+    public static void main(String args[]) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
         /* Set the Nimbus look and feel */
         //        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
 //        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -300,18 +299,27 @@ public class Startup extends JFrameInheritable {
 //        //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        SwingUtilities.invokeLater(new Runnable() {
+
             @Override
             public void run() {
-                new Startup().setVisible(true);
+                Startup frame = new Startup();
+                frame.initUI(frame);
             }
         });
-        try {
-            UIManager.setLookAndFeel(
-                    UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                new Startup().setVisible(true);
+//            }
+//        });
+//        try {
+//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+//            Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

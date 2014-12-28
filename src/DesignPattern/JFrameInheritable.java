@@ -6,9 +6,18 @@
 package DesignPattern;
 
 import Database.Components.MsgBox;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JList;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
@@ -26,6 +35,57 @@ public abstract class JFrameInheritable extends JFrameDbComponents {
         initalizeTableName();
         initComponents();
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    }
+
+    protected void initUI(JFrameInheritable frame) {
+
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        final JComboBox<LookAndFeelInfo> laf = new JComboBox<LookAndFeelInfo>();
+        LookAndFeelInfo selected = null;
+        for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
+            laf.addItem(lafInfo);
+            if (lafInfo.getName().equals(UIManager.getLookAndFeel().getName())) {
+                selected = lafInfo;
+            }
+        }
+        laf.setSelectedItem(selected);
+        laf.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                if (value != null) {
+                    LookAndFeelInfo lafInfo = (LookAndFeelInfo) value;
+                    setText(lafInfo.getName());
+                } else {
+                    setText("");
+                }
+                return this;
+            }
+        });
+        laf.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String className = laf.getModel().getElementAt(laf.getSelectedIndex()).getClassName();
+                System.err.println("Changing to " + className);
+                try {
+                    UIManager.setLookAndFeel(className);
+                    SwingUtilities.updateComponentTreeUI(frame.getRootPane());
+                } catch (ClassNotFoundException e1) {
+                    e1.printStackTrace();
+                } catch (InstantiationException e1) {
+                    e1.printStackTrace();
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (UnsupportedLookAndFeelException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+           
+        });
+        frame.add(laf);
+    
+        frame.setVisible(true);
     }
 
     public abstract void initalizeTableName();
