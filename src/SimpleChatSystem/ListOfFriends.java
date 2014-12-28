@@ -150,8 +150,12 @@ public class ListOfFriends extends JFrameInheritable {
                 }
             }
         }
-
-        this.UsernameLabel.setText(getUser().Name);
+        String dots = "";
+        if (getUser().Name.length() > 13) {
+            dots = "...";
+        }
+        this.UsernameLabel.setText(getUser().Name.substring(0, 13) + dots);
+        this.UsernameLabel.setToolTipText(getUser().Name);
         profilePictureRequestSender = new PictureSender(givenUser, PictureSender.IAskPicture.Profile);
         updateUserProfilePictue();
         this.setTitle(_user.Name + " : Friends List");
@@ -227,7 +231,7 @@ public class ListOfFriends extends JFrameInheritable {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(UsernameLabel)
                     .addComponent(UsterstatusLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -516,14 +520,26 @@ public class ListOfFriends extends JFrameInheritable {
                 foundedUser = userFoundByEmail;
 
             }
-            if (foundedUser != null) {
+
+            boolean isSameUserAsCurrent = foundedUser.equals(this._user);
+            boolean isUserFound = foundedUser != null;
+
+            if (isUserFound && isSameUserAsCurrent == false) {
                 AddFriend addfriendForm = new AddFriend(foundedUser, this._user);
-                loadNewForm(addfriendForm, true);
-                userFoundByEmail.UserID = -1;
-                userFoundByUserName.UserID = -1;
+                if (addfriendForm.isFriendRequsetAlreadySent() == false) {
+                    loadNewForm(addfriendForm, true);
+                    userFoundByEmail = new UserTable();
+                    userFoundByUserName = new UserTable();
+                } else {
+                    this.getMessageBox().show(this, "Sorry ! you have already send request to the user. Please wait for the response.", "Can't send request to yourself.");
+
+                }
+            } else if (isSameUserAsCurrent & isUserFound) {
+                this.getMessageBox().show(this, "Sorry ! you can't send request to yourself.", "Can't send request to yourself.");
             } else {
                 this.getMessageBox().show(this, "Sorry ! The user that you are looking for doesn't exist in the system you can also try to search for it by email.", "User doesn't exist.");
             }
+            
         }
 
     }

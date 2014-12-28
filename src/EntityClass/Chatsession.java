@@ -31,7 +31,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Chatsession.findAll", query = "SELECT c FROM Chatsession c"),
     @NamedQuery(name = "Chatsession.findByChatSessionID", query = "SELECT c FROM Chatsession c WHERE c.chatSessionID = :chatSessionID"),
     @NamedQuery(name = "Chatsession.findByTimed", query = "SELECT c FROM Chatsession c WHERE c.timed = :timed"),
-    @NamedQuery(name = "Chatsession.findByIsActive", query = "SELECT c FROM Chatsession c WHERE c.isActive = :isActive")})
+    @NamedQuery(name = "Chatsession.findByIsActive", query = "SELECT c FROM Chatsession c WHERE c.isActive = :isActive"),
+    @NamedQuery(name = "Chatsession.findBySessionName", query = "SELECT c FROM Chatsession c WHERE c.sessionName = :sessionName"),
+    @NamedQuery(name = "Chatsession.findByIsSingleUser", query = "SELECT c FROM Chatsession c WHERE c.isSingleUser = :isSingleUser")})
 public class Chatsession implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -46,6 +48,11 @@ public class Chatsession implements Serializable {
     @Basic(optional = false)
     @Column(name = "IsActive")
     private boolean isActive;
+    @Column(name = "SessionName")
+    private String sessionName;
+    @Basic(optional = false)
+    @Column(name = "IsSingleUser")
+    private boolean isSingleUser;
 
     public Chatsession() {
     }
@@ -54,10 +61,11 @@ public class Chatsession implements Serializable {
         this.chatSessionID = chatSessionID;
     }
 
-    public Chatsession(Integer chatSessionID, Date timed, boolean isActive) {
+    public Chatsession(Integer chatSessionID, Date timed, boolean isActive, boolean isSingleUser) {
         this.chatSessionID = chatSessionID;
         this.timed = timed;
         this.isActive = isActive;
+        this.isSingleUser = isSingleUser;
     }
 
     public Integer getChatSessionID() {
@@ -84,6 +92,22 @@ public class Chatsession implements Serializable {
         this.isActive = isActive;
     }
 
+    public String getSessionName() {
+        return sessionName;
+    }
+
+    public void setSessionName(String sessionName) {
+        this.sessionName = sessionName;
+    }
+
+    public boolean getIsSingleUser() {
+        return isSingleUser;
+    }
+
+    public void setIsSingleUser(boolean isSingleUser) {
+        this.isSingleUser = isSingleUser;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -106,7 +130,7 @@ public class Chatsession implements Serializable {
 
     @Override
     public String toString() {
-        return "EntityClass.Forms.Chatsession[ chatSessionID=" + chatSessionID + " ]";
+        return "EntityClass.Chatsession[ chatSessionID=" + chatSessionID + " ]";
     }
     
 }

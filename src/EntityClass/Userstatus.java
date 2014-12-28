@@ -119,7 +119,7 @@ public class Userstatus implements Serializable {
 
     @Override
     public String toString() {
-        return "EntityClass.Forms.Userstatus[ userStatusID=" + userStatusID + " ]";
+        return "EntityClass.Userstatus[ userStatusID=" + userStatusID + " ]";
     }
     
 }

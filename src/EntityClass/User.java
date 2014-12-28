@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findByUserID", query = "SELECT u FROM User u WHERE u.userID = :userID"),
     @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
+    @NamedQuery(name = "User.findByName", query = "SELECT u FROM User u WHERE u.name = :name"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
     @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
     @NamedQuery(name = "User.findByLastLogin", query = "SELECT u FROM User u WHERE u.lastLogin = :lastLogin"),
@@ -38,7 +39,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "User.findByIsActive", query = "SELECT u FROM User u WHERE u.isActive = :isActive"),
     @NamedQuery(name = "User.findByIsAdmin", query = "SELECT u FROM User u WHERE u.isAdmin = :isAdmin"),
     @NamedQuery(name = "User.findByIsOnline", query = "SELECT u FROM User u WHERE u.isOnline = :isOnline"),
-    @NamedQuery(name = "User.findByCurrentActiveState", query = "SELECT u FROM User u WHERE u.currentActiveState = :currentActiveState")})
+    @NamedQuery(name = "User.findByCurrentActiveState", query = "SELECT u FROM User u WHERE u.currentActiveState = :currentActiveState"),
+    @NamedQuery(name = "User.findByCurrentStatus", query = "SELECT u FROM User u WHERE u.currentStatus = :currentStatus")})
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -49,6 +51,8 @@ public class User implements Serializable {
     @Basic(optional = false)
     @Column(name = "Username")
     private String username;
+    @Column(name = "Name")
+    private String name;
     @Basic(optional = false)
     @Column(name = "Email")
     private String email;
@@ -73,6 +77,9 @@ public class User implements Serializable {
     @Basic(optional = false)
     @Column(name = "CurrentActiveState")
     private short currentActiveState;
+    @Basic(optional = false)
+    @Column(name = "CurrentStatus")
+    private String currentStatus;
 
     public User() {
     }
@@ -81,7 +88,7 @@ public class User implements Serializable {
         this.userID = userID;
     }
 
-    public User(Integer userID, String username, String email, String password, boolean isBlocked, boolean isActive, boolean isAdmin, boolean isOnline, short currentActiveState) {
+    public User(Integer userID, String username, String email, String password, boolean isBlocked, boolean isActive, boolean isAdmin, boolean isOnline, short currentActiveState, String currentStatus) {
         this.userID = userID;
         this.username = username;
         this.email = email;
@@ -91,6 +98,7 @@ public class User implements Serializable {
         this.isAdmin = isAdmin;
         this.isOnline = isOnline;
         this.currentActiveState = currentActiveState;
+        this.currentStatus = currentStatus;
     }
 
     public Integer getUserID() {
@@ -107,6 +115,14 @@ public class User implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -173,6 +189,14 @@ public class User implements Serializable {
         this.currentActiveState = currentActiveState;
     }
 
+    public String getCurrentStatus() {
+        return currentStatus;
+    }
+
+    public void setCurrentStatus(String currentStatus) {
+        this.currentStatus = currentStatus;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -195,7 +219,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "EntityClass.Forms.User[ userID=" + userID + " ]";
+        return "EntityClass.User[ userID=" + userID + " ]";
     }
     
 }

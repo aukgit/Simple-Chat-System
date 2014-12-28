@@ -16,6 +16,11 @@
     <class>OnlineServers.PictureUploadServer</class>
     <class>OnlineServers.UserOnline</class>
     <class>Mailer.Gmail</class>
+    <class>EntityClass.Messagerecent</class>
+    <class>EntityClass.Msgfile</class>
+    <class>EntityClass.Towhomaliaswhat</class>
+    <class>EntityClass.Usermsgreceived</class>
+    <class>EntityClass.Friendrequest</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://locahost:3306/chatdatabase"/>
       <property name="javax.persistence.jdbc.password" value=""/>

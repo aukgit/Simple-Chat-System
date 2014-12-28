@@ -105,7 +105,7 @@
                       <Component id="UsernameLabel" min="-2" max="-2" attributes="0"/>
                       <Component id="UsterstatusLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="45" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

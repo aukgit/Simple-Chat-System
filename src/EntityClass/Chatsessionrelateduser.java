@@ -102,7 +102,7 @@ public class Chatsessionrelateduser implements Serializable {
 
     @Override
     public String toString() {
-        return "EntityClass.Forms.Chatsessionrelateduser[ chatSessionRelatedUserID=" + chatSessionRelatedUserID + " ]";
+        return "EntityClass.Chatsessionrelateduser[ chatSessionRelatedUserID=" + chatSessionRelatedUserID + " ]";
     }
     
 }

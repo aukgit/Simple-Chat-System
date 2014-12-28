@@ -115,7 +115,7 @@ public class Chatlist implements Serializable {
 
     @Override
     public String toString() {
-        return "EntityClass.Forms.Chatlist[ chatListID=" + chatListID + " ]";
+        return "EntityClass.Chatlist[ chatListID=" + chatListID + " ]";
     }
     
 }

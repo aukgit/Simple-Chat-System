@@ -28,11 +28,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Message.findAll", query = "SELECT m FROM Message m"),
     @NamedQuery(name = "Message.findByMessageID", query = "SELECT m FROM Message m WHERE m.messageID = :messageID"),
     @NamedQuery(name = "Message.findBySendFromUserID", query = "SELECT m FROM Message m WHERE m.sendFromUserID = :sendFromUserID"),
-    @NamedQuery(name = "Message.findBySendToUserID", query = "SELECT m FROM Message m WHERE m.sendToUserID = :sendToUserID"),
-    @NamedQuery(name = "Message.findByIsReceivedByUser", query = "SELECT m FROM Message m WHERE m.isReceivedByUser = :isReceivedByUser"),
-    @NamedQuery(name = "Message.findByMessage", query = "SELECT m FROM Message m WHERE m.message = :message"),
-    @NamedQuery(name = "Message.findByIsFileExit", query = "SELECT m FROM Message m WHERE m.isFileExit = :isFileExit"),
-    @NamedQuery(name = "Message.findByFileLocation", query = "SELECT m FROM Message m WHERE m.fileLocation = :fileLocation")})
+    @NamedQuery(name = "Message.findByChatSessionID", query = "SELECT m FROM Message m WHERE m.chatSessionID = :chatSessionID"),
+    @NamedQuery(name = "Message.findByMessage1", query = "SELECT m FROM Message m WHERE m.message1 = :message1"),
+    @NamedQuery(name = "Message.findByMessage2", query = "SELECT m FROM Message m WHERE m.message2 = :message2"),
+    @NamedQuery(name = "Message.findByIsFileExit", query = "SELECT m FROM Message m WHERE m.isFileExit = :isFileExit")})
 public class Message implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -44,19 +43,17 @@ public class Message implements Serializable {
     @Column(name = "SendFromUserID")
     private int sendFromUserID;
     @Basic(optional = false)
-    @Column(name = "SendToUserID")
-    private int sendToUserID;
+    @Column(name = "ChatSessionID")
+    private int chatSessionID;
     @Basic(optional = false)
-    @Column(name = "IsReceivedByUser")
-    private boolean isReceivedByUser;
+    @Column(name = "Message1")
+    private String message1;
     @Basic(optional = false)
-    @Column(name = "Message")
-    private String message;
+    @Column(name = "Message2")
+    private String message2;
     @Basic(optional = false)
     @Column(name = "IsFileExit")
     private boolean isFileExit;
-    @Column(name = "FileLocation")
-    private String fileLocation;
 
     public Message() {
     }
@@ -65,12 +62,12 @@ public class Message implements Serializable {
         this.messageID = messageID;
     }
 
-    public Message(Long messageID, int sendFromUserID, int sendToUserID, boolean isReceivedByUser, String message, boolean isFileExit) {
+    public Message(Long messageID, int sendFromUserID, int chatSessionID, String message1, String message2, boolean isFileExit) {
         this.messageID = messageID;
         this.sendFromUserID = sendFromUserID;
-        this.sendToUserID = sendToUserID;
-        this.isReceivedByUser = isReceivedByUser;
-        this.message = message;
+        this.chatSessionID = chatSessionID;
+        this.message1 = message1;
+        this.message2 = message2;
         this.isFileExit = isFileExit;
     }
 
@@ -90,28 +87,28 @@ public class Message implements Serializable {
         this.sendFromUserID = sendFromUserID;
     }
 
-    public int getSendToUserID() {
-        return sendToUserID;
+    public int getChatSessionID() {
+        return chatSessionID;
     }
 
-    public void setSendToUserID(int sendToUserID) {
-        this.sendToUserID = sendToUserID;
+    public void setChatSessionID(int chatSessionID) {
+        this.chatSessionID = chatSessionID;
     }
 
-    public boolean getIsReceivedByUser() {
-        return isReceivedByUser;
+    public String getMessage1() {
+        return message1;
     }
 
-    public void setIsReceivedByUser(boolean isReceivedByUser) {
-        this.isReceivedByUser = isReceivedByUser;
+    public void setMessage1(String message1) {
+        this.message1 = message1;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMessage2() {
+        return message2;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessage2(String message2) {
+        this.message2 = message2;
     }
 
     public boolean getIsFileExit() {
@@ -120,14 +117,6 @@ public class Message implements Serializable {
 
     public void setIsFileExit(boolean isFileExit) {
         this.isFileExit = isFileExit;
-    }
-
-    public String getFileLocation() {
-        return fileLocation;
-    }
-
-    public void setFileLocation(String fileLocation) {
-        this.fileLocation = fileLocation;
     }
 
     @Override
@@ -152,7 +141,7 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return "EntityClass.Forms.Message[ messageID=" + messageID + " ]";
+        return "EntityClass.Message[ messageID=" + messageID + " ]";
     }
     
 }

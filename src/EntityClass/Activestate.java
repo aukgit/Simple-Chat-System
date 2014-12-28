@@ -128,7 +128,7 @@ public class Activestate implements Serializable {
 
     @Override
     public String toString() {
-        return "EntityClass.Forms.Activestate[ activeStateID=" + activeStateID + " ]";
+        return "EntityClass.Activestate[ activeStateID=" + activeStateID + " ]";
     }
     
 }

@@ -31,7 +31,14 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Serversetting.findByServerPort", query = "SELECT s FROM Serversetting s WHERE s.serverPort = :serverPort"),
     @NamedQuery(name = "Serversetting.findByIsActive", query = "SELECT s FROM Serversetting s WHERE s.isActive = :isActive"),
     @NamedQuery(name = "Serversetting.findByConnectionString", query = "SELECT s FROM Serversetting s WHERE s.connectionString = :connectionString"),
-    @NamedQuery(name = "Serversetting.findByUserOnlinePort", query = "SELECT s FROM Serversetting s WHERE s.userOnlinePort = :userOnlinePort")})
+    @NamedQuery(name = "Serversetting.findByUserOnlinePort", query = "SELECT s FROM Serversetting s WHERE s.userOnlinePort = :userOnlinePort"),
+    @NamedQuery(name = "Serversetting.findByPictureUploaderPort", query = "SELECT s FROM Serversetting s WHERE s.pictureUploaderPort = :pictureUploaderPort"),
+    @NamedQuery(name = "Serversetting.findByProfilePicWidth", query = "SELECT s FROM Serversetting s WHERE s.profilePicWidth = :profilePicWidth"),
+    @NamedQuery(name = "Serversetting.findByProfilePicHeight", query = "SELECT s FROM Serversetting s WHERE s.profilePicHeight = :profilePicHeight"),
+    @NamedQuery(name = "Serversetting.findByChatingThumbWidth", query = "SELECT s FROM Serversetting s WHERE s.chatingThumbWidth = :chatingThumbWidth"),
+    @NamedQuery(name = "Serversetting.findByChatingThumbHeight", query = "SELECT s FROM Serversetting s WHERE s.chatingThumbHeight = :chatingThumbHeight"),
+    @NamedQuery(name = "Serversetting.findByChatListThumbWidth", query = "SELECT s FROM Serversetting s WHERE s.chatListThumbWidth = :chatListThumbWidth"),
+    @NamedQuery(name = "Serversetting.findByChatListThumbHeight", query = "SELECT s FROM Serversetting s WHERE s.chatListThumbHeight = :chatListThumbHeight")})
 public class Serversetting implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -53,6 +60,27 @@ public class Serversetting implements Serializable {
     @Basic(optional = false)
     @Column(name = "UserOnlinePort")
     private short userOnlinePort;
+    @Basic(optional = false)
+    @Column(name = "PictureUploaderPort")
+    private short pictureUploaderPort;
+    @Basic(optional = false)
+    @Column(name = "ProfilePicWidth")
+    private short profilePicWidth;
+    @Basic(optional = false)
+    @Column(name = "ProfilePicHeight")
+    private short profilePicHeight;
+    @Basic(optional = false)
+    @Column(name = "ChatingThumbWidth")
+    private short chatingThumbWidth;
+    @Basic(optional = false)
+    @Column(name = "ChatingThumbHeight")
+    private short chatingThumbHeight;
+    @Basic(optional = false)
+    @Column(name = "ChatListThumbWidth")
+    private short chatListThumbWidth;
+    @Basic(optional = false)
+    @Column(name = "ChatListThumbHeight")
+    private short chatListThumbHeight;
 
     public Serversetting() {
     }
@@ -61,12 +89,19 @@ public class Serversetting implements Serializable {
         this.serverSettingID = serverSettingID;
     }
 
-    public Serversetting(Short serverSettingID, String serverIP, short serverPort, boolean isActive, short userOnlinePort) {
+    public Serversetting(Short serverSettingID, String serverIP, short serverPort, boolean isActive, short userOnlinePort, short pictureUploaderPort, short profilePicWidth, short profilePicHeight, short chatingThumbWidth, short chatingThumbHeight, short chatListThumbWidth, short chatListThumbHeight) {
         this.serverSettingID = serverSettingID;
         this.serverIP = serverIP;
         this.serverPort = serverPort;
         this.isActive = isActive;
         this.userOnlinePort = userOnlinePort;
+        this.pictureUploaderPort = pictureUploaderPort;
+        this.profilePicWidth = profilePicWidth;
+        this.profilePicHeight = profilePicHeight;
+        this.chatingThumbWidth = chatingThumbWidth;
+        this.chatingThumbHeight = chatingThumbHeight;
+        this.chatListThumbWidth = chatListThumbWidth;
+        this.chatListThumbHeight = chatListThumbHeight;
     }
 
     public Short getServerSettingID() {
@@ -117,6 +152,62 @@ public class Serversetting implements Serializable {
         this.userOnlinePort = userOnlinePort;
     }
 
+    public short getPictureUploaderPort() {
+        return pictureUploaderPort;
+    }
+
+    public void setPictureUploaderPort(short pictureUploaderPort) {
+        this.pictureUploaderPort = pictureUploaderPort;
+    }
+
+    public short getProfilePicWidth() {
+        return profilePicWidth;
+    }
+
+    public void setProfilePicWidth(short profilePicWidth) {
+        this.profilePicWidth = profilePicWidth;
+    }
+
+    public short getProfilePicHeight() {
+        return profilePicHeight;
+    }
+
+    public void setProfilePicHeight(short profilePicHeight) {
+        this.profilePicHeight = profilePicHeight;
+    }
+
+    public short getChatingThumbWidth() {
+        return chatingThumbWidth;
+    }
+
+    public void setChatingThumbWidth(short chatingThumbWidth) {
+        this.chatingThumbWidth = chatingThumbWidth;
+    }
+
+    public short getChatingThumbHeight() {
+        return chatingThumbHeight;
+    }
+
+    public void setChatingThumbHeight(short chatingThumbHeight) {
+        this.chatingThumbHeight = chatingThumbHeight;
+    }
+
+    public short getChatListThumbWidth() {
+        return chatListThumbWidth;
+    }
+
+    public void setChatListThumbWidth(short chatListThumbWidth) {
+        this.chatListThumbWidth = chatListThumbWidth;
+    }
+
+    public short getChatListThumbHeight() {
+        return chatListThumbHeight;
+    }
+
+    public void setChatListThumbHeight(short chatListThumbHeight) {
+        this.chatListThumbHeight = chatListThumbHeight;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -139,7 +230,7 @@ public class Serversetting implements Serializable {
 
     @Override
     public String toString() {
-        return "EntityClass.Forms.Serversetting[ serverSettingID=" + serverSettingID + " ]";
+        return "EntityClass.Serversetting[ serverSettingID=" + serverSettingID + " ]";
     }
     
 }

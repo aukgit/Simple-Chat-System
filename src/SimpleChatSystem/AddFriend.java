@@ -33,6 +33,7 @@ public class AddFriend extends JFrameInheritable {
         _sendingFromUser = sendingFromUser;
         _sendingToUser.displayUser(this.ToUser_UsernameLabel, this.ToUser_UserStatusLabel, null, this.ToUser_ProfilePicture);
         this.setTitle("Add friend : " + _sendingToUser.Username);
+        this.EmailSendingLabel.setText("");
     }
 
     public boolean isFriendRequsetAlreadySent() {
@@ -73,10 +74,7 @@ public class AddFriend extends JFrameInheritable {
 
             columns[--row] = FriendRequest.Message;
             values[row] = this.quoteTextBox.getText();
-            if (this.getDb().insertData(columns, values)) {
-                this.getMessageBox().show(this, "Successfully friend request sent!");
-                return true;
-            }
+            return this.getDb().insertData(columns, values);
 
         }
         return false;
@@ -98,6 +96,7 @@ public class AddFriend extends JFrameInheritable {
         quoteTextBox = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        EmailSendingLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -107,10 +106,10 @@ public class AddFriend extends JFrameInheritable {
         jLabel1.setText("Add Friend");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
-        ToUser_UsernameLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        ToUser_UsernameLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         ToUser_UsernameLabel.setText("Username");
 
-        ToUser_UserStatusLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        ToUser_UserStatusLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         ToUser_UserStatusLabel.setText("Status");
 
         quoteTextBox.setHorizontalAlignment(javax.swing.JTextField.LEFT);
@@ -146,7 +145,7 @@ public class AddFriend extends JFrameInheritable {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(ToUser_ProfilePicture, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(ToUser_ProfilePicture, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(ToUser_UsernameLabel)
@@ -155,8 +154,10 @@ public class AddFriend extends JFrameInheritable {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jButton2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1)))
-                        .addGap(0, 236, Short.MAX_VALUE)))
+                                .addComponent(jButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(EmailSendingLabel)))
+                        .addGap(0, 213, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -166,7 +167,7 @@ public class AddFriend extends JFrameInheritable {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ToUser_ProfilePicture, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ToUser_ProfilePicture, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(ToUser_UsernameLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -176,7 +177,8 @@ public class AddFriend extends JFrameInheritable {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(EmailSendingLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -185,22 +187,25 @@ public class AddFriend extends JFrameInheritable {
 
     public void sendMailToUser() {
         String body = "";
-        body += "Hello " + _sendingToUser.Name + ", <br>";
+        body += "Hello " + _sendingToUser.Name + ", <br><br>";
         body += "How you doing? Someone personal try to add you in his/her friend list. <br>";
         body += "<br>";
         body += "<h3>A short message from " + _sendingFromUser.Username + "</h3>";
-        body += "<quote>" + this.quoteTextBox + "</quote>";
+        body += "<blockquote>" + this.quoteTextBox.getText() + "</blockquote>";
         body += "<br><br>";
-        body += "Thanks ,";
-        body += "<strong>" + _sendingFromUser.Username + "</strong>";
-        body += "<a href='mailto:" + _sendingFromUser.Email + "'>" + _sendingFromUser.Email + "</strong>";
-        mailer.sendEmail(_sendingToUser.Email, "A friend request is send by " + _sendingFromUser.Username, body);
+        body += "Thanks ,<br>";
+        body += "<strong>" + _sendingFromUser.Name + "</strong><br>";
+        body += "<a href='mailto:" + _sendingFromUser.Email + "'>" + _sendingFromUser.Email + "</strong><br>";
+        mailer.sendEmail(_sendingToUser.Email, "A friend request is send by " + _sendingFromUser.Name, body);
     }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if (addFriendRequesToUserDb()) {
+            this.EmailSendingLabel.setText("Sending...Email...");
             sendMailToUser();
+            this.getMessageBox().show(this, "Successfully friend request sent!");
             this.hide();
+
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -219,6 +224,7 @@ public class AddFriend extends JFrameInheritable {
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel EmailSendingLabel;
     private javax.swing.JLabel ToUser_ProfilePicture;
     private javax.swing.JLabel ToUser_UserStatusLabel;
     private javax.swing.JLabel ToUser_UsernameLabel;

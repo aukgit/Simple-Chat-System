@@ -99,4 +99,13 @@ public class UserTable extends ImageLoadRelatedCode {
         System.out.println("ID :" + this.UserID + " | Username: " + this.Username);
     }
 
+    /**
+     *
+     * @param u
+     * @return
+     */
+    public boolean equals(UserTable u) {
+        return u != null && u.UserID == this.UserID;
+    }
+
 }
