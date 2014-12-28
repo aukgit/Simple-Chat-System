@@ -310,7 +310,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param fields
      */
     public void addSpecialFieldsToIntList(boolean append, ArrayList<Integer> list, int... fields) {
-        initializeListIntIfNecessary(list);
+        list = initializeListIntIfNecessary(list);
         if (append == false) {
             list.clear();
         }
@@ -579,6 +579,28 @@ public final class DatabaseQuery extends DbInitalizer {
         return "( " + queryReturn + " )";
     }
 
+    //6
+    private String inQuery(String Field, String Search, boolean isResultForEntity) {
+        String queryReturn;
+        if (Search == null || "".equals(Search.trim()) || Search.contains(";") == false) {
+            return "";
+        }
+        if (isResultForEntity == false) {
+            Field = this.getDbField(Field);
+        }
+        String params[] = Search.split("[;]");
+        String inQuery = "";
+        for (String param : params) {
+            if ("".equals(inQuery) == false) {
+                inQuery += ",";
+            }
+            inQuery += protectValue(param);
+        }
+
+        queryReturn = (Field) + " IN (" + inQuery + ")";
+        return "( " + queryReturn + " )";
+    }
+
     /**
      *
      * @param Field
@@ -599,6 +621,9 @@ public final class DatabaseQuery extends DbInitalizer {
         } else if (type == BETWEEN) {
 
             return betweenQuery(Field, Search, isResultForEntity);
+        } else if (type == IN_QUERY) {
+
+            return inQuery(Field, Search, isResultForEntity);
         } else {
             return exactQuery(Field, Search, opt, isResultForEntity);
         }
@@ -632,6 +657,30 @@ public final class DatabaseQuery extends DbInitalizer {
         }
     }
 // </editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Get String joined">
+    public <T> String getStringJoined(ArrayList<T> list, String joiner, String protectorLeft, String protectorRight) {
+        if (list == null) {
+            return null;
+        }
+        String reStr = "";
+        if (protectorLeft == null) {
+            protectorLeft = "";
+        }
+        if (protectorRight == null) {
+            protectorRight = "";
+        }
+        for (T item : list) {
+            if ("".equals(reStr) == false) {
+                reStr += joiner;
+            }
+            reStr += protectorLeft + item + protectorRight;
+        }
+
+        return reStr;
+
+    }
+//</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="SQL Query Executer">
     public ResultSet ExecuteReadQuery(String sql) {
@@ -1562,6 +1611,9 @@ public final class DatabaseQuery extends DbInitalizer {
             if (count > 0) {
                 ArrayList<String> returnResult = new ArrayList<>(count + 30);
                 try {
+                    if (result.first()) {
+                        returnResult.add(result.getString(columnName));
+                    }
                     while (result.next()) {
                         returnResult.add(result.getString(columnName));
                     }
@@ -1586,6 +1638,9 @@ public final class DatabaseQuery extends DbInitalizer {
             if (count > 0) {
                 ArrayList<Integer> returnResult = new ArrayList<>(count + 30);
                 try {
+                    if (result.first()) {
+                        returnResult.add(result.getInt(columnName));
+                    }
                     while (result.next()) {
                         returnResult.add(result.getInt(columnName));
                     }
@@ -1609,6 +1664,9 @@ public final class DatabaseQuery extends DbInitalizer {
             if (count > 0) {
                 ArrayList<Long> returnResult = new ArrayList<>(count + 30);
                 try {
+                    if (result.first()) {
+                        returnResult.add(result.getLong(columnName));
+                    }
                     while (result.next()) {
                         returnResult.add(result.getLong(columnName));
                     }
@@ -2728,4 +2786,5 @@ public final class DatabaseQuery extends DbInitalizer {
     public void setQueryEndLimit(int queryEndLimit) {
         this.queryEndLimit = queryEndLimit;
     }
+
 }

@@ -5,17 +5,102 @@
  */
 package SimpleChatSystem;
 
+import ConsolePackage.Console;
+import CurrentDb.TableColumns.FriendRequest;
+import CurrentDb.TableColumns.User;
+import CurrentDb.TableNames;
+import CurrentDb.Tables.ChatListTable;
+import CurrentDb.Tables.FriendRequestTable;
+import CurrentDb.Tables.UserTable;
+import Database.Components.IQueryType;
+import DesignPattern.JFrameInheritable;
+import OnlineServers.PictureUploader;
+import OnlineServers.RelatedObjects.PictureSender;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+
 /**
  *
  * @author Alim
  */
-public class FriendRqsForm extends javax.swing.JFrame {
+public class FriendRqsForm extends JFrameInheritable {
+
+    public UserTable currentUser;
+    public ArrayList<UserTable> users;
+    public ArrayList<FriendRequestTable> frdReqs;
+    public ArrayList<Integer> usersIds;
+    DefaultListModel<String> displayModel = new DefaultListModel();
+
+    private FriendRqsForm() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public boolean isNoFriendRequestExist() {
+        return frdReqs == null || frdReqs.size() == 0;
+    }
 
     /**
      * Creates new form FriendRqsForm
      */
-    public FriendRqsForm() {
+    public FriendRqsForm(UserTable user) {
+
         initComponents();
+        currentUser = user;
+        loadFriendReqs();
+        loadUsersBasedOnFrdReq();
+        setModelToList();
+    }
+
+    public void loadFriendReqs() {
+        this.getDb().readData(FriendRequest.ToWhomUserID, this.currentUser.UserID + "");
+        frdReqs = this.getDb().getResultsAsORM(new FriendRequestTable());
+        usersIds = this.getDb().getSingleColumnValuesInt(FriendRequest.SenderUserID);
+    }
+
+    public void loadUsersBasedOnFrdReq() {
+        if (isNoFriendRequestExist()) {
+            return;
+        }
+        this.getDb().setTableName(TableNames.USER);
+        String inQuery = this.getDb().getStringJoined(usersIds, ";", null, null);
+        Console.writeLine(inQuery);
+
+        this.getDb().setSpecialTypes_(false, IQueryType.IN_QUERY);
+        this.getDb().readData(User.UserID, inQuery);
+        users = this.getDb().getResultsAsORM(new UserTable());
+        Console.writeLine(this.getDb().LastSQL);
+        PictureUploader server = new PictureUploader();
+        PictureSender picSender = new PictureSender(users, PictureSender.IAskPicture.Profile);
+        try {
+            picSender = server.clientSendingMethod(picSender);
+        } catch (IOException ex) {
+            Logger.getLogger(FriendRqsForm.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(FriendRqsForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        users = picSender.getListOfUsers();
+
+        users.stream().forEach((user) -> {
+            for (FriendRequestTable req : frdReqs) {
+                if (req.SenderUserID == user.UserID) {
+                    req.SenderUser = user;
+                    break;
+                }
+            }
+        });
+    }
+
+    public void setModelToList() {
+        if (isNoFriendRequestExist()) {
+            return;
+        }
+        jList1.setModel(displayModel);
+        for (FriendRequestTable req : frdReqs) {
+            displayModel.addElement(req.SenderUser.Name);
+        }
     }
 
     /**
@@ -29,16 +114,50 @@ public class FriendRqsForm extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jList1 = new javax.swing.JList();
+        UsernameLabel = new javax.swing.JLabel();
+        MessageLabel = new javax.swing.JLabel();
+        AcceptBtn = new javax.swing.JButton();
+        RejectBtn = new javax.swing.JButton();
+        StatusLabel = new javax.swing.JLabel();
+        EmailLabel = new javax.swing.JLabel();
+        ProfilePic = new javax.swing.JLabel();
+        CloseBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("Friend Requests");
 
-        jTable1.setColumnSelectionAllowed(true);
-        jScrollPane1.setViewportView(jTable1);
-        jTable1.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jList1ValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jList1);
+
+        UsernameLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        UsernameLabel.setText("Username");
+
+        MessageLabel.setText("Message");
+        MessageLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        MessageLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        MessageLabel.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+
+        AcceptBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IconsCollections/112_Tick_Green_32x32_72.png"))); // NOI18N
+        AcceptBtn.setText("Accept");
+
+        RejectBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IconsCollections/Delete_black_32x32.png"))); // NOI18N
+        RejectBtn.setText("Reject");
+        RejectBtn.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+
+        StatusLabel.setText("status");
+
+        EmailLabel.setText("status");
+
+        ProfilePic.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED, new java.awt.Color(204, 204, 204), new java.awt.Color(204, 204, 204)));
+
+        CloseBtn.setText("jButton1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -46,12 +165,32 @@ public class FriendRqsForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(22, 22, 22)
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(311, 311, 311)
+                        .addComponent(CloseBtn)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(ProfilePic, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(UsernameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(EmailLabel)
+                                            .addComponent(StatusLabel))
+                                        .addGap(0, 0, Short.MAX_VALUE))))
+                            .addComponent(MessageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(AcceptBtn)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(RejectBtn)))
+                        .addGap(120, 120, 120))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -59,51 +198,64 @@ public class FriendRqsForm extends javax.swing.JFrame {
                 .addGap(29, 29, 29)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(UsernameLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(StatusLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(EmailLabel)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(ProfilePic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(MessageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(AcceptBtn)
+                            .addComponent(RejectBtn))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                        .addComponent(CloseBtn)))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    public UserTable getSelectedUserFromList() {
+        if (jList1.getSelectedIndex() > -1) {
+            return frdReqs.get(jList1.getSelectedIndex()).SenderUser;
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FriendRqsForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FriendRqsForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FriendRqsForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FriendRqsForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FriendRqsForm().setVisible(true);
-            }
-        });
+        return null;
     }
+    private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
+        // TODO add your handling code here:
+        UserTable user = getSelectedUserFromList();
+        if (user != null) {
+            user.displayUser(UsernameLabel, StatusLabel, EmailLabel, ProfilePic);
+        }
+
+    }//GEN-LAST:event_jList1ValueChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AcceptBtn;
+    private javax.swing.JButton CloseBtn;
+    private javax.swing.JLabel EmailLabel;
+    private javax.swing.JLabel MessageLabel;
+    private javax.swing.JLabel ProfilePic;
+    private javax.swing.JButton RejectBtn;
+    private javax.swing.JLabel StatusLabel;
+    private javax.swing.JLabel UsernameLabel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void initalizeTableName() {
+        this.getDb().setTableName(TableNames.FRIEND_REQUEST);
+    }
 }

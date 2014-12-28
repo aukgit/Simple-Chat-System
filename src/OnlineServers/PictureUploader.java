@@ -43,12 +43,13 @@ public class PictureUploader extends GeneralServer<PictureSender> {
             }
         } else {
             // ask to get pictures servered on list of users
-            for (UserTable user : clientObject.getListOfUsers()) {
+            clientObject.getListOfUsers().stream().forEach((user) -> {
                 int id = user.UserID;
                 String path = imageLoader.getPathForProfilePic(id);
-                ImageIcon icon = pictureProcessor.getImageIcon(path);
+                System.out.println("path  :" + path);
+                ImageIcon icon = pictureProcessor.getImageIcon(path, true);
                 user.Picture = icon;
-            }
+            });
         }
     }
 
@@ -76,7 +77,8 @@ public class PictureUploader extends GeneralServer<PictureSender> {
                 imageLoader = clientObject.getUser();
             } else if (clientObject.getChatListTable() != null) {
                 imageLoader = clientObject.getChatListTable();
-
+            } else if (clientObject.isAskToAttachImageWithUser() || clientObject.isAskToAttachImageWithListUser()) {
+                imageLoader = new ImageLoadRelatedCode();
             } else {
                 System.out.println("Sorry no table detected , please fix it in your request sending side.");
                 clientObject = null;

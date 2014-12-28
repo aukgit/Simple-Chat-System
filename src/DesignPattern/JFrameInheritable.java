@@ -5,12 +5,14 @@
  */
 package DesignPattern;
 
+import CurrentDb.Tables.FriendRequestTable;
 import Database.Components.MsgBox;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -26,6 +28,16 @@ import javax.swing.UnsupportedLookAndFeelException;
 public abstract class JFrameInheritable extends JFrameDbComponents {
 
     private static final long serialVersionUID = 1L;
+
+    //DefaultListModel<T> displayModel = new DefaultListModel();
+
+    public void terminateCurrentForm(boolean loadPreviousForm) {
+        this.hide();
+        if (loadPreviousForm) {
+            this.getPreviousForm().show(true);
+        }
+        dispose();
+    }
 
     /**
      * Creates new form InheritableJFrame
@@ -81,10 +93,9 @@ public abstract class JFrameInheritable extends JFrameDbComponents {
                 }
             }
 
-           
         });
         frame.add(laf);
-    
+
         frame.setVisible(true);
     }
 

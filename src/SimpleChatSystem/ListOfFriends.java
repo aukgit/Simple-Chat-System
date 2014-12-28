@@ -56,6 +56,7 @@ public class ListOfFriends extends JFrameInheritable {
     private DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
     private ChatListTable chatList = new ChatListTable();
     private Picture pictureProcessor = new Picture();
+
     String previousSearch = "";
 
     @SuppressWarnings("unchecked")
@@ -178,6 +179,7 @@ public class ListOfFriends extends JFrameInheritable {
         profilePictureRequestSender = new PictureSender(givenUser, PictureSender.IAskPicture.Profile);
         updateUserProfilePictue();
         this.setTitle(_user.Name + " : Friends List");
+
     }
 
     public ListOfFriends(UserTable u) {
@@ -186,7 +188,7 @@ public class ListOfFriends extends JFrameInheritable {
 
     public ListOfFriends() {
         _user = new UserTable();
-        this.getDb().setLimitsOnQuery(1, 1);
+        this.getDb().setLimitsOnQuery(0, 1);
         this.getDb().readData();
 
         this.getDb().getResultsAsObject(_user);
@@ -218,7 +220,7 @@ public class ListOfFriends extends JFrameInheritable {
         SearchOrAddFriendTextBox = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
-        FriendsRequestsMenu = new javax.swing.JMenu();
+        FriendReqShowMenuBtn = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         ExitBtn = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
@@ -331,8 +333,18 @@ public class ListOfFriends extends JFrameInheritable {
 
         jMenu2.setText("Menu");
 
-        FriendsRequestsMenu.setText("Friends Requests");
-        jMenu2.add(FriendsRequestsMenu);
+        FriendReqShowMenuBtn.setText("Friend Requests");
+        FriendReqShowMenuBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                FriendReqShowMenuBtnMouseClicked(evt);
+            }
+        });
+        FriendReqShowMenuBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FriendReqShowMenuBtnActionPerformed(evt);
+            }
+        });
+        jMenu2.add(FriendReqShowMenuBtn);
 
         jMenuItem1.setText("Offline Messages");
         jMenu2.add(jMenuItem1);
@@ -455,6 +467,26 @@ public class ListOfFriends extends JFrameInheritable {
     private void ExitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitBtnActionPerformed
         this.closeApplication();
     }//GEN-LAST:event_ExitBtnActionPerformed
+
+    private void FriendReqShowMenuBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FriendReqShowMenuBtnMouseClicked
+      
+    }//GEN-LAST:event_FriendReqShowMenuBtnMouseClicked
+
+    private void FriendReqShowMenuBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FriendReqShowMenuBtnActionPerformed
+     if (showFriendRqstForm() == false) {
+            
+            this.getMessageBox().showError(this, "Sorry! you don't have any friend request.");
+        }
+    }//GEN-LAST:event_FriendReqShowMenuBtnActionPerformed
+
+    public boolean showFriendRqstForm() {
+        FriendRqsForm friendRqsForm = new FriendRqsForm(_user);
+        if (friendRqsForm.isNoFriendRequestExist() == false) {
+            loadNewForm(friendRqsForm);
+            return true;
+        }
+        return false;
+    }
 
     public void filterList(String alias) {
 
@@ -603,7 +635,7 @@ public class ListOfFriends extends JFrameInheritable {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem ExitBtn;
-    private javax.swing.JMenu FriendsRequestsMenu;
+    private javax.swing.JMenuItem FriendReqShowMenuBtn;
     private javax.swing.JMenuItem MultiChatBtn;
     private javax.swing.JMenuItem RemoveFriendBtn;
     private javax.swing.JTextField SearchOrAddFriendTextBox;

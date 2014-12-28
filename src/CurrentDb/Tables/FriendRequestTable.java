@@ -18,5 +18,8 @@ public class FriendRequestTable extends DatabaseTableClass {
     public boolean IsAccept;
     public String Message;
     public boolean IsSeen;
+    
+    public UserTable SenderUser;
+    
 
 }

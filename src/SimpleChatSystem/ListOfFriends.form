@@ -36,11 +36,15 @@
             <Property name="text" type="java.lang.String" value="Menu"/>
           </Properties>
           <SubComponents>
-            <Menu class="javax.swing.JMenu" name="FriendsRequestsMenu">
+            <MenuItem class="javax.swing.JMenuItem" name="FriendReqShowMenuBtn">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Friends Requests"/>
+                <Property name="text" type="java.lang.String" value="Friend Requests"/>
               </Properties>
-            </Menu>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="FriendReqShowMenuBtnMouseClicked"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="FriendReqShowMenuBtnActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Offline Messages"/>
