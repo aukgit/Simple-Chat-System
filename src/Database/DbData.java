@@ -230,10 +230,12 @@ public class DbData extends SQLError {
     }
 
     /**
+     * Also sets rs
      * @param _db the _db to set
      */
     public void setDb(DatabaseQuery _db) {
         this._db = _db;
+        this._rs = _db.getRs();
     }
 
 }

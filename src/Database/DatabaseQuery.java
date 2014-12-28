@@ -1545,6 +1545,76 @@ public final class DatabaseQuery extends DbInitalizer {
 //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Get column value">
+    public ArrayList<String> getSingleColumnValues(String columnName) {
+        return getSingleColumnValues(getRs(), columnName);
+    }
+
+    public ArrayList<String> getSingleColumnValues(ResultSet result, String columnName) {
+        if (result != null) {
+            int count = rowCount(result);
+            if (count > 0) {
+                ArrayList<String> returnResult = new ArrayList<>(count + 30);
+                try {
+                    while (result.next()) {
+                        returnResult.add(result.getString(columnName));
+                    }
+                    return returnResult;
+                } catch (SQLException ex) {
+                    Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+
+        }
+        return null;
+    }
+
+    public ArrayList<Integer> getSingleColumnValuesInt(String columnName) {
+        return getSingleColumnValuesInt(getRs(), columnName);
+    }
+
+    public ArrayList<Integer> getSingleColumnValuesInt(ResultSet result, String columnName) {
+        if (result != null) {
+            int count = rowCount(result);
+            if (count > 0) {
+                ArrayList<Integer> returnResult = new ArrayList<>(count + 30);
+                try {
+                    while (result.next()) {
+                        returnResult.add(result.getInt(columnName));
+                    }
+                    return returnResult;
+                } catch (SQLException ex) {
+                    Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        }
+        return null;
+    }
+
+    public ArrayList<Long> getSingleColumnValuesLong(String columnName) {
+        return getSingleColumnValuesLong(getRs(), columnName);
+    }
+
+    public ArrayList<Long> getSingleColumnValuesLong(ResultSet result, String columnName) {
+        if (result != null) {
+            int count = rowCount(result);
+            if (count > 0) {
+                ArrayList<Long> returnResult = new ArrayList<>(count + 30);
+                try {
+                    while (result.next()) {
+                        returnResult.add(result.getLong(columnName));
+                    }
+                    return returnResult;
+                } catch (SQLException ex) {
+                    Logger.getLogger(DatabaseQuery.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        }
+        return null;
+    }
+
     /**
      * It moves cursor to last to get the index if exist Heavy method
      *
@@ -1653,6 +1723,7 @@ public final class DatabaseQuery extends DbInitalizer {
      */
     public String[] getColumnsNames() {
         if (_tableColumnsGlobal == null) {
+
             String names = "";
             //int i = 1;
             String query = _showDbColumnsSQL + getTableName();

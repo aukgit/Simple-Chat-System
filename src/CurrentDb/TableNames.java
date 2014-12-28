@@ -21,5 +21,7 @@ public interface TableNames {
     // https://forums.netbeans.org/ntopic3947.html
     public String USERSTATUS = "USERSTATUS";
     public String USER_RECENT_STATUS = "UserRecentStatus";
+    public String MESSAGES_RECENT = "MessageRecent";
+    public String CHAT_SESSION_RELATED_USERS = "chatsessionrelateduser";
 
 }

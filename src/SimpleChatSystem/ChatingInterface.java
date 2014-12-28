@@ -7,8 +7,12 @@ package SimpleChatSystem;
 
 import CurrentDb.CommonData;
 import CurrentDb.TableNames;
+import CurrentDb.Tables.MessageRecentTable;
+import CurrentDb.Tables.MessageTable;
+import CurrentDb.Tables.ToWhomAliasWhatTable;
 import DesignPattern.JFrameInheritable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,11 +24,33 @@ public class ChatingInterface extends JFrameInheritable {
 
     private static final long serialVersionUID = 1L;
 
+    boolean newChatSession;
+    boolean isMultipleUser;
+
+    int sessionID;
+    int senderUserID;
+    ArrayList<Integer> receiverUserIDs;
+    ArrayList<ToWhomAliasWhatTable> alias;
+    ArrayList<MessageRecentTable> messages;
+
+    boolean loadAllPreviousChat;
+
+    public void loadReceivers(int sessionId) {
+        this.getDb().setTableName(TableNames.CHAT_SESSION_RELATED_USERS);
+        this.getDb().readData("ChatSessionID", sessionId + "");
+
+        receiverUserIDs = this.getDb().getSingleColumnValuesInt(null);
+    }
+
+    public void customInitalize() {
+        initComponents();
+    }
+
     /**
      * Creates new form ChatingInterface
      */
     public ChatingInterface() {
-        initComponents();
+        customInitalize();
     }
 
     /**
@@ -39,11 +65,13 @@ public class ChatingInterface extends JFrameInheritable {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
-        MessageDisplay = new javax.swing.JEditorPane();
-        jButton1 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        MessageDisplayEditorPane = new javax.swing.JEditorPane();
+        CancelBtn = new javax.swing.JButton();
+        SendingTextBox = new javax.swing.JTextField();
         UsernameLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        SendBtn = new javax.swing.JButton();
+        AttachImageBtn = new javax.swing.JButton();
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -51,21 +79,21 @@ public class ChatingInterface extends JFrameInheritable {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        MessageDisplay.setEditable(false);
-        MessageDisplay.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jScrollPane2.setViewportView(MessageDisplay);
+        MessageDisplayEditorPane.setEditable(false);
+        MessageDisplayEditorPane.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jScrollPane2.setViewportView(MessageDisplayEditorPane);
 
-        jButton1.setText("Send");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        CancelBtn.setText("Close");
+        CancelBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                CancelBtnActionPerformed(evt);
             }
         });
 
-        jTextField1.setText("jTextField1");
-        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+        SendingTextBox.setToolTipText("Send message to your friend\n");
+        SendingTextBox.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                jTextField1KeyReleased(evt);
+                SendingTextBoxKeyReleased(evt);
             }
         });
 
@@ -75,6 +103,26 @@ public class ChatingInterface extends JFrameInheritable {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         jLabel1.setText("Status");
 
+        SendBtn.setText("Send");
+        SendBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        SendBtn.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        SendBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SendBtnActionPerformed(evt);
+            }
+        });
+
+        AttachImageBtn.setIcon(new javax.swing.ImageIcon("E:\\Working\\GitHub\\Simple-Chat-System\\Emotions\\attachment.png")); // NOI18N
+        AttachImageBtn.setToolTipText("Attach image or file");
+        AttachImageBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        AttachImageBtn.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        AttachImageBtn.setIconTextGap(0);
+        AttachImageBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AttachImageBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -82,31 +130,38 @@ public class ChatingInterface extends JFrameInheritable {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTextField1)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
+                    .addComponent(SendingTextBox)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(UsernameLabel)
                             .addComponent(jLabel1))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(AttachImageBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(CancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(SendBtn)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addComponent(UsernameLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addGap(4, 4, 4)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(SendingTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(SendBtn)
+                        .addComponent(CancelBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(AttachImageBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -115,20 +170,28 @@ public class ChatingInterface extends JFrameInheritable {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void CancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_CancelBtnActionPerformed
 
-    private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
+    private void SendingTextBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SendingTextBoxKeyReleased
         // TODO add your handling code here:
         if (evt.getKeyCode() == CommonData.ENTER_KEY) {
             try {
-                this.MessageDisplay.setPage(this.jTextField1.getText());
+                this.MessageDisplayEditorPane.setPage(this.SendingTextBox.getText());
             } catch (IOException ex) {
                 Logger.getLogger(ChatingInterface.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }//GEN-LAST:event_jTextField1KeyReleased
+    }//GEN-LAST:event_SendingTextBoxKeyReleased
+
+    private void SendBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_SendBtnActionPerformed
+
+    private void AttachImageBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AttachImageBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AttachImageBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -166,18 +229,20 @@ public class ChatingInterface extends JFrameInheritable {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JEditorPane MessageDisplay;
+    private javax.swing.JButton AttachImageBtn;
+    private javax.swing.JButton CancelBtn;
+    private javax.swing.JEditorPane MessageDisplayEditorPane;
+    private javax.swing.JButton SendBtn;
+    private javax.swing.JTextField SendingTextBox;
     private javax.swing.JLabel UsernameLabel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void initalizeTableName() {
-        this.getDb().setTableName(TableNames.MESSAGE);
+        this.getDb().setTableName(TableNames.MESSAGES_RECENT);
     }
 }

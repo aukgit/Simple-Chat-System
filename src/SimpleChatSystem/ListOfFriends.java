@@ -177,6 +177,10 @@ public class ListOfFriends extends JFrameInheritable {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenu1 = new javax.swing.JMenu();
+        RemoveFriendBtn = new javax.swing.JMenuItem();
+        MultiChatBtn = new javax.swing.JMenuItem();
+        SendEmailBtn = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         UsernameLabel = new javax.swing.JLabel();
         UsterstatusLabel = new javax.swing.JLabel();
@@ -188,6 +192,18 @@ public class ListOfFriends extends JFrameInheritable {
         adminConfigBtn = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         friendsDisplayList = new javax.swing.JList();
+
+        jMenu1.setText("Menu");
+
+        RemoveFriendBtn.setText("Remove Friend");
+        RemoveFriendBtn.setToolTipText("");
+        jMenu1.add(RemoveFriendBtn);
+
+        MultiChatBtn.setText("MultiChat");
+        jMenu1.add(MultiChatBtn);
+
+        SendEmailBtn.setText("jMenuItem2");
+        jMenu1.add(SendEmailBtn);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -266,7 +282,6 @@ public class ListOfFriends extends JFrameInheritable {
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        friendsDisplayList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         friendsDisplayList.setVisibleRowCount(30);
         jScrollPane3.setViewportView(friendsDisplayList);
 
@@ -274,10 +289,11 @@ public class ListOfFriends extends JFrameInheritable {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(UserPicLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -285,9 +301,8 @@ public class ListOfFriends extends JFrameInheritable {
                         .addComponent(adminConfigBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(editProfile))
-                    .addComponent(UserActiveState, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jScrollPane3))
+                    .addComponent(UserActiveState, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -304,7 +319,7 @@ public class ListOfFriends extends JFrameInheritable {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -463,6 +478,9 @@ public class ListOfFriends extends JFrameInheritable {
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem MultiChatBtn;
+    private javax.swing.JMenuItem RemoveFriendBtn;
+    private javax.swing.JMenuItem SendEmailBtn;
     private java.awt.Choice UserActiveState;
     private javax.swing.JLabel UserPicLabel;
     private javax.swing.JLabel UsernameLabel;
@@ -470,6 +488,7 @@ public class ListOfFriends extends JFrameInheritable {
     private javax.swing.JLabel adminConfigBtn;
     private javax.swing.JLabel editProfile;
     private javax.swing.JList friendsDisplayList;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
