@@ -174,7 +174,7 @@ public class RegisterForm extends JFrameInheritable {
 
         String passwordError = "Password doesn't match.";
         String passwordNormal = "Password is fine.";
-        int numberOfFields = 7;
+        int numberOfFields = 8;
         String Columns[] = new String[numberOfFields];
         String Values[] = new String[numberOfFields];
         int i = 0;
@@ -206,7 +206,7 @@ public class RegisterForm extends JFrameInheritable {
         }
         ErrorHighLight.ErrorValidate(passwordNotMatch, this.ConfirmPasswordLabel, this.ConfrimPasswordTextBox, passwordError, passwordNormal);
         boolean isNameValid = Validate.minMaxCheck(this.NameTextBox, NameLabel, 5, 50, false, passwordNormal, "(Min,Max) = (3,20)");
-        ErrorHighLight.ErrorValidate(isNameValid, this.NameLabel, this.NameTextBox, "Name is not valid", "Name");
+        ErrorHighLight.ErrorValidate(!isNameValid, this.NameLabel, this.NameTextBox, "Name is not valid", "Name");
 
         if (!passwordNotMatch && isPasswordSatisfyMinMax && isNotEmailExist && isNotUsernameExist && isUsernameValid && isEmailValid && isNameValid) {
             String hashSh1Password = Hasher.getShA1Hash(this.ConfrimPasswordTextBox.getText());
@@ -237,6 +237,10 @@ public class RegisterForm extends JFrameInheritable {
             //6
             Columns[i] = User.Name;
             Values[i++] = this.NameTextBox.getText();
+            
+            //7
+            Columns[i] = User.CurrentStatus;
+            Values[i++] = "None";
             if (this.getDb().insertData(Columns, Values)) {
                 OnSuccess();
             } else {

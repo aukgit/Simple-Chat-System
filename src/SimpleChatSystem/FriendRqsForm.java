@@ -6,6 +6,7 @@
 package SimpleChatSystem;
 
 import ConsolePackage.Console;
+import CurrentDb.TableColumns.ChatList;
 import CurrentDb.TableColumns.FriendRequest;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
@@ -32,7 +33,10 @@ public class FriendRqsForm extends JFrameInheritable {
     public ArrayList<UserTable> users;
     public ArrayList<FriendRequestTable> frdReqs;
     public ArrayList<Integer> usersIds;
+    @SuppressWarnings("unchecked")
     DefaultListModel<String> displayModel = new DefaultListModel();
+
+    ListOfFriends listOfFriends;
 
     private FriendRqsForm() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -45,17 +49,88 @@ public class FriendRqsForm extends JFrameInheritable {
     /**
      * Creates new form FriendRqsForm
      */
-    public FriendRqsForm(UserTable user) {
+    public FriendRqsForm(UserTable user, ListOfFriends _listOfFriends) {
 
         initComponents();
+        this.listOfFriends = _listOfFriends;
         currentUser = user;
         loadFriendReqs();
         loadUsersBasedOnFrdReq();
         setModelToList();
+        if (isNoFriendRequestExist() == false) {
+            this.setTitle("Friend Requests Pending (" + frdReqs.size() + ")");
+            friendRequestLabel.setText(this.getTitle());
+            this.jList1.setSelectedIndex(0);
+            listIndexChanged();
+
+        }
+    }
+
+    public void acceptRequest() {
+        this.getDb().setTableName(TableNames.CHATLIST);
+        int row = 3;
+        UserTable senderUser = getSelectedUserFromList();
+        String columns[] = new String[row];
+        String values[] = new String[row];
+
+        columns[--row] = ChatList.OriginalUserID;
+        values[row] = currentUser.UserID + "";
+
+        columns[--row] = ChatList.RelatedUserID;
+        values[row] = senderUser.UserID + "";
+
+        columns[--row] = ChatList.AliasAs;
+        values[row] = senderUser.Name;
+
+        if (this.getDb().insertData(columns, values)) {
+            row = 3;
+
+            columns[--row] = ChatList.OriginalUserID;
+            values[row] = senderUser.UserID + "";
+
+            columns[--row] = ChatList.RelatedUserID;
+            values[row] = currentUser.UserID + "";
+
+            columns[--row] = ChatList.AliasAs;
+            values[row] = currentUser.Name;
+            if (this.getDb().insertData(columns, values)) {
+                this.getMessageBox().show(this, senderUser.Name + " is now in your chatlist.", "Success");
+                FriendRequestTable req = getSelectedReq();
+                listOfFriends.refreshFriendList();
+                req.IsAccept = true;
+
+                isSeenRequestSetInDB(req);
+                this.frdReqs.remove(req);
+
+                return;
+            }
+        }
+        this.getMessageBox().showError(this, "System problem can't add request.");
+    }
+
+    public void isSeenRequestSetInDB(FriendRequestTable req) {
+        this.getDb().setTableName(TableNames.FRIEND_REQUEST);
+
+        int accept = req.IsAccept ? 1 : 0;
+        this.getDb().updateData(FriendRequest.IsAccept + "=" + accept + "," + FriendRequest.IsSeen + "=1", FriendRequest.FriendRequestID + "=" + req.FriendRequestID);
+    }
+
+    public void rejectRequest() {
+        FriendRequestTable req = getSelectedReq();
+
+        req.IsAccept = false;
+
+        isSeenRequestSetInDB(req);
+        this.frdReqs.remove(req);
+
     }
 
     public void loadFriendReqs() {
-        this.getDb().readData(FriendRequest.ToWhomUserID, this.currentUser.UserID + "");
+        this.getDb().setTableName(TableNames.FRIEND_REQUEST);
+        this.getDb().setSpecialQueryFields_(false, FriendRequest.ToWhomUserID, FriendRequest.IsSeen);
+        this.getDb().setSpecialQueryValues_(false, this.currentUser.UserID + "", "0");
+        this.getDb().readData();
+        Console.writeLine(this.getDb().LastSQL);
         frdReqs = this.getDb().getResultsAsORM(new FriendRequestTable());
         usersIds = this.getDb().getSingleColumnValuesInt(FriendRequest.SenderUserID);
     }
@@ -71,15 +146,18 @@ public class FriendRqsForm extends JFrameInheritable {
         this.getDb().setSpecialTypes_(false, IQueryType.IN_QUERY);
         this.getDb().readData(User.UserID, inQuery);
         users = this.getDb().getResultsAsORM(new UserTable());
-        Console.writeLine(this.getDb().LastSQL);
+
         PictureUploader server = new PictureUploader();
         PictureSender picSender = new PictureSender(users, PictureSender.IAskPicture.Profile);
         try {
             picSender = server.clientSendingMethod(picSender);
+
         } catch (IOException ex) {
-            Logger.getLogger(FriendRqsForm.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FriendRqsForm.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(FriendRqsForm.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FriendRqsForm.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
         users = picSender.getListOfUsers();
 
@@ -112,7 +190,7 @@ public class FriendRqsForm extends JFrameInheritable {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        friendRequestLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
         UsernameLabel = new javax.swing.JLabel();
@@ -126,8 +204,8 @@ public class FriendRqsForm extends JFrameInheritable {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel1.setText("Friend Requests");
+        friendRequestLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        friendRequestLabel.setText("Friend Requests");
 
         jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -146,10 +224,20 @@ public class FriendRqsForm extends JFrameInheritable {
 
         AcceptBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IconsCollections/112_Tick_Green_32x32_72.png"))); // NOI18N
         AcceptBtn.setText("Accept");
+        AcceptBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AcceptBtnActionPerformed(evt);
+            }
+        });
 
         RejectBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IconsCollections/Delete_black_32x32.png"))); // NOI18N
         RejectBtn.setText("Reject");
         RejectBtn.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        RejectBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RejectBtnActionPerformed(evt);
+            }
+        });
 
         StatusLabel.setText("status");
 
@@ -157,7 +245,12 @@ public class FriendRqsForm extends JFrameInheritable {
 
         ProfilePic.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED, new java.awt.Color(204, 204, 204), new java.awt.Color(204, 204, 204)));
 
-        CloseBtn.setText("jButton1");
+        CloseBtn.setText("Close");
+        CloseBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CloseBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -167,36 +260,40 @@ public class FriendRqsForm extends JFrameInheritable {
                 .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(311, 311, 311)
-                        .addComponent(CloseBtn)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(friendRequestLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(ProfilePic, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(UsernameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
                                     .addGroup(layout.createSequentialGroup()
+                                        .addComponent(ProfilePic, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(EmailLabel)
-                                            .addComponent(StatusLabel))
-                                        .addGap(0, 0, Short.MAX_VALUE))))
-                            .addComponent(MessageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(AcceptBtn)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(RejectBtn)))
-                        .addGap(120, 120, 120))))
+                                            .addComponent(UsernameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(EmailLabel)
+                                                    .addComponent(StatusLabel))
+                                                .addGap(0, 0, Short.MAX_VALUE))))
+                                    .addComponent(MessageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(AcceptBtn)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(RejectBtn)))
+                                .addGap(120, 120, 120))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(CloseBtn)
+                                .addGap(26, 26, 26))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
-                .addComponent(jLabel1)
+                .addComponent(friendRequestLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
@@ -223,22 +320,54 @@ public class FriendRqsForm extends JFrameInheritable {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
     public UserTable getSelectedUserFromList() {
         if (jList1.getSelectedIndex() > -1) {
             return frdReqs.get(jList1.getSelectedIndex()).SenderUser;
+        }
+        return null;
+    }
+
+    public FriendRequestTable getSelectedReq() {
+        if (jList1.getSelectedIndex() > -1) {
+            return frdReqs.get(jList1.getSelectedIndex());
 
         }
         return null;
     }
+
     private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
         // TODO add your handling code here:
-        UserTable user = getSelectedUserFromList();
-        if (user != null) {
-            user.displayUser(UsernameLabel, StatusLabel, EmailLabel, ProfilePic);
-        }
+        listIndexChanged();
 
     }//GEN-LAST:event_jList1ValueChanged
 
+    private void CloseBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CloseBtnActionPerformed
+        terminateCurrentForm(false);
+    }//GEN-LAST:event_CloseBtnActionPerformed
+
+    private void RejectBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RejectBtnActionPerformed
+        rejectRequest();
+        if (frdReqs.size() == 0) {
+            terminateCurrentForm(true);
+        }
+    }//GEN-LAST:event_RejectBtnActionPerformed
+
+    private void AcceptBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AcceptBtnActionPerformed
+        // TODO add your handling code here:
+        acceptRequest();
+        if (frdReqs.size() == 0) {
+            terminateCurrentForm(true);
+        }
+    }//GEN-LAST:event_AcceptBtnActionPerformed
+    public void listIndexChanged() {
+        FriendRequestTable req = getSelectedReq();
+        if (req != null) {
+            UserTable user = req.SenderUser;
+            user.displayUser(UsernameLabel, StatusLabel, EmailLabel, ProfilePic);
+            this.MessageLabel.setText(req.Message);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AcceptBtn;
@@ -249,7 +378,7 @@ public class FriendRqsForm extends JFrameInheritable {
     private javax.swing.JButton RejectBtn;
     private javax.swing.JLabel StatusLabel;
     private javax.swing.JLabel UsernameLabel;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel friendRequestLabel;
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables

@@ -7,22 +7,22 @@ package CurrentDb.Tables;
 
 import java.util.Date;
 
-/**
- *
- * @author Alim
- */
-@SuppressWarnings("serial")
+
 public class ToWhomAliasWhatTable extends DatabaseTableClass {
 
+    /**
+     * Search by this.. Related user id
+     */
     public int UserID;
 
+    /**
+     * original userid
+     */
     public int ToWhomUserID;
     public String Email;
     public String Username;
 
     public String AliasAs;
     public String CurrentStatus;
-
-
 
 }

@@ -56,7 +56,7 @@ public class ListOfFriends extends JFrameInheritable {
     private DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
     private ChatListTable chatList = new ChatListTable();
     private Picture pictureProcessor = new Picture();
-
+    UserOnline online = new UserOnline();
     String previousSearch = "";
 
     @SuppressWarnings("unchecked")
@@ -134,25 +134,40 @@ public class ListOfFriends extends JFrameInheritable {
         } else {
             adminConfigBtn.setVisible(false);
         }
+        online.reReadDataFromServer();
+        online.clientRequest(this);
 
+        refreshFriendList();
         for (String item : CommonData.getActiveStateList()) {
             this.UserActiveState.add(item);
         }
         loadCurrentStatus();
-        UserOnline online = new UserOnline();
-        online.reReadDataFromServer();
 
-        online.sendUserOnlineRequestToServer(givenUser);
+        String dots = "";
+        if (getUser().Name.length() > 13) {
+            dots = "...";
+        }
+        this.UsernameLabel.setText(getUser().Name.substring(0, 13) + dots);
+        this.UsernameLabel.setToolTipText(getUser().Name);
+        profilePictureRequestSender = new PictureSender(givenUser, PictureSender.IAskPicture.Profile);
+        updateUserProfilePictue();
+        this.setTitle(getUser().Name + " : Friends List");
+
+    }
+
+    @SuppressWarnings({"unchecked", "unchecked"})
+    public void refreshFriendList() {
+
         allfriendsList = dbChatLists.getResultsAsORM(chatList);
         onlineFriendsList = new ArrayList<ChatListTable>(500);
 
         this.friendsDisplayList.setCellRenderer(new JLabelForListCell());
         //this.friendsDisplayList.removeAll();
-        ArrayList<ChatListTable> allUsers = dbUsers.readAndGetResultsAsORM(new ChatListTable());
+        ArrayList<ChatListTable> allUsers = dbChatLists.readAndGetResultsAsORM(new ChatListTable());
 
-        for (ChatListTable sUser : allUsers) {
+        allUsers.stream().forEach((sUser) -> {
             friendListDisplayModel.addElement(sUser);
-        }
+        });
         friendsDisplayList.setModel(friendListDisplayModel);
 
         if (allfriendsList != null) {
@@ -170,16 +185,6 @@ public class ListOfFriends extends JFrameInheritable {
                 }
             }
         }
-        String dots = "";
-        if (getUser().Name.length() > 13) {
-            dots = "...";
-        }
-        this.UsernameLabel.setText(getUser().Name.substring(0, 13) + dots);
-        this.UsernameLabel.setToolTipText(getUser().Name);
-        profilePictureRequestSender = new PictureSender(givenUser, PictureSender.IAskPicture.Profile);
-        updateUserProfilePictue();
-        this.setTitle(_user.Name + " : Friends List");
-
     }
 
     public ListOfFriends(UserTable u) {
@@ -308,6 +313,16 @@ public class ListOfFriends extends JFrameInheritable {
             public Object getElementAt(int i) { return strings[i]; }
         });
         friendsDisplayList.setVisibleRowCount(30);
+        friendsDisplayList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                friendsDisplayListMouseClicked(evt);
+            }
+        });
+        friendsDisplayList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                friendsDisplayListValueChanged(evt);
+            }
+        });
         jScrollPane3.setViewportView(friendsDisplayList);
 
         SearchOrAddFriendTextBox.setText("Search or add friend...");
@@ -469,20 +484,33 @@ public class ListOfFriends extends JFrameInheritable {
     }//GEN-LAST:event_ExitBtnActionPerformed
 
     private void FriendReqShowMenuBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FriendReqShowMenuBtnMouseClicked
-      
+
     }//GEN-LAST:event_FriendReqShowMenuBtnMouseClicked
 
     private void FriendReqShowMenuBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FriendReqShowMenuBtnActionPerformed
-     if (showFriendRqstForm() == false) {
-            
+        if (showFriendRqstForm() == false) {
+
             this.getMessageBox().showError(this, "Sorry! you don't have any friend request.");
         }
     }//GEN-LAST:event_FriendReqShowMenuBtnActionPerformed
 
+    private void friendsDisplayListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_friendsDisplayListValueChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_friendsDisplayListValueChanged
+
+    private void friendsDisplayListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_friendsDisplayListMouseClicked
+        // TODO add your handling code here:
+        if(evt.getClickCount() == 2){
+            
+        }
+    }//GEN-LAST:event_friendsDisplayListMouseClicked
+
+    
+    
     public boolean showFriendRqstForm() {
-        FriendRqsForm friendRqsForm = new FriendRqsForm(_user);
+        FriendRqsForm friendRqsForm = new FriendRqsForm(getUser(), this);
         if (friendRqsForm.isNoFriendRequestExist() == false) {
-            loadNewForm(friendRqsForm);
+            loadNewForm(friendRqsForm, true);
             return true;
         }
         return false;
@@ -606,11 +634,11 @@ public class ListOfFriends extends JFrameInheritable {
 
             }
 
-            boolean isSameUserAsCurrent = foundedUser.equals(this._user);
+            boolean isSameUserAsCurrent = foundedUser.equals(this.getUser());
             boolean isUserFound = foundedUser != null;
 
             if (isUserFound && isSameUserAsCurrent == false) {
-                AddFriend addfriendForm = new AddFriend(foundedUser, this._user);
+                AddFriend addfriendForm = new AddFriend(foundedUser, this.getUser());
                 if (addfriendForm.isFriendRequsetAlreadySent() == false) {
                     loadNewForm(addfriendForm, true);
                     userFoundByEmail = new UserTable();

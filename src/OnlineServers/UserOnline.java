@@ -3,6 +3,7 @@ package OnlineServers;
 import OnlineServers.Inheritable.InheritableServer;
 import ConsolePackage.Console;
 import CurrentDb.Tables.UserTable;
+import SimpleChatSystem.ListOfFriends;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
@@ -13,6 +14,8 @@ import java.util.logging.Logger;
 
 public class UserOnline extends InheritableServer {
 
+//    ArrayList<ListOfFriends> ListOfForms;
+
     /**
      * checks if not null and alive
      *
@@ -20,6 +23,7 @@ public class UserOnline extends InheritableServer {
      * @return
      */
     @SuppressWarnings("deprecation")
+
     public Thread stopThread() {
         return super.stopThread(this);
     }
@@ -56,7 +60,7 @@ public class UserOnline extends InheritableServer {
         }
         while (_serverConfig.IsActive && _shouldThreadRun) {
             Console.writeLine("Server running...." + _serverConfig.IsActive);
-            serverForAddingUser(severSocket);
+            serverProcess(severSocket);
             _serverHitCounter++;
             System.err.println("Counter : " + _serverHitCounter);
             if (_serverHitCounter >= _serverRefershAfterHits) {
@@ -69,7 +73,7 @@ public class UserOnline extends InheritableServer {
 
     }
 
-    private void serverForAddingUser(ServerSocket severSocket) {
+    private void serverProcess(ServerSocket severSocket) {
 
         Socket socket = null;
 
@@ -79,29 +83,30 @@ public class UserOnline extends InheritableServer {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        // for taking input from sendUserOnlineRequestToServer
+        // for taking input from clientRequest
         ObjectInputStream inputFromClient = super.getObjectInputStream(socket);
         boolean returnResult = false;
-        UserTable userReturnedfromClient = null;
+        ListOfFriends listOfFriends = null;
+        UserTable user = null;
         try {
-            userReturnedfromClient = (UserTable) inputFromClient.readObject();
-
-            returnResult = super.addUsertoOnlineList(userReturnedfromClient);
+            listOfFriends = (ListOfFriends) inputFromClient.readObject();
+            user = listOfFriends.getUser();
+            returnResult = super.addUsertoOnlineList(user);
 
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(InheritableServer.class.getName()).log(Level.SEVERE, null, ex);
 
         }
-        // sending data to sendUserOnlineRequestToServer
+        // sending data to clientRequest
 
-        // for giving output to the sendUserOnlineRequestToServer.
-        // output to sendUserOnlineRequestToServer, to send data to the server
+        // for giving output to the clientRequest.
+        // output to clientRequest, to send data to the server
         // get output from server
         try {
-            // send data to sendUserOnlineRequestToServer
+            // send data to clientRequest
             System.out.println("Writing to client : " + returnResult);
             if (returnResult) {
-                super.getOutputObjectStream(socket).writeObject(userReturnedfromClient);
+                super.getOutputObjectStream(socket).writeObject(user);
             } else {
                 super.getOutputObjectStream(socket).writeObject(null);
             }
@@ -110,15 +115,15 @@ public class UserOnline extends InheritableServer {
         }
     }
 
-    public void sendUserOnlineRequestToServer(UserTable sendingUser) {
+    public void clientRequest(ListOfFriends listOfFriendForm) {
 
         int port = _serverConfig.UserOnlinePort;
-        String ip = _serverConfig.ServerIP;       
+        String ip = _serverConfig.ServerIP;
         tryagain:
         try (Socket socket = new Socket(ip, port)) {
-            super.getOutputObjectStream(socket).writeObject(sendingUser);
-            UserTable gotUser = (UserTable)super.getObjectInputStream(socket).readObject();
-            if(gotUser != null){
+            super.getOutputObjectStream(socket).writeObject(listOfFriendForm);
+            UserTable gotUser = (UserTable) super.getObjectInputStream(socket).readObject();
+            if (gotUser != null) {
                 gotUser.print();
             } else {
                 System.out.println("user already exist.");

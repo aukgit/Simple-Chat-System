@@ -381,7 +381,7 @@ public final class DatabaseQuery extends DbInitalizer {
      * @param fields :Query Fields ie.: where ... *column* = value
      */
     public void setSpecialQueryFields_(boolean append, String... fields) {
-        addSpecialFieldsToList(append, getQueryFieldNames(), fields);
+        this.queryFieldNames = addSpecialFieldsToList(append, getQueryFieldNames(), fields);
     }
 
     /**

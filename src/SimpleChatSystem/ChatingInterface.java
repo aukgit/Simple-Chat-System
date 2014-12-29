@@ -6,9 +6,13 @@
 package SimpleChatSystem;
 
 import CurrentDb.CommonData;
+import CurrentDb.TableColumns.ToWhomAliasWhat;
 import CurrentDb.TableNames;
 import CurrentDb.Tables.MessageRecentTable;
 import CurrentDb.Tables.ToWhomAliasWhatTable;
+import CurrentDb.Tables.UserTable;
+import Database.Components.IQueryType;
+import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,15 +28,65 @@ public class ChatingInterface extends JFrameInheritable {
     private static final long serialVersionUID = 1L;
 
     boolean newChatSession;
-
     int sessionID;
     int senderUserID;
     boolean isSingleUser;
     ArrayList<Integer> receiverUserIDs;
     ArrayList<ToWhomAliasWhatTable> alias;
     ArrayList<MessageRecentTable> messages;
+    UserTable sendingUser;
 
     boolean loadAllPreviousChat;
+
+    int lastMsgPaintedId;
+
+    class ThreadRunner implements Runnable {
+
+        DatabaseQuery db;
+        public ChatingInterface _chatMsg;
+
+        ThreadRunner(ChatingInterface chatMsg) {
+            db = new DatabaseQuery(TableNames.MESSAGE);
+            this._chatMsg = chatMsg;
+        }
+
+        public void run() {
+            while (true) {
+                try {
+                    Thread.sleep(1500);
+                    _chatMsg.loadLastTwentyConversations();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ChatingInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+        }
+
+    }
+
+    public void paitDisplay() {
+
+        for (MessageRecentTable msg : messages) {
+            if (lastMsgPaintedId == 0) {
+
+            }
+        }
+    }
+
+    public void paidForOwn(MessageRecentTable msg) {
+        if (msg.SendFromUserID == this.senderUserID) {
+            this.MessageDisplayEditorPane.
+        }
+    }
+
+    public String getAlias(int userID) {
+        for (ToWhomAliasWhatTable aAlias : alias) {
+            if (aAlias.UserID == userID) {
+                return aAlias.AliasAs;
+            }
+        }
+        return null;
+    }
 
     public void loadReceivers(int sessionId) {
         this.getDb().setTableName(TableNames.CHAT_SESSION_RELATED_USERS);
@@ -44,24 +98,36 @@ public class ChatingInterface extends JFrameInheritable {
         }
         this.getDb().setTableName(TableNames.MESSAGES_RECENT);
     }
-    
-    public void loadAllConversations(int sessionId) {
-        loadConversations(sessionId, -1);
+
+    public void loadAlias() {
+        this.getDb().setTableName(TableNames.TO_WHOM_ALIAS_WHAT);
+
+        String inQuery = this.getDb().getStringJoined(receiverUserIDs, ";", null, null);
+        this.getDb().setSpecialTypes_(false, IQueryType.IN_QUERY);
+        this.getDb().readData(ToWhomAliasWhat.UserID, inQuery);
+        alias = this.getDb().getResultsAsORM(new ToWhomAliasWhatTable());
+
+        this.getDb().setTableName(TableNames.MESSAGES_RECENT);
+
     }
-    public void loadLastHundredConversations(int sessionId) {
-        loadConversations(sessionId, 100);
+
+    public void loadAllConversations() {
+        loadConversations(sessionID, -1);
+    }
+
+    public void loadLastTwentyConversations() {
+        loadConversations(this.sessionID, 20);
     }
 
     public void loadConversations(int sessionId, int limit) {
         if (limit > 0) {
+            this.getDb().setTableName(TableNames.MESSAGES_RECENT);
             this.getDb().setLimitsOnQuery(0, limit);
         }
 
         this.getDb().readData("ChatSessionID", sessionId + "");
         messages = this.getDb().getResultsAsORM(new MessageRecentTable());
     }
-
-  
 
     public void customInitalize() {
         initComponents();
@@ -151,7 +217,7 @@ public class ChatingInterface extends JFrameInheritable {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
                     .addComponent(SendingTextBox)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,8 +226,8 @@ public class ChatingInterface extends JFrameInheritable {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(AttachImageBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(CancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 404, Short.MAX_VALUE)
+                        .addComponent(CancelBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(SendBtn)))
                 .addContainerGap())
@@ -179,9 +245,10 @@ public class ChatingInterface extends JFrameInheritable {
                 .addComponent(SendingTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(CancelBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(SendBtn)
-                    .addComponent(AttachImageBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(AttachImageBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(CancelBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(SendBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 

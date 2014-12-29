@@ -245,6 +245,10 @@
             </Property>
             <Property name="visibleRowCount" type="int" value="30"/>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="friendsDisplayListMouseClicked"/>
+            <EventHandler event="valueChanged" listener="javax.swing.event.ListSelectionListener" parameters="javax.swing.event.ListSelectionEvent" handler="friendsDisplayListValueChanged"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
