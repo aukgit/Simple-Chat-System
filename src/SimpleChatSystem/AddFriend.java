@@ -10,6 +10,7 @@ import CurrentDb.TableColumns.FriendRequest;
 import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
 import DesignPattern.JFrameInheritable;
+import InputValidation.Validate;
 import Mailer.OwnGmail;
 
 /**
@@ -209,6 +210,10 @@ public class AddFriend extends JFrameInheritable {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     public void processSendingFriendRequest() {
+        if (!Validate.sqlSearchValid(quoteTextBox, null, 3, 40)) {
+            this.getMessageBox().showError(this, "Sorry! Your messgae is too long keep it in between 4 and 40 characters.");
+            return;
+        }
         if (addFriendRequesToUserDb()) {
             this.EmailSendingLabel.setText("Sending...Email...");
             sendMailToUser();
