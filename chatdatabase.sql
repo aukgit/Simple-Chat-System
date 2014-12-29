@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50614
 File Encoding         : 65001
 
-Date: 2014-12-29 19:30:08
+Date: 2014-12-29 20:31:20
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -126,7 +126,7 @@ CREATE TABLE `message` (
   `IsSeen` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`MessageID`),
   KEY `MessageIDDsc` (`MessageID`) USING HASH
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of message
@@ -151,6 +151,16 @@ INSERT INTO `message` VALUES ('17', '5', '1', 'tomar nam ki', '0', '1');
 INSERT INTO `message` VALUES ('18', '1', '5', 'ok I got it', '0', '1');
 INSERT INTO `message` VALUES ('19', '1', '5', 'hey is it', '0', '1');
 INSERT INTO `message` VALUES ('20', '1', '5', 'are you?', '0', '1');
+INSERT INTO `message` VALUES ('21', '1', '5', 'hey alim 5', '0', '1');
+INSERT INTO `message` VALUES ('22', '5', '1', 'hey', '0', '1');
+INSERT INTO `message` VALUES ('23', '5', '1', 'dqwwdq', '0', '1');
+INSERT INTO `message` VALUES ('24', '5', '1', 'opkjqdwdwq', '0', '1');
+INSERT INTO `message` VALUES ('25', '1', '5', 'hello', '0', '1');
+INSERT INTO `message` VALUES ('26', '1', '5', 'Hello 5h user , wrote from first user', '0', '1');
+INSERT INTO `message` VALUES ('27', '5', '1', 'hi', '0', '1');
+INSERT INTO `message` VALUES ('28', '5', '1', 'did you go offline', '0', '1');
+INSERT INTO `message` VALUES ('29', '5', '1', 'did you go offline', '0', '1');
+INSERT INTO `message` VALUES ('30', '5', '1', 'hey first account', '0', '1');
 
 -- ----------------------------
 -- Table structure for `msgfile`
