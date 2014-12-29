@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 public class UserOnline extends InheritableServer {
 
 //    ArrayList<ListOfFriends> ListOfForms;
-
     /**
      * checks if not null and alive
      *
@@ -89,8 +88,8 @@ public class UserOnline extends InheritableServer {
         ListOfFriends listOfFriends = null;
         UserTable user = null;
         try {
-            listOfFriends = (ListOfFriends) inputFromClient.readObject();
-            user = listOfFriends.getUser();
+            user = (UserTable) inputFromClient.readObject();
+
             returnResult = super.addUsertoOnlineList(user);
 
         } catch (IOException | ClassNotFoundException ex) {
@@ -115,13 +114,13 @@ public class UserOnline extends InheritableServer {
         }
     }
 
-    public void clientRequest(ListOfFriends listOfFriendForm) {
+    public void clientRequest(UserTable user) {
 
         int port = _serverConfig.UserOnlinePort;
         String ip = _serverConfig.ServerIP;
         tryagain:
         try (Socket socket = new Socket(ip, port)) {
-            super.getOutputObjectStream(socket).writeObject(listOfFriendForm);
+            super.getOutputObjectStream(socket).writeObject(user);
             UserTable gotUser = (UserTable) super.getObjectInputStream(socket).readObject();
             if (gotUser != null) {
                 gotUser.print();

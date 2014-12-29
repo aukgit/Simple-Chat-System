@@ -135,7 +135,7 @@ public class ListOfFriends extends JFrameInheritable {
             adminConfigBtn.setVisible(false);
         }
         online.reReadDataFromServer();
-        online.clientRequest(this);
+        online.clientRequest(this._user);
 
         refreshFriendList();
         for (String item : CommonData.getActiveStateList()) {
@@ -500,13 +500,11 @@ public class ListOfFriends extends JFrameInheritable {
 
     private void friendsDisplayListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_friendsDisplayListMouseClicked
         // TODO add your handling code here:
-        if(evt.getClickCount() == 2){
-            
+        if (evt.getClickCount() == 2) {
+
         }
     }//GEN-LAST:event_friendsDisplayListMouseClicked
 
-    
-    
     public boolean showFriendRqstForm() {
         FriendRqsForm friendRqsForm = new FriendRqsForm(getUser(), this);
         if (friendRqsForm.isNoFriendRequestExist() == false) {

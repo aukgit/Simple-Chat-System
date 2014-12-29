@@ -16,7 +16,6 @@ import CurrentDb.Tables.UserTable;
 import Database.Components.IQueryType;
 import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,8 +32,8 @@ public class ChatingInterface extends JFrameInheritable {
     int sessionID;
     int senderUserID;
     boolean isSingleUser;
-    ArrayList<Integer> receiverUserIDs;
-    ArrayList<ToWhomAliasWhatTable> alias;
+//    ArrayList<Integer> receiverUserIDs;
+//    ArrayList<ToWhomAliasWhatTable> alias;
     ArrayList<MessageRecentTable> messages;
     UserTable sendingUser;
 
@@ -174,13 +173,13 @@ public class ChatingInterface extends JFrameInheritable {
         customInitalize();
         this.sendingUser = user;
         this.senderUserID = user.UserID;
-        receiverUserIDs = new ArrayList<>(10);
-        receiverUserIDs.add(toWhomWantsToChatWithUserID);
-        addUserToThisSession(this.sessionID, senderUserID);
-        createNewSession();
-        for (Integer id : receiverUserIDs) {
-            addUserToThisSession(this.sessionID, id);
-        }
+//        receiverUserIDs = new ArrayList<>(10);
+//        receiverUserIDs.add(toWhomWantsToChatWithUserID);
+//        addUserToThisSession(this.sessionID, senderUserID);
+//        createNewSession();
+//        for (Integer id : receiverUserIDs) {
+//            addUserToThisSession(this.sessionID, id);
+//        }
         this.getDb().setTableName(TableNames.MESSAGES_RECENT);
     }
 
