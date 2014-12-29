@@ -14,12 +14,10 @@ public interface Message {
 
     public String MessageID = "MessageID";
     public String SendFromUserID = "SendFromUserID";
-    public String ChatSessionID = "ChatSessionID";
+    public String ReceiverUserId = "ReceiverUserId";
 
     public String Message = "Message";
 //    public String Message2 = "Message2";
     public String IsFileExit = "IsFileExit";
-
-
 
 }

@@ -5,6 +5,9 @@
  */
 package CurrentDb.Tables;
 
+import CurrentDb.TableColumns.User;
+import CurrentDb.TableNames;
+import Database.DatabaseQuery;
 import OnlineServers.PictureUploader;
 import OnlineServers.RelatedObjects.PictureSender;
 import java.awt.Color;
@@ -14,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import org.eclipse.persistence.queries.DataModifyQuery;
 
 /**
  *
@@ -106,6 +110,22 @@ public class UserTable extends ImageLoadRelatedCode {
      */
     public boolean equals(UserTable u) {
         return u != null && u.UserID == this.UserID;
+    }
+
+    public boolean loadUserFromDb(int userID) {
+        DatabaseQuery db = new DatabaseQuery(TableNames.USER);
+        db.setLimitsOnQuery(0, 1);
+
+        return db.isExist(User.UserID, userID + "", this);
+
+    }
+    
+     public boolean loadUserFromDb(String username) {
+        DatabaseQuery db = new DatabaseQuery(TableNames.USER);
+        db.setLimitsOnQuery(0, 1);
+
+        return db.isExist(User.Username, username, this);
+
     }
 
 }

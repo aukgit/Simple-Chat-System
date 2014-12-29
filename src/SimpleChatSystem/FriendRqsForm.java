@@ -130,7 +130,7 @@ public class FriendRqsForm extends JFrameInheritable {
         this.getDb().setSpecialQueryFields_(false, FriendRequest.ToWhomUserID, FriendRequest.IsSeen);
         this.getDb().setSpecialQueryValues_(false, this.currentUser.UserID + "", "0");
         this.getDb().readData();
-        Console.writeLine(this.getDb().LastSQL);
+//        Console.writeLine(this.getDb().LastSQL);
         frdReqs = this.getDb().getResultsAsORM(new FriendRequestTable());
         usersIds = this.getDb().getSingleColumnValuesInt(FriendRequest.SenderUserID);
     }
@@ -343,12 +343,16 @@ public class FriendRqsForm extends JFrameInheritable {
     }//GEN-LAST:event_jList1ValueChanged
 
     private void CloseBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CloseBtnActionPerformed
+        listOfFriends.startOrResumeThread();
+
         terminateCurrentForm(false);
     }//GEN-LAST:event_CloseBtnActionPerformed
 
     private void RejectBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RejectBtnActionPerformed
         rejectRequest();
         if (frdReqs.size() == 0) {
+            listOfFriends.startOrResumeThread();
+
             terminateCurrentForm(true);
         }
     }//GEN-LAST:event_RejectBtnActionPerformed
@@ -357,6 +361,7 @@ public class FriendRqsForm extends JFrameInheritable {
         // TODO add your handling code here:
         acceptRequest();
         if (frdReqs.size() == 0) {
+            listOfFriends.startOrResumeThread();
             terminateCurrentForm(true);
         }
     }//GEN-LAST:event_AcceptBtnActionPerformed

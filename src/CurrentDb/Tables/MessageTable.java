@@ -15,11 +15,10 @@ public class MessageTable extends DatabaseTableClass {
     public long MessageID;
 
     public int SendFromUserID;
-    public int ChatSessionID;
+    public int ReceiverUserId;
     public String Message;
 //
 //    public String Message2;
     public boolean IsFileExit;
-
 
 }

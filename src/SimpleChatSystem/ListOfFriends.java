@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -61,13 +62,53 @@ public class ListOfFriends extends JFrameInheritable {
     UserOnline online = new UserOnline();
     String previousSearch = "";
 
+    private int defaultOpenUserNumber = 4;
+
     @SuppressWarnings("unchecked")
     DefaultListModel<ToWhomAliasWhatTable> friendListDisplayModel = new DefaultListModel();
 
     private PictureUploader pictureRelatedServer = new PictureUploader();
 
     private PictureSender profilePictureRequestSender;
-//</editor-fold>
+    Thread refreshFriendListThread;
+
+    ThreadRunner threadRunnerObject;
+
+    //</editor-fold>
+    class ThreadRunner implements Runnable {
+
+        DatabaseQuery db;
+        public ListOfFriends currentForm;
+        public FriendRqsForm frdReqForm;
+        public boolean running = true;
+
+        ThreadRunner(ListOfFriends frame) {
+            db = new DatabaseQuery(TableNames.MESSAGE);
+            this.currentForm = frame;
+        }
+
+        public void run() {
+            while (running) {
+                try {
+                    currentForm.refreshFriendList();
+                    frdReqForm = new FriendRqsForm(currentForm._user, currentForm);
+                    if (frdReqForm.isNoFriendRequestExist()) {
+                        frdReqForm.terminateCurrentForm(false);
+                    } else {
+                        loadNewForm(frdReqForm, true);
+                        running = false;
+                        currentForm.pauseThread();
+                    }
+                    Thread.sleep(2000);
+
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ChatingInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+        }
+
+    }
 
     public void closeApplication() {
         // this will make sure WindowListener.windowClosing() et al. will be called.
@@ -138,8 +179,11 @@ public class ListOfFriends extends JFrameInheritable {
         }
         online.reReadDataFromServer();
         online.clientRequest(this._user);
+        threadRunnerObject = new ThreadRunner(this);
 
-        refreshFriendList();
+        refreshFriendListThread = new Thread(threadRunnerObject);
+        refreshFriendListThread.start();
+
         for (String item : CommonData.getActiveStateList()) {
             this.UserActiveState.add(item);
         }
@@ -156,6 +200,19 @@ public class ListOfFriends extends JFrameInheritable {
         this.setTitle(getUser().Name + " : Friends List");
         makeUserOnline();
 
+    }
+
+    public void startOrResumeThread() {
+        this.threadRunnerObject.running = false;
+        this.threadRunnerObject = new ThreadRunner(this);
+        this.refreshFriendListThread.stop();
+        this.refreshFriendListThread = new Thread(threadRunnerObject);
+        refreshFriendListThread.start();
+    }
+
+    public void pauseThread() {
+        this.threadRunnerObject.running = false;
+        this.refreshFriendListThread.stop();
     }
 
     @SuppressWarnings({"unchecked", "unchecked"})
@@ -195,7 +252,7 @@ public class ListOfFriends extends JFrameInheritable {
 
     public ListOfFriends() {
         _user = new UserTable();
-        this.getDb().setLimitsOnQuery(0, 1);
+        this.getDb().setLimitsOnQuery(defaultOpenUserNumber, 1);
         this.getDb().readData();
 
         this.getDb().getResultsAsObject(_user);
@@ -552,6 +609,9 @@ public class ListOfFriends extends JFrameInheritable {
      */
     public boolean searchForUserInFriendList(String input) {
         // first try to look for user name
+        if (searchResultOfFriendsList == null) {
+            searchResultOfFriendsList = new ArrayList<>(200);
+        }
         searchResultOfFriendsList.clear();
 
         if (isUserExist(input, userFoundByUserName)) {
@@ -582,8 +642,10 @@ public class ListOfFriends extends JFrameInheritable {
                             .parallelStream()
                             .filter(f -> f.AliasAs.contains(item))
                             .collect(Collectors.toList());
-                    if (foundList != null) {
-                        searchResultOfFriendsList = (ArrayList<ToWhomAliasWhatTable>) foundList;
+                    if (foundList != null && foundList.size() > 0) {
+                        for (ToWhomAliasWhatTable item2 : foundList) {
+                            searchResultOfFriendsList.add(item2);
+                        }
                         returnResult = true;
                     }
                 }
@@ -611,10 +673,15 @@ public class ListOfFriends extends JFrameInheritable {
 //        return dbChatLists.isExist(userID, userID, aliasFound);
 
         if (allfriendsList != null && allfriendsList.size() > 0) {
-            aliasFound = allfriendsList.stream()
+            Optional<ToWhomAliasWhatTable> findItem = allfriendsList.stream()
                     .filter(f -> f.UserID == userID)
-                    .findFirst()
-                    .get();
+                    .findFirst();
+            if (findItem.isPresent()) {
+                aliasFound = findItem.get();
+            } else {
+                aliasFound = null;
+
+            }
         } else {
             aliasFound = null;
         }

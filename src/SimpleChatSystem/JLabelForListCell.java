@@ -22,7 +22,7 @@ import javax.swing.ListCellRenderer;
  */
 public class JLabelForListCell extends JLabel implements ListCellRenderer {
 
-    private static final Color HIGHLIGHT_COLOR = new Color(0, 0, 128);
+    private static final Color HIGHLIGHT_COLOR = new Color(174, 229, 245);
     private static final long serialVersionUID = 1L;
 
     public JLabelForListCell() {
@@ -34,23 +34,28 @@ public class JLabelForListCell extends JLabel implements ListCellRenderer {
     public Component getListCellRendererComponent(JList list, Object value,
             int index, boolean isSelected, boolean cellHasFocus) {
         ToWhomAliasWhatTable user = (ToWhomAliasWhatTable) value;
-        setText(user.AliasAs + " . Status : " + user.CurrentStatus);
+        //setText(user.AliasAs + " - " + user.CurrentStatus);
+        setText(user.AliasAs + " - " + user.CurrentStatus);
+
+        setToolTipText(user.AliasAs + " . Status : " + user.CurrentStatus);
+
         setIcon(null);
         if (user.isImageExist(user.UserID)) {
             setIcon(new ImageIcon(user.getPathForProfilePic(user.UserID)));
         }
-
+        int indexOFActiveState = user.CurrentActiveState;
         if (user.IsOnline) {
             if (isSelected) {
-                setBackground(HIGHLIGHT_COLOR);
+                setBackground(Color.BLUE);
                 setForeground(Color.white);
             } else {
                 setBackground(Color.white);
+                setBackground(HIGHLIGHT_COLOR);
 
                 if (user.CurrentActiveState > 0) {
-                    user.CurrentActiveState -= 1;
+                    indexOFActiveState = user.CurrentActiveState - 1;
                 }
-                setForeground(CommonData.getColorForActiveStatus(index));
+                setForeground(CommonData.getColorForActiveStatus(indexOFActiveState));
             }
         } else {
             setText("[Offline] " + user.AliasAs);
