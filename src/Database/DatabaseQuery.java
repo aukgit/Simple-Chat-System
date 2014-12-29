@@ -1694,9 +1694,11 @@ public final class DatabaseQuery extends DbInitalizer {
         if (isResultSetInitialized() && isResultValid(index)) {
             try {
                 int currentRow = getRs().getRow();
-                getRs().absolute(index);
+                if (currentRow != index) {
+                    getRs().absolute(index);
+                }
                 String val = getRs().getString(columnName);
-                if (currentRow > -1) {
+                if (currentRow > -1 && (currentRow != index)) {
                     getRs().absolute(currentRow);
                 }
             } catch (SQLException ex) {

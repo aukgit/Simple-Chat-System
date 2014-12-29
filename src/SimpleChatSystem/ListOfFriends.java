@@ -18,6 +18,7 @@ import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
 import Global.AppConfig;
 import ImageProcessing.Picture;
+import InputValidation.Validate;
 import OnlineServers.PictureUploader;
 import OnlineServers.RelatedObjects.PictureSender;
 import OnlineServers.UserOnline;
@@ -85,7 +86,7 @@ public class ListOfFriends extends JFrameInheritable {
         public boolean running = true;
 
         ThreadRunner(ListOfFriends frame) {
-            db = new DatabaseQuery(TableNames.MESSAGE);
+            db = new DatabaseQuery("NewMessageView");
             this.currentForm = frame;
         }
 
@@ -101,7 +102,15 @@ public class ListOfFriends extends JFrameInheritable {
                         running = false;
                         currentForm.pauseThread();
                     }
-                    Thread.sleep(2000);
+                    if (currentForm.isAnyNewMessage(currentForm._user.UserID)) {
+                        this.db.readData("ReceiverUserId", currentForm._user.UserID + "");
+                        ArrayList<Integer> userIds = this.db.getSingleColumnValuesInt("SendFromUserID");
+                        for (Integer userId : userIds) {
+                            currentForm.showChatInterfaceForUserId(userId);
+                        }
+                    }
+
+                    Thread.sleep(3000);
 
                 } catch (InterruptedException ex) {
                     Logger.getLogger(ChatingInterface.class.getName()).log(Level.SEVERE, null, ex);
@@ -544,7 +553,8 @@ public class ListOfFriends extends JFrameInheritable {
     }//GEN-LAST:event_SearchOrAddFriendTextBoxMouseClicked
 
     private void SearchOrAddFriendTextBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SearchOrAddFriendTextBoxKeyReleased
-        if (evt.getKeyCode() == CommonData.ENTER_KEY) {
+
+        if (Validate.sqlSearchValid(SearchOrAddFriendTextBox, null) && evt.getKeyCode() == CommonData.ENTER_KEY) {
             searchForUserOrAddUserIfFoundInDatabase(this.SearchOrAddFriendTextBox.getText());
         }
     }//GEN-LAST:event_SearchOrAddFriendTextBoxKeyReleased
@@ -610,6 +620,25 @@ public class ListOfFriends extends JFrameInheritable {
                 }
                 loadNewForm(chatMsg, true);
 
+            }
+        }
+    }
+
+    public void showChatInterfaceForUserId(int receivingUserID) {
+        if (receivingUserID > 0) {
+
+            UserTable receivingUser = new UserTable();
+            receivingUser.loadUserFromDb(receivingUserID);
+            if (receivingUser.UserID > 0) {
+                ChatingInterface chatMsg = getAnyChattingInterfaceAlreayExist(receivingUser.UserID);
+                if (chatMsg == null) {
+                    chatMsg = new ChatingInterface(_user, receivingUser, this);
+                    chattingMessageBoxList.add(chatMsg);
+                }
+                loadNewForm(chatMsg, true);
+
+            } else {
+                this.getMessageBox().showError(this, "Not a valid user.");
             }
         }
     }
@@ -703,12 +732,14 @@ public class ListOfFriends extends JFrameInheritable {
         searchResultOfFriendsList.clear();
         boolean returnResult = false;
         if (input != null && "".equals(input) == false) {
-            String[] list = input.split(" ");
+            String newInput = input.toLowerCase();
+
+            String[] list = newInput.split(" ");
             if (allfriendsList != null && allfriendsList.size() > 0) {
                 for (String item : list) {
                     List<ToWhomAliasWhatTable> foundList = allfriendsList
                             .parallelStream()
-                            .filter(f -> f.AliasAs.contains(item))
+                            .filter(f -> f.AliasAs.toLowerCase().contains(item))
                             .collect(Collectors.toList());
                     if (foundList != null && foundList.size() > 0) {
                         for (ToWhomAliasWhatTable item2 : foundList) {
