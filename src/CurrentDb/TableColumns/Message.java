@@ -19,5 +19,6 @@ public interface Message {
     public String Message = "Message";
 //    public String Message2 = "Message2";
     public String IsFileExit = "IsFileExit";
+    public String IsSeen = "IsSeen";
 
 }

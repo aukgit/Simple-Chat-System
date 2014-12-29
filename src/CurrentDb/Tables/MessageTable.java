@@ -20,5 +20,6 @@ public class MessageTable extends DatabaseTableClass {
 //
 //    public String Message2;
     public boolean IsFileExit;
+    public boolean IsSeen;
 
 }

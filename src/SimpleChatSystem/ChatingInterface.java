@@ -17,6 +17,7 @@ import CurrentDb.Tables.UserTable;
 import Database.Components.IQueryType;
 import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
+import Mailer.OwnGmail;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,23 +32,78 @@ public class ChatingInterface extends JFrameInheritable {
 
     String finalSQL;
 
-    UserTable recevingUser;
-    UserTable sendingUser;
+    private UserTable recevingUser;
+    private UserTable sendingUser;
+    OwnGmail mailer = new OwnGmail();
 
 //    ArrayList<Integer> receiverUserIDs;
 //    ArrayList<ToWhomAliasWhatTable> alias;
     ArrayList<MessageRecentTable> messages;
+    private ListOfFriends listOfFriends;
+
+    public boolean equals(int recevingUserId) {
+        if (recevingUser.UserID == recevingUserId) {
+            return true;
+        }
+        return false;
+    }
 
     boolean loadAllPreviousChat;
 
     long lastMsgPaintedId;
 
+    ThreadRunner threadObject;
+    Thread thread;
+
     DatabaseQuery dbMessagesSaving = new DatabaseQuery(TableNames.MESSAGE);
+
+    /**
+     * @return the recevingUser
+     */
+    public UserTable getRecevingUser() {
+        return recevingUser;
+    }
+
+    /**
+     * @param recevingUser the recevingUser to set
+     */
+    public void setRecevingUser(UserTable recevingUser) {
+        this.recevingUser = recevingUser;
+    }
+
+    /**
+     * @return the sendingUser
+     */
+    public UserTable getSendingUser() {
+        return sendingUser;
+    }
+
+    /**
+     * @param sendingUser the sendingUser to set
+     */
+    public void setSendingUser(UserTable sendingUser) {
+        this.sendingUser = sendingUser;
+    }
+
+    /**
+     * @return the listOfFriends
+     */
+    public ListOfFriends getListOfFriends() {
+        return listOfFriends;
+    }
+
+    /**
+     * @param listOfFriends the listOfFriends to set
+     */
+    public void setListOfFriends(ListOfFriends listOfFriends) {
+        this.listOfFriends = listOfFriends;
+    }
 
     class ThreadRunner implements Runnable {
 
         DatabaseQuery db;
         public ChatingInterface _chatMsg;
+        public boolean running = true;
 
         ThreadRunner(ChatingInterface chatMsg) {
             db = new DatabaseQuery(TableNames.MESSAGE);
@@ -55,11 +111,12 @@ public class ChatingInterface extends JFrameInheritable {
         }
 
         public void run() {
-            while (true) {
+            while (running) {
                 try {
-                    Thread.sleep(2000);
                     _chatMsg.loadAllConversations();
                     _chatMsg.paintMessagesOnDisplay();
+                    Thread.sleep(1000);
+
                 } catch (InterruptedException ex) {
                     Logger.getLogger(ChatingInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -70,20 +127,24 @@ public class ChatingInterface extends JFrameInheritable {
     }
 //
 
+    public void stopThread() {
+        threadObject.running = false;
+        thread.stop();
+    }
+
     public String getMessageQuerySQL() {
         if (finalSQL == null) {
-            String condition1 = Message.SendFromUserID + "=" + sendingUser.UserID;
-            String condition2 = Message.ReceiverUserId + "=" + recevingUser.UserID;
+            String condition1 = Message.SendFromUserID + "=" + getSendingUser().UserID;
+            String condition2 = Message.ReceiverUserId + "=" + getRecevingUser().UserID;
 
-            String condition3 = Message.SendFromUserID + "=" + recevingUser.UserID;
-            String condition4 = Message.ReceiverUserId + "=" + sendingUser.UserID;
+            String condition3 = Message.SendFromUserID + "=" + getRecevingUser().UserID;
+            String condition4 = Message.ReceiverUserId + "=" + getSendingUser().UserID;
 
             String combinedCondition1 = "(" + condition1 + " AND " + condition2 + ")";
             String combinedCondition2 = "(" + condition3 + " AND " + condition4 + ")";
             String finalCondition = combinedCondition1 + " OR " + combinedCondition2;
 
             finalSQL = "SELECT * FROM messagerecent WHERE " + finalCondition;
-
         }
         return finalSQL;
     }
@@ -118,32 +179,51 @@ public class ChatingInterface extends JFrameInheritable {
         }
 
     }
-    
-    public void sendMessage(String msg){
-          int row = 3;
-        this.getDb().setTableName(TableNames.CHATSESSION);
+
+    public void sendMailToUser(UserTable _sendingUser, String msg, UserTable _sendingFromUser) {
+        String body = "";
+        body += "Hello " + _sendingUser.Name + ", <br><br>";
+        body += "How you doing? Your friend is sending you some text. <br>";
+        body += "<br>";
+        body += "<h3>A short message from " + _sendingFromUser.Username + "</h3>";
+        body += "<blockquote>" + msg + "</blockquote>";
+        body += "<br><br>";
+        body += "Thanks ,<br>";
+        body += "<strong>" + _sendingUser.Name + "</strong><br>";
+        body += "<a href='mailto:" + _sendingUser.Email + "'>" + _sendingFromUser.Email + "</strong><br>";
+        mailer.sendEmail(_sendingUser.Email, "A friend request is send by " + _sendingFromUser.Name, body);
+    }
+
+    public void sendMessage(String msg) {
+        int row = 5;
         String columns[] = new String[row];
         String values[] = new String[row];
 
-        columns[--row] = ChatSession.IsActive;
-        values[row] = "1";
+        columns[--row] = Message.Message;
+        values[row] = msg;
 
-        columns[--row] = ChatSession.IsSingleUser;
-        values[row] = "1";
+        columns[--row] = Message.SendFromUserID;
+        values[row] = getSendingUser().UserID + "";
 
-        columns[--row] = ChatSession.Timed;
-        values[row] = this.getDb().getCurrentInDbFormat();
+        columns[--row] = Message.ReceiverUserId;
+        values[row] = getRecevingUser().UserID + "";
 
-        this.getDb().insertData(columns, values);
+        columns[--row] = Message.IsFileExit;
+        values[row] = "0";
 
-        this.getDb().setTableName("LastChatSessionID");
-        this.getDb().readData();
-        this.sessionID = Integer.parseInt(this.getDb().getValue(1, "ID"));
-        dbMessagesSaving.insertData(msg, msg)
+        columns[--row] = Message.IsSeen;
+        values[row] = "0";
+
+        dbMessagesSaving.insertData(columns, values);
+
+        if (getRecevingUser().IsOnline == false) {
+            sendMailToUser(getSendingUser(), msg, getRecevingUser());
+        }
+        getRecevingUser().loadUserFromDb(getRecevingUser().UserID);
     }
 
     public boolean paintForOwn(MessageRecentTable msg) {
-        if (msg.SendFromUserID == this.senderUserID) {
+        if (msg.SendFromUserID == getSendingUser().UserID) {
             this.MessageDisplayTextArea.append("You wrote: " + msg.Message);
             return true;
         }
@@ -151,8 +231,8 @@ public class ChatingInterface extends JFrameInheritable {
     }
 
     public void paintForOthers(MessageRecentTable msg) {
-        if (msg.SendFromUserID != this.senderUserID) {
-            String getAias = getAlias(msg.SendFromUserID);
+        if (msg.SendFromUserID != getSendingUser().UserID) {
+            String getAias = getRecevingUser().Name;
             this.MessageDisplayTextArea.append(getAias + " wrote: " + msg.Message);
         }
     }
@@ -175,8 +255,6 @@ public class ChatingInterface extends JFrameInheritable {
 ////        }
 //        this.getDb().setTableName(TableNames.MESSAGES_RECENT);
 //    }
-
-
     public void loadAllConversations() {
         this.getDb().setTableName(TableNames.MESSAGES_RECENT);
         this.getDb().readData(getMessageQuerySQL());
@@ -185,12 +263,16 @@ public class ChatingInterface extends JFrameInheritable {
 
     public void customInitalize() {
         initComponents();
+        getRecevingUser().loadProfilePicFromServer();
+        getRecevingUser().displayUser(UsernameLabel, StatusLabel, null, ProfilePic);
+        threadObject = new ThreadRunner(this);
+        thread = new Thread(threadObject);
     }
 
     /**
      * Creates new form ChatingInterface
      */
-    public ChatingInterface(UserTable user, UserTable recevingUser) {
+    public ChatingInterface(UserTable user, UserTable recevingUser, ListOfFriends listOfFriendForm) {
         customInitalize();
         this.sendingUser = user;
         this.recevingUser = recevingUser;
@@ -201,7 +283,15 @@ public class ChatingInterface extends JFrameInheritable {
 //        for (Integer id : receiverUserIDs) {
 //            addUserToThisSession(this.sessionID, id);
 //        }
+        setListOfFriends(listOfFriends);
         this.getDb().setTableName(TableNames.MESSAGES_RECENT);
+    }
+
+    public void makeCurrentUserAllMessageSeen() {
+        String sql = "Update " + TableNames.MESSAGE
+                + " SET IsSeen = 1 "
+                + " WHERE ReceiverUserId = " + getRecevingUser().UserID;
+        dbMessagesSaving.ExecuteUpdateQueries(sql);
     }
 //
 //    public int createNewSession() {
@@ -258,17 +348,25 @@ public class ChatingInterface extends JFrameInheritable {
         CancelBtn = new javax.swing.JButton();
         SendingTextBox = new javax.swing.JTextField();
         UsernameLabel = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        StatusLabel = new javax.swing.JLabel();
         SendBtn = new javax.swing.JButton();
-        AttachImageBtn = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         MessageDisplayTextArea = new javax.swing.JTextArea();
+        ProfilePic = new javax.swing.JLabel();
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         CancelBtn.setText("Close");
         CancelBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -278,6 +376,11 @@ public class ChatingInterface extends JFrameInheritable {
         });
 
         SendingTextBox.setToolTipText("Send message to your friend\n");
+        SendingTextBox.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MessageDisplayTextAreaMouseClicked(evt);
+            }
+        });
         SendingTextBox.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 SendingTextBoxKeyReleased(evt);
@@ -287,8 +390,8 @@ public class ChatingInterface extends JFrameInheritable {
         UsernameLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         UsernameLabel.setText("Friend : Username");
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        jLabel1.setText("Status");
+        StatusLabel.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        StatusLabel.setText("Status");
 
         SendBtn.setText("Send");
         SendBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -299,20 +402,16 @@ public class ChatingInterface extends JFrameInheritable {
             }
         });
 
-        AttachImageBtn.setIcon(new javax.swing.ImageIcon("E:\\Working\\GitHub\\Simple-Chat-System\\Emotions\\attachment.png")); // NOI18N
-        AttachImageBtn.setToolTipText("Attach image or file");
-        AttachImageBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        AttachImageBtn.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        AttachImageBtn.setIconTextGap(0);
-        AttachImageBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AttachImageBtnActionPerformed(evt);
-            }
-        });
-
         MessageDisplayTextArea.setColumns(20);
         MessageDisplayTextArea.setRows(5);
+        MessageDisplayTextArea.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                clikedOnTextEditors(evt);
+            }
+        });
         jScrollPane3.setViewportView(MessageDisplayTextArea);
+
+        ProfilePic.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED, new java.awt.Color(153, 153, 153), new java.awt.Color(153, 153, 153)));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -324,36 +423,38 @@ public class ChatingInterface extends JFrameInheritable {
                     .addComponent(jScrollPane3)
                     .addComponent(SendingTextBox, javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(AttachImageBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 404, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(CancelBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(SendBtn))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(ProfilePic, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(UsernameLabel)
-                            .addComponent(jLabel1))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(StatusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 159, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(UsernameLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(UsernameLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(StatusLabel))
+                    .addComponent(ProfilePic, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(SendingTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(AttachImageBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(CancelBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(SendBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(CancelBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(SendBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         UsernameLabel.getAccessibleContext().setAccessibleName("UsernameLabel");
@@ -368,7 +469,7 @@ public class ChatingInterface extends JFrameInheritable {
     private void SendingTextBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SendingTextBoxKeyReleased
         // TODO add your handling code here:
         if (evt.getKeyCode() == CommonData.ENTER_KEY) {
-
+            sendMessage(this.SendingTextBox.getText());
         }
     }//GEN-LAST:event_SendingTextBoxKeyReleased
 
@@ -376,19 +477,33 @@ public class ChatingInterface extends JFrameInheritable {
         // TODO add your handling code here:
     }//GEN-LAST:event_SendBtnActionPerformed
 
-    private void AttachImageBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AttachImageBtnActionPerformed
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+
+    }//GEN-LAST:event_formWindowActivated
+
+    private void MessageDisplayTextAreaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MessageDisplayTextAreaMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_AttachImageBtnActionPerformed
+
+    }//GEN-LAST:event_MessageDisplayTextAreaMouseClicked
+
+    private void clikedOnTextEditors(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clikedOnTextEditors
+        makeCurrentUserAllMessageSeen();
+    }//GEN-LAST:event_clikedOnTextEditors
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        stopThread();
+    }//GEN-LAST:event_formWindowClosing
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton AttachImageBtn;
     private javax.swing.JButton CancelBtn;
     private javax.swing.JTextArea MessageDisplayTextArea;
+    private javax.swing.JLabel ProfilePic;
     private javax.swing.JButton SendBtn;
     private javax.swing.JTextField SendingTextBox;
+    private javax.swing.JLabel StatusLabel;
     private javax.swing.JLabel UsernameLabel;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextArea jTextArea1;

@@ -46,6 +46,7 @@ public class ListOfFriends extends JFrameInheritable {
 //    private static ListOfFriends Form = new ListOfFriends();
 
     //<editor-fold defaultstate="collapsed" desc="Fields">
+    ArrayList<ChatingInterface> chattingMessageBoxList = new ArrayList<ChatingInterface>(50);
     private static final long serialVersionUID = 1L;
     private boolean _isAdmin;
     private UserTable _user; // load from previous form , startup
@@ -573,9 +574,53 @@ public class ListOfFriends extends JFrameInheritable {
     private void friendsDisplayListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_friendsDisplayListMouseClicked
         // TODO add your handling code here:
         if (evt.getClickCount() == 2) {
-
+            showChatInterface();
         }
     }//GEN-LAST:event_friendsDisplayListMouseClicked
+    public ToWhomAliasWhatTable getListBoxSelectedUser() {
+        int index = this.friendsDisplayList.getSelectedIndex();
+        if (index > -1) {
+            return friendListDisplayModel.get(index);
+        }
+
+        return null;
+    }
+
+    public UserTable getUserFromAliasTable(ToWhomAliasWhatTable alias) {
+        UserTable user2 = new UserTable();
+        user2.loadUserFromDb(alias.UserID);
+        if (user2.UserID > 0) {
+            return user2;
+        }
+        return null;
+    }
+
+    public void showChatInterface() {
+        int index = this.friendsDisplayList.getSelectedIndex();
+        if (index > -1) {
+            ToWhomAliasWhatTable alias = getListBoxSelectedUser();
+            UserTable receivingUser = getUserFromAliasTable(alias);
+
+            if (receivingUser != null) {
+                ChatingInterface chatMsg = getAnyChattingInterfaceAlreayExist(receivingUser.UserID);
+                if (receivingUser == null) {
+                    chatMsg = new ChatingInterface(_user, receivingUser, this);
+                    chattingMessageBoxList.add(chatMsg);
+                }
+                loadNewForm(chatMsg, true);
+            }
+        }
+    }
+
+    public ChatingInterface getAnyChattingInterfaceAlreayExist(int receiveingUserId) {
+        for (ChatingInterface item : chattingMessageBoxList) {
+            if (item.equals(receiveingUserId)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         takeOffline();

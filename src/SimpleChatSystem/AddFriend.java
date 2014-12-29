@@ -5,6 +5,7 @@
  */
 package SimpleChatSystem;
 
+import CurrentDb.CommonData;
 import CurrentDb.TableColumns.FriendRequest;
 import CurrentDb.TableNames;
 import CurrentDb.Tables.UserTable;
@@ -119,6 +120,11 @@ public class AddFriend extends JFrameInheritable {
                 quoteTextBoxActionPerformed(evt);
             }
         });
+        quoteTextBox.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                quoteTextBoxKeyReleased(evt);
+            }
+        });
 
         jButton1.setText("Cancel");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -198,6 +204,11 @@ public class AddFriend extends JFrameInheritable {
     }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        processSendingFriendRequest();
+
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    public void processSendingFriendRequest() {
         if (addFriendRequesToUserDb()) {
             this.EmailSendingLabel.setText("Sending...Email...");
             sendMailToUser();
@@ -208,8 +219,7 @@ public class AddFriend extends JFrameInheritable {
             this.getMessageBox().showError(this, "Sorry can't send request.");
 
         }
-
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
@@ -222,6 +232,12 @@ public class AddFriend extends JFrameInheritable {
     private void quoteTextBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quoteTextBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_quoteTextBoxActionPerformed
+
+    private void quoteTextBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_quoteTextBoxKeyReleased
+        if (evt.getKeyCode() == CommonData.ENTER_KEY) {
+            processSendingFriendRequest();
+        }
+    }//GEN-LAST:event_quoteTextBoxKeyReleased
 
     /**
      * @param args the command line arguments
