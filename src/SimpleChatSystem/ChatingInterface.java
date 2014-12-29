@@ -49,7 +49,7 @@ public class ChatingInterface extends JFrameInheritable {
     }
 
     boolean loadAllPreviousChat;
-
+    boolean firstTimeMsgLoads = true;
     long lastMsgPaintedId;
 
     ThreadRunner threadObject;
@@ -115,7 +115,7 @@ public class ChatingInterface extends JFrameInheritable {
                 try {
                     _chatMsg.loadAllConversations();
                     _chatMsg.paintMessagesOnDisplay();
-                    Thread.sleep(1000);
+                    Thread.sleep(4000);
 
                 } catch (InterruptedException ex) {
                     Logger.getLogger(ChatingInterface.class.getName()).log(Level.SEVERE, null, ex);
@@ -180,18 +180,18 @@ public class ChatingInterface extends JFrameInheritable {
 
     }
 
-    public void sendMailToUser(UserTable _sendingUser, String msg, UserTable _sendingFromUser) {
+    public void sendMailToUser(UserTable _receivingUser, String msg, UserTable _sendingFromUser) {
         String body = "";
-        body += "Hello " + _sendingUser.Name + ", <br><br>";
+        body += "Hello " + _receivingUser.Name + ", <br><br>";
         body += "How you doing? Your friend is sending you some text. <br>";
         body += "<br>";
-        body += "<h3>A short message from " + _sendingFromUser.Username + "</h3>";
+        body += "<h3>A short message from " + _sendingFromUser.Name + "</h3>";
         body += "<blockquote>" + msg + "</blockquote>";
         body += "<br><br>";
         body += "Thanks ,<br>";
-        body += "<strong>" + _sendingUser.Name + "</strong><br>";
-        body += "<a href='mailto:" + _sendingUser.Email + "'>" + _sendingFromUser.Email + "</strong><br>";
-        mailer.sendEmail(_sendingUser.Email, "A friend request is send by " + _sendingFromUser.Name, body);
+        body += "<strong>" + _sendingFromUser.Name + "</strong><br>";
+        body += "<a href='mailto:" + _sendingFromUser.Email + "'>" + _sendingFromUser.Email + "</strong><br>";
+        mailer.sendEmail(_sendingFromUser.Email, "A personal message from " + _sendingFromUser.Name, body);
     }
 
     public void sendMessage(String msg) {
@@ -256,9 +256,12 @@ public class ChatingInterface extends JFrameInheritable {
 //        this.getDb().setTableName(TableNames.MESSAGES_RECENT);
 //    }
     public void loadAllConversations() {
-        this.getDb().setTableName(TableNames.MESSAGES_RECENT);
-        this.getDb().readData(getMessageQuerySQL());
-        messages = this.getDb().getResultsAsORM(new MessageRecentTable());
+        if (getListOfFriends().isAnyNewMessage(getRecevingUser().UserID) || firstTimeMsgLoads) {
+            this.getDb().setTableName(TableNames.MESSAGES_RECENT);
+            this.getDb().readDataFullSQL(getMessageQuerySQL());
+            messages = this.getDb().getResultsAsORM(new MessageRecentTable());
+            firstTimeMsgLoads = false;
+        }
     }
 
     public void customInitalize() {
@@ -267,15 +270,15 @@ public class ChatingInterface extends JFrameInheritable {
         getRecevingUser().displayUser(UsernameLabel, StatusLabel, null, ProfilePic);
         threadObject = new ThreadRunner(this);
         thread = new Thread(threadObject);
+        thread.start();
     }
 
     /**
      * Creates new form ChatingInterface
      */
     public ChatingInterface(UserTable user, UserTable recevingUser, ListOfFriends listOfFriendForm) {
-        customInitalize();
-        this.sendingUser = user;
-        this.recevingUser = recevingUser;
+        setSendingUser(user);
+        setRecevingUser(recevingUser);
 //        receiverUserIDs = new ArrayList<>(10);
 //        receiverUserIDs.add(toWhomWantsToChatWithUserID);
 //        addUserToThisSession(this.sessionID, senderUserID);
@@ -283,14 +286,16 @@ public class ChatingInterface extends JFrameInheritable {
 //        for (Integer id : receiverUserIDs) {
 //            addUserToThisSession(this.sessionID, id);
 //        }
-        setListOfFriends(listOfFriends);
+        setListOfFriends(listOfFriendForm);
         this.getDb().setTableName(TableNames.MESSAGES_RECENT);
+        customInitalize();
+
     }
 
     public void makeCurrentUserAllMessageSeen() {
         String sql = "Update " + TableNames.MESSAGE
                 + " SET IsSeen = 1 "
-                + " WHERE ReceiverUserId = " + getRecevingUser().UserID;
+                + " WHERE ReceiverUserId = " + getSendingUser().UserID;
         dbMessagesSaving.ExecuteUpdateQueries(sql);
     }
 //
@@ -463,7 +468,9 @@ public class ChatingInterface extends JFrameInheritable {
     }// </editor-fold>//GEN-END:initComponents
 
     private void CancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelBtnActionPerformed
-        // TODO add your handling code here:
+        getListOfFriends().disconnectChattingInterface(this);
+        terminateCurrentForm(true);
+
     }//GEN-LAST:event_CancelBtnActionPerformed
 
     private void SendingTextBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SendingTextBoxKeyReleased
@@ -474,10 +481,11 @@ public class ChatingInterface extends JFrameInheritable {
     }//GEN-LAST:event_SendingTextBoxKeyReleased
 
     private void SendBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendBtnActionPerformed
-        // TODO add your handling code here:
+        sendMessage(this.SendingTextBox.getText());
     }//GEN-LAST:event_SendBtnActionPerformed
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        makeCurrentUserAllMessageSeen();
 
     }//GEN-LAST:event_formWindowActivated
 
@@ -493,6 +501,8 @@ public class ChatingInterface extends JFrameInheritable {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
         stopThread();
+        getListOfFriends().disconnectChattingInterface(this);
+        terminateCurrentForm(true);
     }//GEN-LAST:event_formWindowClosing
 
 

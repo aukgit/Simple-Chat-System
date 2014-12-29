@@ -58,6 +58,7 @@ public class ListOfFriends extends JFrameInheritable {
     private DatabaseQuery dbChatLists = new DatabaseQuery(TableNames.CHATLIST);
     private DatabaseQuery dbToWhom = new DatabaseQuery(TableNames.TO_WHOM_ALIAS_WHAT);
     private DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
+    private DatabaseQuery dbNewMsg = new DatabaseQuery("NewMessageView");
     private ToWhomAliasWhatTable chatListOfWhom = new ToWhomAliasWhatTable();
     private Picture pictureProcessor = new Picture();
     UserOnline online = new UserOnline();
@@ -574,11 +575,12 @@ public class ListOfFriends extends JFrameInheritable {
     private void friendsDisplayListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_friendsDisplayListMouseClicked
         // TODO add your handling code here:
         if (evt.getClickCount() == 2) {
-            showChatInterface();
+            int index = this.friendsDisplayList.getSelectedIndex();
+
+            showChatInterface(index);
         }
     }//GEN-LAST:event_friendsDisplayListMouseClicked
-    public ToWhomAliasWhatTable getListBoxSelectedUser() {
-        int index = this.friendsDisplayList.getSelectedIndex();
+    public ToWhomAliasWhatTable getListBoxSelectedUser(int index) {
         if (index > -1) {
             return friendListDisplayModel.get(index);
         }
@@ -595,21 +597,25 @@ public class ListOfFriends extends JFrameInheritable {
         return null;
     }
 
-    public void showChatInterface() {
-        int index = this.friendsDisplayList.getSelectedIndex();
+    public void showChatInterface(int index) {
         if (index > -1) {
-            ToWhomAliasWhatTable alias = getListBoxSelectedUser();
+            ToWhomAliasWhatTable alias = getListBoxSelectedUser(index);
             UserTable receivingUser = getUserFromAliasTable(alias);
 
             if (receivingUser != null) {
                 ChatingInterface chatMsg = getAnyChattingInterfaceAlreayExist(receivingUser.UserID);
-                if (receivingUser == null) {
+                if (chatMsg == null) {
                     chatMsg = new ChatingInterface(_user, receivingUser, this);
                     chattingMessageBoxList.add(chatMsg);
                 }
                 loadNewForm(chatMsg, true);
+
             }
         }
+    }
+
+    public boolean isAnyNewMessage(int recevingUserId) {
+        return dbNewMsg.isExist("ReceiverUserId", recevingUserId + "");
     }
 
     public ChatingInterface getAnyChattingInterfaceAlreayExist(int receiveingUserId) {
@@ -619,6 +625,23 @@ public class ListOfFriends extends JFrameInheritable {
             }
         }
         return null;
+    }
+
+    public ChatingInterface getAnyChattingInterfaceAlreayExist(ChatingInterface chatMsg) {
+        int recevingUserid = chatMsg.getRecevingUser().UserID;
+        for (ChatingInterface item : chattingMessageBoxList) {
+            if (item.equals(recevingUserid)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    public void disconnectChattingInterface(ChatingInterface chatMsg) {
+        ChatingInterface found = getAnyChattingInterfaceAlreayExist(chatMsg);
+        if (found != null) {
+            chattingMessageBoxList.remove(found);
+        }
     }
 
 
