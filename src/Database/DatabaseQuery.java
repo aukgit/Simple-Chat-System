@@ -17,9 +17,6 @@ package Database;
 
 //<editor-fold defaultstate="collapsed" desc="imports">
 import Common.Codes;
-import ConsolePackage.Console;
-import CurrentDb.TableNames;
-import CurrentDb.Tables.UserTable;
 import Database.Attributes.DbAttribute;
 import Database.Attributes.*;
 import Database.Components.DbInitalizer;

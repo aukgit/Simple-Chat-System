@@ -6,15 +6,10 @@
 package SimpleChatSystem;
 
 import CurrentDb.CommonData;
-import CurrentDb.TableColumns.ChatSession;
-import CurrentDb.TableColumns.ChatSessionRelatedUsers;
 import CurrentDb.TableColumns.Message;
-import CurrentDb.TableColumns.ToWhomAliasWhat;
 import CurrentDb.TableNames;
 import CurrentDb.Tables.MessageRecentTable;
-import CurrentDb.Tables.ToWhomAliasWhatTable;
 import CurrentDb.Tables.UserTable;
-import Database.Components.IQueryType;
 import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
 import Mailer.OwnGmail;
@@ -29,11 +24,11 @@ import java.util.logging.Logger;
  * @author Alim
  */
 public class ChatingInterface extends JFrameInheritable {
-
+    
     private static final long serialVersionUID = 1L;
-
+    
     String finalSQL;
-
+    
     private UserTable recevingUser;
     private UserTable sendingUser;
     OwnGmail mailer = new OwnGmail();
@@ -44,23 +39,23 @@ public class ChatingInterface extends JFrameInheritable {
     private ListOfFriends listOfFriends;
     private String countSQL;
     int previousCountofMessages = -1;
-
+    
     public boolean equals(int recevingUserId) {
         if (recevingUser.UserID == recevingUserId) {
             return true;
         }
         return false;
     }
-
+    
     boolean loadAllPreviousChat;
     boolean firstTimeMsgLoads = true;
     long lastMsgPaintedId;
-
+    
     int messageDisplayIndex = -1;
-
+    
     ThreadRunner threadObject;
     Thread thread;
-
+    
     DatabaseQuery dbMessagesSaving = new DatabaseQuery(TableNames.MESSAGE);
 
     /**
@@ -104,31 +99,31 @@ public class ChatingInterface extends JFrameInheritable {
     public void setListOfFriends(ListOfFriends listOfFriends) {
         this.listOfFriends = listOfFriends;
     }
-
+    
     class ThreadRunner implements Runnable {
-
+        
         DatabaseQuery db;
         public ChatingInterface _chatMsg;
         public boolean running = true;
-
+        
         ThreadRunner(ChatingInterface chatMsg) {
             db = new DatabaseQuery(TableNames.MESSAGE);
             this._chatMsg = chatMsg;
         }
-
+        
         public void run() {
             while (running) {
                 try {
                     _chatMsg.loadAllConversations();
                     Thread.sleep(5000);
-
+                    
                 } catch (InterruptedException ex) {
                     Logger.getLogger(ChatingInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
+                
             }
         }
-
+        
     }
 //
 
@@ -136,41 +131,41 @@ public class ChatingInterface extends JFrameInheritable {
         threadObject.running = false;
         thread.stop();
     }
-
+    
     public String getMessageQuerySQL() {
         if (finalSQL == null) {
             String condition1 = Message.SendFromUserID + "=" + getSendingUser().UserID;
             String condition2 = Message.ReceiverUserId + "=" + getRecevingUser().UserID;
-
+            
             String condition3 = Message.SendFromUserID + "=" + getRecevingUser().UserID;
             String condition4 = Message.ReceiverUserId + "=" + getSendingUser().UserID;
-
+            
             String combinedCondition1 = "(" + condition1 + " AND " + condition2 + ")";
             String combinedCondition2 = "(" + condition3 + " AND " + condition4 + ")";
             String finalCondition = combinedCondition1 + " OR " + combinedCondition2;
-
+            
             finalSQL = "SELECT * FROM messagerecent WHERE " + finalCondition;
         }
         return finalSQL;
     }
-
+    
     public String getMessageQuerySQLForCount() {
         if (countSQL == null) {
             String condition1 = Message.SendFromUserID + "=" + getSendingUser().UserID;
             String condition2 = Message.ReceiverUserId + "=" + getRecevingUser().UserID;
-
+            
             String condition3 = Message.SendFromUserID + "=" + getRecevingUser().UserID;
             String condition4 = Message.ReceiverUserId + "=" + getSendingUser().UserID;
-
+            
             String combinedCondition1 = "(" + condition1 + " AND " + condition2 + ")";
             String combinedCondition2 = "(" + condition3 + " AND " + condition4 + ")";
             String finalCondition = combinedCondition1 + " OR " + combinedCondition2;
-
+            
             countSQL = "SELECT COUNT(*) as CountX FROM message WHERE " + finalCondition;
         }
         return countSQL;
     }
-
+    
     public void paintMessagesOnDisplay() {
         if (messages == null || messages.size() == 0) {
             return;
@@ -178,7 +173,7 @@ public class ChatingInterface extends JFrameInheritable {
         if (lastMsgPaintedId == 0) {
             for (int i = messages.size() - 1; i >= 0; i--) {
                 MessageRecentTable msg = messages.get(i);
-
+                
                 if (i == 0) {
                     lastMsgPaintedId = msg.MessageID;
                 }
@@ -187,7 +182,7 @@ public class ChatingInterface extends JFrameInheritable {
                     paintForOthers(msg);
                 }
             }
-
+            
         } else {
             for (MessageRecentTable msg : messages) {
                 if (lastMsgPaintedId == msg.MessageID) {
@@ -199,10 +194,10 @@ public class ChatingInterface extends JFrameInheritable {
                 }
             }
         }
-
+        
     }
-
-    public void sendMailToUser(UserTable _receivingUser, String msg, UserTable _sendingFromUser) {
+    
+    public void sendMailToUser(UserTable _sendingFromUser, String msg, UserTable _receivingUser) {
         String body = "";
         body += "Hello " + _receivingUser.Name + ", <br><br>";
         body += "How you doing? Your friend is sending you some text. <br>";
@@ -215,37 +210,37 @@ public class ChatingInterface extends JFrameInheritable {
         body += "<a href='mailto:" + _sendingFromUser.Email + "'>" + _sendingFromUser.Email + "</strong><br>";
         mailer.sendEmail(_sendingFromUser.Email, "A personal message from " + _sendingFromUser.Name, body);
     }
-
+    
     public void sendMessage(String msg) {
         int row = 5;
         String columns[] = new String[row];
         String values[] = new String[row];
-
+        
         columns[--row] = Message.Message;
         values[row] = msg;
-
+        
         columns[--row] = Message.SendFromUserID;
         values[row] = getSendingUser().UserID + "";
-
+        
         columns[--row] = Message.ReceiverUserId;
         values[row] = getRecevingUser().UserID + "";
-
+        
         columns[--row] = Message.IsFileExit;
         values[row] = "0";
-
+        
         columns[--row] = Message.IsSeen;
         values[row] = "0";
-
+        
         dbMessagesSaving.insertData(columns, values);
-
+        
         if (getRecevingUser().IsOnline == false) {
             this.SendingEmailLabel.setText("Sending email to the user...");
             Thread thread2 = new Thread(new Runnable() {
-
+                
                 @Override
                 public void run() {
                     sendMailToUser(getSendingUser(), msg, getRecevingUser());
-
+                    
                 }
             });
             thread2.start();
@@ -253,7 +248,7 @@ public class ChatingInterface extends JFrameInheritable {
         getRecevingUser().loadUserFromDb(getRecevingUser().UserID);
         this.SendingTextBox.setText("");
     }
-
+    
     public boolean paintForOwn(MessageRecentTable msg) {
         if (msg.SendFromUserID == getSendingUser().UserID) {
             String put = "You wrote: " + msg.Message + "\n";
@@ -262,7 +257,7 @@ public class ChatingInterface extends JFrameInheritable {
         }
         return false;
     }
-
+    
     public void paintForOthers(MessageRecentTable msg) {
         if (msg.SendFromUserID != getSendingUser().UserID) {
             String getAias = getRecevingUser().Name;
@@ -290,7 +285,7 @@ public class ChatingInterface extends JFrameInheritable {
 //    }
     public void loadAllConversations() {
         String countSQL2 = getMessageQuerySQLForCount();
-
+        
         this.getDb().setTableName(TableNames.MESSAGES_RECENT);
         this.getDb().readDataFullSQL(countSQL2);
         int countVal = 0;
@@ -303,7 +298,7 @@ public class ChatingInterface extends JFrameInheritable {
         }
         if (countVal != previousCountofMessages) {
             String sql = getMessageQuerySQL();
-
+            
             this.getDb().readDataFullSQL(sql);
             messages = this.getDb().getResultsAsORM(new MessageRecentTable());
             previousCountofMessages = messages.size();
@@ -312,7 +307,7 @@ public class ChatingInterface extends JFrameInheritable {
 //            firstTimeMsgLoads = false;
 //        }
     }
-
+    
     public void customInitalize() {
         initComponents();
         getRecevingUser().loadProfilePicFromServer();
@@ -338,9 +333,9 @@ public class ChatingInterface extends JFrameInheritable {
         setListOfFriends(listOfFriendForm);
         this.getDb().setTableName(TableNames.MESSAGES_RECENT);
         customInitalize();
-
+        this.setTitle(sendingUser.Name + " is chatting with '" + recevingUser.Name + "'");
     }
-
+    
     public void makeCurrentUserAllMessageSeen() {
         String sql = "Update " + TableNames.MESSAGE
                 + " SET IsSeen = 1 "
@@ -539,7 +534,7 @@ public class ChatingInterface extends JFrameInheritable {
                 String msg = messages.get(messageDisplayIndex).Message;
                 this.SendingTextBox.setText(msg);
                 messageDisplayIndex++;
-
+                
             }
         } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
             if (messages != null && messages.size() > 0 && messageDisplayIndex >= 1) {
@@ -549,11 +544,11 @@ public class ChatingInterface extends JFrameInheritable {
                 String msg = messages.get(messageDisplayIndex).Message;
                 this.SendingTextBox.setText(msg);
                 messageDisplayIndex--;
-
+                
             }
         }
     }//GEN-LAST:event_SendingTextBoxKeyReleased
-
+    
     public void finalSendMessage() {
         sendMessage(this.SendingTextBox.getText());
     }
