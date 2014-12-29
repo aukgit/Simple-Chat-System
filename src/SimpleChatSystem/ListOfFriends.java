@@ -65,7 +65,7 @@ public class ListOfFriends extends JFrameInheritable {
     UserOnline online = new UserOnline();
     String previousSearch = "";
 
-    private int defaultOpenUserNumber = 4;
+    private int defaultOpenUserNumber = 0;
 
     @SuppressWarnings("unchecked")
     DefaultListModel<ToWhomAliasWhatTable> friendListDisplayModel = new DefaultListModel();

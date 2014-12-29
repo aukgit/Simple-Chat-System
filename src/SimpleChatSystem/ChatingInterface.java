@@ -18,6 +18,7 @@ import Database.Components.IQueryType;
 import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
 import Mailer.OwnGmail;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -54,6 +55,8 @@ public class ChatingInterface extends JFrameInheritable {
     boolean loadAllPreviousChat;
     boolean firstTimeMsgLoads = true;
     long lastMsgPaintedId;
+
+    int messageDisplayIndex = -1;
 
     ThreadRunner threadObject;
     Thread thread;
@@ -494,7 +497,7 @@ public class ChatingInterface extends JFrameInheritable {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(UsernameLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(StatusLabel))
@@ -525,8 +528,29 @@ public class ChatingInterface extends JFrameInheritable {
 
     private void SendingTextBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SendingTextBoxKeyReleased
         // TODO add your handling code here:
+
         if (evt.getKeyCode() == CommonData.ENTER_KEY) {
             finalSendMessage();
+        } else if (evt.getKeyCode() == KeyEvent.VK_UP) {
+            if (messages != null && messages.size() > messageDisplayIndex) {
+                if (messageDisplayIndex == -1) {
+                    messageDisplayIndex = 0;
+                }
+                String msg = messages.get(messageDisplayIndex).Message;
+                this.SendingTextBox.setText(msg);
+                messageDisplayIndex++;
+
+            }
+        } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            if (messages != null && messages.size() > 0 && messageDisplayIndex >= 1) {
+                if (messageDisplayIndex == -1) {
+                    messageDisplayIndex = 0;
+                }
+                String msg = messages.get(messageDisplayIndex).Message;
+                this.SendingTextBox.setText(msg);
+                messageDisplayIndex--;
+
+            }
         }
     }//GEN-LAST:event_SendingTextBoxKeyReleased
 
