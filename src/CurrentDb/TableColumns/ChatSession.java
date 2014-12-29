@@ -10,16 +10,12 @@ package CurrentDb.TableColumns;
  *
  * @author Alim
  */
-public interface Message {
+public interface ChatSession {
 
-    public String MessageID = "MessageID";
-    public String SendFromUserID = "SendFromUserID";
     public String ChatSessionID = "ChatSessionID";
-
-    public String Message = "Message";
-//    public String Message2 = "Message2";
-    public String IsFileExit = "IsFileExit";
-
-
+    public String Timed = "Timed";
+    public String IsActive = "IsActive";
+    public String SessionName = "SessionName";
+    public String IsSingleUser = "IsSingleUser";
 
 }

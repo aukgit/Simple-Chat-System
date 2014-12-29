@@ -6,6 +6,8 @@
 package SimpleChatSystem;
 
 import CurrentDb.CommonData;
+import CurrentDb.TableColumns.ChatSession;
+import CurrentDb.TableColumns.ChatSessionRelatedUsers;
 import CurrentDb.TableColumns.ToWhomAliasWhat;
 import CurrentDb.TableNames;
 import CurrentDb.Tables.MessageRecentTable;
@@ -38,7 +40,7 @@ public class ChatingInterface extends JFrameInheritable {
 
     boolean loadAllPreviousChat;
 
-    int lastMsgPaintedId;
+    long lastMsgPaintedId;
 
     class ThreadRunner implements Runnable {
 
@@ -55,6 +57,7 @@ public class ChatingInterface extends JFrameInheritable {
                 try {
                     Thread.sleep(1500);
                     _chatMsg.loadLastTwentyConversations();
+                    _chatMsg.paintMessagesOnDisplay();
                 } catch (InterruptedException ex) {
                     Logger.getLogger(ChatingInterface.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -64,18 +67,49 @@ public class ChatingInterface extends JFrameInheritable {
 
     }
 
-    public void paitDisplay() {
+    public void paintMessagesOnDisplay() {
+        if (messages == null || messages.size() == 0) {
+            return;
+        }
+        if (lastMsgPaintedId == 0) {
+            for (int i = messages.size() - 1; i >= 0; i--) {
+                MessageRecentTable msg = messages.get(i);
 
-        for (MessageRecentTable msg : messages) {
-            if (lastMsgPaintedId == 0) {
+                if (lastMsgPaintedId == 0) {
+                    lastMsgPaintedId = msg.MessageID;
+                }
+                // printing in reverse becuase those are in recent order
+                if (paintForOwn(msg) == false) {
+                    paintForOthers(msg);
+                }
 
             }
+
+        } else {
+            for (MessageRecentTable msg : messages) {
+                if (lastMsgPaintedId == msg.MessageID) {
+                    break;
+                }
+                if (paintForOwn(msg) == false) {
+                    paintForOthers(msg);
+                }
+            }
         }
+
     }
 
-    public void paidForOwn(MessageRecentTable msg) {
+    public boolean paintForOwn(MessageRecentTable msg) {
         if (msg.SendFromUserID == this.senderUserID) {
-            this.MessageDisplayEditorPane.
+            this.MessageDisplayTextArea.append("You wrote: " + msg.Message);
+            return true;
+        }
+        return false;
+    }
+
+    public void paintForOthers(MessageRecentTable msg) {
+        if (msg.SendFromUserID != this.senderUserID) {
+            String getAias = getAlias(msg.SendFromUserID);
+            this.MessageDisplayTextArea.append(getAias + " wrote: " + msg.Message);
         }
     }
 
@@ -136,8 +170,59 @@ public class ChatingInterface extends JFrameInheritable {
     /**
      * Creates new form ChatingInterface
      */
-    public ChatingInterface() {
+    public ChatingInterface(UserTable user, int toWhomWantsToChatWithUserID) {
         customInitalize();
+        this.sendingUser = user;
+        this.senderUserID = user.UserID;
+        receiverUserIDs = new ArrayList<>(10);
+        receiverUserIDs.add(toWhomWantsToChatWithUserID);
+        addUserToThisSession(this.sessionID, senderUserID);
+        createNewSession();
+        for (Integer id : receiverUserIDs) {
+            addUserToThisSession(this.sessionID, id);
+        }
+        this.getDb().setTableName(TableNames.MESSAGES_RECENT);
+    }
+
+    public int createNewSession() {
+        int row = 3;
+        this.getDb().setTableName(TableNames.CHATSESSION);
+        String columns[] = new String[row];
+        String values[] = new String[row];
+
+        columns[--row] = ChatSession.IsActive;
+        values[row] = "1";
+
+        columns[--row] = ChatSession.IsSingleUser;
+        values[row] = "1";
+
+        columns[--row] = ChatSession.Timed;
+        values[row] = this.getDb().getCurrentInDbFormat();
+
+        this.getDb().insertData(columns, values);
+
+        this.getDb().setTableName("LastChatSessionID");
+        this.getDb().readData();
+        this.sessionID = Integer.parseInt(this.getDb().getValue(1, "ID"));
+
+        this.getDb().setTableName(TableNames.MESSAGES_RECENT);
+        return this.sessionID;
+    }
+
+    public void addUserToThisSession(int sessionId, int userId) {
+        int row = 2;
+        this.getDb().setTableName(TableNames.CHAT_SESSION_RELATED_USERS);
+        String columns[] = new String[row];
+        String values[] = new String[row];
+
+        columns[--row] = ChatSessionRelatedUsers.ChatSessionID;
+        values[row] = this.sessionID + "";
+
+        columns[--row] = ChatSessionRelatedUsers.UserID;
+        values[row] = userId + "";
+
+        this.getDb().insertData(columns, values);
+
     }
 
     /**
@@ -151,24 +236,20 @@ public class ChatingInterface extends JFrameInheritable {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        MessageDisplayEditorPane = new javax.swing.JEditorPane();
         CancelBtn = new javax.swing.JButton();
         SendingTextBox = new javax.swing.JTextField();
         UsernameLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         SendBtn = new javax.swing.JButton();
         AttachImageBtn = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        MessageDisplayTextArea = new javax.swing.JTextArea();
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        MessageDisplayEditorPane.setEditable(false);
-        MessageDisplayEditorPane.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jScrollPane2.setViewportView(MessageDisplayEditorPane);
 
         CancelBtn.setText("Close");
         CancelBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -210,26 +291,30 @@ public class ChatingInterface extends JFrameInheritable {
             }
         });
 
+        MessageDisplayTextArea.setColumns(20);
+        MessageDisplayTextArea.setRows(5);
+        jScrollPane3.setViewportView(MessageDisplayTextArea);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
-                    .addComponent(SendingTextBox)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(UsernameLabel)
-                            .addComponent(jLabel1))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane3)
+                    .addComponent(SendingTextBox, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(AttachImageBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 404, Short.MAX_VALUE)
                         .addComponent(CancelBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(SendBtn)))
+                        .addComponent(SendBtn))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(UsernameLabel)
+                            .addComponent(jLabel1))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -239,8 +324,8 @@ public class ChatingInterface extends JFrameInheritable {
                 .addComponent(UsernameLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
-                .addGap(4, 4, 4)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(SendingTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -264,11 +349,7 @@ public class ChatingInterface extends JFrameInheritable {
     private void SendingTextBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SendingTextBoxKeyReleased
         // TODO add your handling code here:
         if (evt.getKeyCode() == CommonData.ENTER_KEY) {
-            try {
-                this.MessageDisplayEditorPane.setPage(this.SendingTextBox.getText());
-            } catch (IOException ex) {
-                Logger.getLogger(ChatingInterface.class.getName()).log(Level.SEVERE, null, ex);
-            }
+
         }
     }//GEN-LAST:event_SendingTextBoxKeyReleased
 
@@ -280,51 +361,18 @@ public class ChatingInterface extends JFrameInheritable {
         // TODO add your handling code here:
     }//GEN-LAST:event_AttachImageBtnActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ChatingInterface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ChatingInterface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ChatingInterface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ChatingInterface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ChatingInterface().setVisible(true);
-            }
-        });
-    }
+  
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AttachImageBtn;
     private javax.swing.JButton CancelBtn;
-    private javax.swing.JEditorPane MessageDisplayEditorPane;
+    private javax.swing.JTextArea MessageDisplayTextArea;
     private javax.swing.JButton SendBtn;
     private javax.swing.JTextField SendingTextBox;
     private javax.swing.JLabel UsernameLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
 

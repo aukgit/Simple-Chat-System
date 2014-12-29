@@ -16,9 +16,9 @@ public class MessageTable extends DatabaseTableClass {
 
     public int SendFromUserID;
     public int ChatSessionID;
-    public String Message1;
-
-    public String Message2;
+    public String Message;
+//
+//    public String Message2;
     public boolean IsFileExit;
 
 

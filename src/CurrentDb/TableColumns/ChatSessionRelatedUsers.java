@@ -10,16 +10,11 @@ package CurrentDb.TableColumns;
  *
  * @author Alim
  */
-public interface Message {
+public interface ChatSessionRelatedUsers {
 
-    public String MessageID = "MessageID";
-    public String SendFromUserID = "SendFromUserID";
+    public String ChatSessionRelatedUserID = "ChatSessionRelatedUserID";
     public String ChatSessionID = "ChatSessionID";
-
-    public String Message = "Message";
-//    public String Message2 = "Message2";
-    public String IsFileExit = "IsFileExit";
-
+    public String UserID = "UserID";
 
 
 }
