@@ -28,139 +28,137 @@ public class ChatingInterface extends JFrameInheritable {
 
     private static final long serialVersionUID = 1L;
 
-    boolean newChatSession;
-    int sessionID;
-    int senderUserID;
-    boolean isSingleUser;
+    UserTable recevingUser;
+    UserTable sendingUser;
+
 //    ArrayList<Integer> receiverUserIDs;
 //    ArrayList<ToWhomAliasWhatTable> alias;
     ArrayList<MessageRecentTable> messages;
-    UserTable sendingUser;
 
     boolean loadAllPreviousChat;
 
     long lastMsgPaintedId;
 
-    class ThreadRunner implements Runnable {
-
-        DatabaseQuery db;
-        public ChatingInterface _chatMsg;
-
-        ThreadRunner(ChatingInterface chatMsg) {
-            db = new DatabaseQuery(TableNames.MESSAGE);
-            this._chatMsg = chatMsg;
-        }
-
-        public void run() {
-            while (true) {
-                try {
-                    Thread.sleep(1500);
-                    _chatMsg.loadLastTwentyConversations();
-                    _chatMsg.paintMessagesOnDisplay();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ChatingInterface.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-            }
-        }
-
-    }
-
-    public void paintMessagesOnDisplay() {
-        if (messages == null || messages.size() == 0) {
-            return;
-        }
-        if (lastMsgPaintedId == 0) {
-            for (int i = messages.size() - 1; i >= 0; i--) {
-                MessageRecentTable msg = messages.get(i);
-
-                if (lastMsgPaintedId == 0) {
-                    lastMsgPaintedId = msg.MessageID;
-                }
-                // printing in reverse becuase those are in recent order
-                if (paintForOwn(msg) == false) {
-                    paintForOthers(msg);
-                }
-
-            }
-
-        } else {
-            for (MessageRecentTable msg : messages) {
-                if (lastMsgPaintedId == msg.MessageID) {
-                    break;
-                }
-                if (paintForOwn(msg) == false) {
-                    paintForOthers(msg);
-                }
-            }
-        }
-
-    }
-
-    public boolean paintForOwn(MessageRecentTable msg) {
-        if (msg.SendFromUserID == this.senderUserID) {
-            this.MessageDisplayTextArea.append("You wrote: " + msg.Message);
-            return true;
-        }
-        return false;
-    }
-
-    public void paintForOthers(MessageRecentTable msg) {
-        if (msg.SendFromUserID != this.senderUserID) {
-            String getAias = getAlias(msg.SendFromUserID);
-            this.MessageDisplayTextArea.append(getAias + " wrote: " + msg.Message);
-        }
-    }
-
-    public String getAlias(int userID) {
-        for (ToWhomAliasWhatTable aAlias : alias) {
-            if (aAlias.UserID == userID) {
-                return aAlias.AliasAs;
-            }
-        }
-        return null;
-    }
-
-    public void loadReceivers(int sessionId) {
-        this.getDb().setTableName(TableNames.CHAT_SESSION_RELATED_USERS);
-        this.getDb().readData("ChatSessionID", sessionId + "");
-
-        receiverUserIDs = this.getDb().getSingleColumnValuesInt(null);
-        if (receiverUserIDs.size() == 1) {
-            isSingleUser = true;
-        }
-        this.getDb().setTableName(TableNames.MESSAGES_RECENT);
-    }
-
-    public void loadAlias() {
-        this.getDb().setTableName(TableNames.TO_WHOM_ALIAS_WHAT);
-
-        String inQuery = this.getDb().getStringJoined(receiverUserIDs, ";", null, null);
-        this.getDb().setSpecialTypes_(false, IQueryType.IN_QUERY);
-        this.getDb().readData(ToWhomAliasWhat.UserID, inQuery);
-        alias = this.getDb().getResultsAsORM(new ToWhomAliasWhatTable());
-
-        this.getDb().setTableName(TableNames.MESSAGES_RECENT);
-
-    }
-
-    public void loadAllConversations() {
-        loadConversations(sessionID, -1);
-    }
-
-    public void loadLastTwentyConversations() {
-        loadConversations(this.sessionID, 20);
-    }
-
-    public void loadConversations(int sessionId, int limit) {
-        if (limit > 0) {
-            this.getDb().setTableName(TableNames.MESSAGES_RECENT);
-            this.getDb().setLimitsOnQuery(0, limit);
-        }
-
-        this.getDb().readData("ChatSessionID", sessionId + "");
-        messages = this.getDb().getResultsAsORM(new MessageRecentTable());
-    }
+//    class ThreadRunner implements Runnable {
+//
+//        DatabaseQuery db;
+//        public ChatingInterface _chatMsg;
+//
+//        ThreadRunner(ChatingInterface chatMsg) {
+//            db = new DatabaseQuery(TableNames.MESSAGE);
+//            this._chatMsg = chatMsg;
+//        }
+//
+//        public void run() {
+//            while (true) {
+//                try {
+//                    Thread.sleep(1500);
+//                    _chatMsg.loadLastTwentyConversations();
+//                    _chatMsg.paintMessagesOnDisplay();
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(ChatingInterface.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//
+//            }
+//        }
+//
+//    }
+//
+//    public void paintMessagesOnDisplay() {
+//        if (messages == null || messages.size() == 0) {
+//            return;
+//        }
+//        if (lastMsgPaintedId == 0) {
+//            for (int i = messages.size() - 1; i >= 0; i--) {
+//                MessageRecentTable msg = messages.get(i);
+//
+//                if (lastMsgPaintedId == 0) {
+//                    lastMsgPaintedId = msg.MessageID;
+//                }
+//                // printing in reverse becuase those are in recent order
+//                if (paintForOwn(msg) == false) {
+//                    paintForOthers(msg);
+//                }
+//
+//            }
+//
+//        } else {
+//            for (MessageRecentTable msg : messages) {
+//                if (lastMsgPaintedId == msg.MessageID) {
+//                    break;
+//                }
+//                if (paintForOwn(msg) == false) {
+//                    paintForOthers(msg);
+//                }
+//            }
+//        }
+//
+//    }
+//
+//    public boolean paintForOwn(MessageRecentTable msg) {
+//        if (msg.SendFromUserID == this.senderUserID) {
+//            this.MessageDisplayTextArea.append("You wrote: " + msg.Message);
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    public void paintForOthers(MessageRecentTable msg) {
+//        if (msg.SendFromUserID != this.senderUserID) {
+//            String getAias = getAlias(msg.SendFromUserID);
+//            this.MessageDisplayTextArea.append(getAias + " wrote: " + msg.Message);
+//        }
+//    }
+//
+//    public String getAlias(int userID) {
+//        for (ToWhomAliasWhatTable aAlias : alias) {
+//            if (aAlias.UserID == userID) {
+//                return aAlias.AliasAs;
+//            }
+//        }
+//        return null;
+//    }
+//
+//    public void loadReceivers(int sessionId) {
+//        this.getDb().setTableName(TableNames.CHAT_SESSION_RELATED_USERS);
+//        this.getDb().readData("ChatSessionID", sessionId + "");
+////
+////        receiverUserIDs = this.getDb().getSingleColumnValuesInt(null);
+////        if (receiverUserIDs.size() == 1) {
+////            isSingleUser = true;
+////        }
+//        this.getDb().setTableName(TableNames.MESSAGES_RECENT);
+//    }
+//
+//    public void loadAlias() {
+//        this.getDb().setTableName(TableNames.TO_WHOM_ALIAS_WHAT);
+//
+//        String inQuery = this.getDb().getStringJoined(receiverUserIDs, ";", null, null);
+//        this.getDb().setSpecialTypes_(false, IQueryType.IN_QUERY);
+//        this.getDb().readData(ToWhomAliasWhat.UserID, inQuery);
+//        alias = this.getDb().getResultsAsORM(new ToWhomAliasWhatTable());
+//
+//        this.getDb().setTableName(TableNames.MESSAGES_RECENT);
+//
+//    }
+//
+//    public void loadAllConversations() {
+//        loadConversations(sessionID, -1);
+//    }
+//
+//    public void loadLastTwentyConversations() {
+//        loadConversations(this.sessionID, 20);
+//    }
+//
+//    public void loadConversations(int sessionId, int limit) {
+//        if (limit > 0) {
+//            this.getDb().setTableName(TableNames.MESSAGES_RECENT);
+//            this.getDb().setLimitsOnQuery(0, limit);
+//        }
+//
+//        this.getDb().readData("ChatSessionID", sessionId + "");
+//        messages = this.getDb().getResultsAsORM(new MessageRecentTable());
+//    }
 
     public void customInitalize() {
         initComponents();
@@ -169,10 +167,10 @@ public class ChatingInterface extends JFrameInheritable {
     /**
      * Creates new form ChatingInterface
      */
-    public ChatingInterface(UserTable user, int toWhomWantsToChatWithUserID) {
+    public ChatingInterface(UserTable user, UserTable recevingUser) {
         customInitalize();
         this.sendingUser = user;
-        this.senderUserID = user.UserID;
+        recevingUser = recevingUser;
 //        receiverUserIDs = new ArrayList<>(10);
 //        receiverUserIDs.add(toWhomWantsToChatWithUserID);
 //        addUserToThisSession(this.sessionID, senderUserID);
@@ -182,47 +180,47 @@ public class ChatingInterface extends JFrameInheritable {
 //        }
         this.getDb().setTableName(TableNames.MESSAGES_RECENT);
     }
+//
+//    public int createNewSession() {
+//        int row = 3;
+//        this.getDb().setTableName(TableNames.CHATSESSION);
+//        String columns[] = new String[row];
+//        String values[] = new String[row];
+//
+//        columns[--row] = ChatSession.IsActive;
+//        values[row] = "1";
+//
+//        columns[--row] = ChatSession.IsSingleUser;
+//        values[row] = "1";
+//
+//        columns[--row] = ChatSession.Timed;
+//        values[row] = this.getDb().getCurrentInDbFormat();
+//
+//        this.getDb().insertData(columns, values);
+//
+//        this.getDb().setTableName("LastChatSessionID");
+//        this.getDb().readData();
+//        this.sessionID = Integer.parseInt(this.getDb().getValue(1, "ID"));
+//
+//        this.getDb().setTableName(TableNames.MESSAGES_RECENT);
+//        return this.sessionID;
+//    }
 
-    public int createNewSession() {
-        int row = 3;
-        this.getDb().setTableName(TableNames.CHATSESSION);
-        String columns[] = new String[row];
-        String values[] = new String[row];
-
-        columns[--row] = ChatSession.IsActive;
-        values[row] = "1";
-
-        columns[--row] = ChatSession.IsSingleUser;
-        values[row] = "1";
-
-        columns[--row] = ChatSession.Timed;
-        values[row] = this.getDb().getCurrentInDbFormat();
-
-        this.getDb().insertData(columns, values);
-
-        this.getDb().setTableName("LastChatSessionID");
-        this.getDb().readData();
-        this.sessionID = Integer.parseInt(this.getDb().getValue(1, "ID"));
-
-        this.getDb().setTableName(TableNames.MESSAGES_RECENT);
-        return this.sessionID;
-    }
-
-    public void addUserToThisSession(int sessionId, int userId) {
-        int row = 2;
-        this.getDb().setTableName(TableNames.CHAT_SESSION_RELATED_USERS);
-        String columns[] = new String[row];
-        String values[] = new String[row];
-
-        columns[--row] = ChatSessionRelatedUsers.ChatSessionID;
-        values[row] = this.sessionID + "";
-
-        columns[--row] = ChatSessionRelatedUsers.UserID;
-        values[row] = userId + "";
-
-        this.getDb().insertData(columns, values);
-
-    }
+//    public void addUserToThisSession(int sessionId, int userId) {
+//        int row = 2;
+//        this.getDb().setTableName(TableNames.CHAT_SESSION_RELATED_USERS);
+//        String columns[] = new String[row];
+//        String values[] = new String[row];
+//
+//        columns[--row] = ChatSessionRelatedUsers.ChatSessionID;
+//        values[row] = this.sessionID + "";
+//
+//        columns[--row] = ChatSessionRelatedUsers.UserID;
+//        values[row] = userId + "";
+//
+//        this.getDb().insertData(columns, values);
+//
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -360,7 +358,6 @@ public class ChatingInterface extends JFrameInheritable {
         // TODO add your handling code here:
     }//GEN-LAST:event_AttachImageBtnActionPerformed
 
-  
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AttachImageBtn;

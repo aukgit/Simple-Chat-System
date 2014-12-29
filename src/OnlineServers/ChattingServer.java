@@ -7,6 +7,7 @@ package OnlineServers;
 
 import OnlineServers.Inheritable.GeneralServer;
 import OnlineServers.RelatedObjects.ChatSendingObject;
+import SimpleChatSystem.ChatingInterface;
 
 /**
  * Uploads pictures and send pictures on behalf
@@ -17,6 +18,12 @@ import OnlineServers.RelatedObjects.ChatSendingObject;
 public class ChattingServer extends GeneralServer<ChatSendingObject> {
 
     public static int ChattingServerPort = 8887;
+    
+    /**
+     *
+     */
+    public ChatingInterface chatMsg1;
+    public ChatingInterface chatMsg2;
 
     public ChattingServer() {
         super.initialize("Chatting Server", ChattingServerPort, super._serverConfig.ServerIP);
