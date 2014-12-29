@@ -5,7 +5,9 @@
  */
 package SimpleChatSystem;
 
+import CurrentDb.CommonData;
 import CurrentDb.Tables.ChatListTable;
+import CurrentDb.Tables.ToWhomAliasWhatTable;
 import CurrentDb.Tables.UserTable;
 import java.awt.Color;
 import java.awt.Component;
@@ -31,18 +33,35 @@ public class JLabelForListCell extends JLabel implements ListCellRenderer {
     @Override
     public Component getListCellRendererComponent(JList list, Object value,
             int index, boolean isSelected, boolean cellHasFocus) {
-        ChatListTable user = (ChatListTable) value;
-        setText(user.AliasAs);
+        ToWhomAliasWhatTable user = (ToWhomAliasWhatTable) value;
+        setText(user.AliasAs + " . Status : " + user.CurrentStatus);
         setIcon(null);
-        if (user.isImageExist(user.RelatedUserID)) {
-            setIcon(new ImageIcon(user.getPathForProfilePic(user.RelatedUserID)));
+        if (user.isImageExist(user.UserID)) {
+            setIcon(new ImageIcon(user.getPathForProfilePic(user.UserID)));
         }
-        if (isSelected) {
-            setBackground(HIGHLIGHT_COLOR);
-            setForeground(Color.white);
+
+        if (user.IsOnline) {
+            if (isSelected) {
+                setBackground(HIGHLIGHT_COLOR);
+                setForeground(Color.white);
+            } else {
+                setBackground(Color.white);
+
+                if (user.CurrentActiveState > 0) {
+                    user.CurrentActiveState -= 1;
+                }
+                setForeground(CommonData.getColorForActiveStatus(index));
+            }
         } else {
-            setBackground(Color.white);
-            setForeground(Color.black);
+            setText("[Offline] " + user.AliasAs);
+            setToolTipText(user.AliasAs + " is offline. Status :" + user.CurrentStatus);
+            if (isSelected) {
+                setBackground(Color.RED);
+                setForeground(Color.white);
+            } else {
+                setBackground(Color.white);
+                setForeground(Color.GRAY);
+            }
         }
         return this;
     }

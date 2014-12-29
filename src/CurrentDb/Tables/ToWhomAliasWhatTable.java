@@ -7,16 +7,15 @@ package CurrentDb.Tables;
 
 import java.util.Date;
 
-
-public class ToWhomAliasWhatTable extends DatabaseTableClass {
+public class ToWhomAliasWhatTable extends ImageLoadRelatedCode {
 
     /**
-     * Search by this.. Related user id
+     * Search by this.. Related user id user against the current user.
      */
     public int UserID;
 
     /**
-     * original userid
+     * original userid, search by this or may be the current user
      */
     public int ToWhomUserID;
     public String Email;
@@ -24,5 +23,9 @@ public class ToWhomAliasWhatTable extends DatabaseTableClass {
 
     public String AliasAs;
     public String CurrentStatus;
+
+    public boolean IsOnline;
+
+    public int CurrentActiveState;
 
 }

@@ -20,11 +20,14 @@ public interface ToWhomAliasWhat {
     /**
      * original userid
      */
-    public String ToWhomUserID= "ToWhomUserID";
-    public String Email= "Email";
-    public String Username= "Username";
+    public String ToWhomUserID = "ToWhomUserID";
+    public String Email = "Email";
+    public String Username = "Username";
 
-    public String AliasAs= "AliasAs";
-    public String CurrentStatus= "CurrentStatus";
+    public String AliasAs = "AliasAs";
+    public String CurrentStatus = "CurrentStatus";
+    public String IsOnline = "IsOnline";
+
+    public String CurrentActiveState = "CurrentActiveState";
 
 }

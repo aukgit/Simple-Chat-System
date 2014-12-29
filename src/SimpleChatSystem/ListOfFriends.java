@@ -7,10 +7,12 @@ package SimpleChatSystem;
 
 //<editor-fold defaultstate="collapsed" desc="Imports">
 import CurrentDb.CommonData;
+import CurrentDb.TableColumns.ToWhomAliasWhat;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableColumns.UserStatus;
 import CurrentDb.TableNames;
 import CurrentDb.Tables.ChatListTable;
+import CurrentDb.Tables.ToWhomAliasWhatTable;
 import CurrentDb.Tables.UserTable;
 import Database.DatabaseQuery;
 import DesignPattern.JFrameInheritable;
@@ -46,21 +48,21 @@ public class ListOfFriends extends JFrameInheritable {
     private static final long serialVersionUID = 1L;
     private boolean _isAdmin;
     private UserTable _user; // load from previous form , startup
-    private List<ChatListTable> allfriendsList;
-    private ArrayList<ChatListTable> onlineFriendsList;
-    private ArrayList<ChatListTable> searchResultOfFriendsList = new ArrayList<>(200);
+    private ArrayList<ToWhomAliasWhatTable> allfriendsList;
+    private ArrayList<ToWhomAliasWhatTable> searchResultOfFriendsList;
     private UserTable userFoundByUserName = new UserTable();
     private UserTable userFoundByEmail = new UserTable();
 
     private DatabaseQuery dbChatLists = new DatabaseQuery(TableNames.CHATLIST);
+    private DatabaseQuery dbToWhom = new DatabaseQuery(TableNames.TO_WHOM_ALIAS_WHAT);
     private DatabaseQuery dbUsers = new DatabaseQuery(TableNames.USER);
-    private ChatListTable chatList = new ChatListTable();
+    private ToWhomAliasWhatTable chatListOfWhom = new ToWhomAliasWhatTable();
     private Picture pictureProcessor = new Picture();
     UserOnline online = new UserOnline();
     String previousSearch = "";
 
     @SuppressWarnings("unchecked")
-    DefaultListModel<ChatListTable> friendListDisplayModel = new DefaultListModel();
+    DefaultListModel<ToWhomAliasWhatTable> friendListDisplayModel = new DefaultListModel();
 
     private PictureUploader pictureRelatedServer = new PictureUploader();
 
@@ -152,39 +154,39 @@ public class ListOfFriends extends JFrameInheritable {
         profilePictureRequestSender = new PictureSender(givenUser, PictureSender.IAskPicture.Profile);
         updateUserProfilePictue();
         this.setTitle(getUser().Name + " : Friends List");
+        makeUserOnline();
 
     }
 
     @SuppressWarnings({"unchecked", "unchecked"})
     public void refreshFriendList() {
 
-        allfriendsList = dbChatLists.getResultsAsORM(chatList);
-        onlineFriendsList = new ArrayList<ChatListTable>(500);
+        dbToWhom.readData(ToWhomAliasWhat.ToWhomUserID, this._user.UserID + "");
+        allfriendsList = dbToWhom.getResultsAsORM(new ToWhomAliasWhatTable());
 
         this.friendsDisplayList.setCellRenderer(new JLabelForListCell());
-        //this.friendsDisplayList.removeAll();
-        ArrayList<ChatListTable> allUsers = dbChatLists.readAndGetResultsAsORM(new ChatListTable());
 
-        allUsers.stream().forEach((sUser) -> {
-            friendListDisplayModel.addElement(sUser);
-        });
+        //this.friendsDisplayList.removeAll();
+        //ArrayList<ChatListTable> allUsers = dbChatLists.readAndGetResultsAsORM(new ChatListTable());
+        if (allfriendsList != null) {
+
+            updateDisplayModelIntheListBox(allfriendsList);
+
+        }
+    }
+
+    /**
+     *
+     * @param list
+     */
+    public void updateDisplayModelIntheListBox(ArrayList<ToWhomAliasWhatTable> list) {
+
+        friendListDisplayModel.removeAllElements();
+        for (ToWhomAliasWhatTable item : list) {
+            friendListDisplayModel.addElement(item);
+        }
         friendsDisplayList.setModel(friendListDisplayModel);
 
-        if (allfriendsList != null) {
-            for (ChatListTable chatListUser : allfriendsList) {
-//            for (UserTable onlineUser : UserOnline._UsersOnline) {
-//                            if(chatListUser.RelatedUserID  )
-//
-//            }
-                boolean isUserOnline = UserOnline._UsersOnline.stream()
-                        .filter(e -> chatListUser.RelatedUserID == e.UserID)
-                        .findAny()
-                        .isPresent();
-                if (isUserOnline) {
-                    onlineFriendsList.add(chatListUser);
-                }
-            }
-        }
     }
 
     public ListOfFriends(UserTable u) {
@@ -198,6 +200,14 @@ public class ListOfFriends extends JFrameInheritable {
 
         this.getDb().getResultsAsObject(_user);
         customInit(_user);
+    }
+
+    public void makeUserOnline() {
+        dbUsers.updateData("IsOnline=1", User.UserID + "=" + this._user.UserID);
+    }
+
+    public void takeOffline() {
+        dbUsers.updateData("IsOnline=0", User.UserID + "=" + this._user.UserID);
     }
 
     /**
@@ -244,6 +254,11 @@ public class ListOfFriends extends JFrameInheritable {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         UsernameLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         UsernameLabel.setText("Username");
@@ -505,6 +520,10 @@ public class ListOfFriends extends JFrameInheritable {
         }
     }//GEN-LAST:event_friendsDisplayListMouseClicked
 
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        takeOffline();
+    }//GEN-LAST:event_formWindowClosing
+
     public boolean showFriendRqstForm() {
         FriendRqsForm friendRqsForm = new FriendRqsForm(getUser(), this);
         if (friendRqsForm.isNoFriendRequestExist() == false) {
@@ -538,14 +557,14 @@ public class ListOfFriends extends JFrameInheritable {
         if (isUserExist(input, userFoundByUserName)) {
             // boolean userExistByUsername = db2.isExist(User.Username, input);
             // user found by user name now check if they are friends
-            if (isCurrentUserIsFriend(userFoundByUserName.UserID, chatList)) {
-                searchResultOfFriendsList.add(chatList);
+            if (isCurrentUserIsFriend(userFoundByUserName.UserID, chatListOfWhom)) {
+                searchResultOfFriendsList.add(chatListOfWhom);
                 return true;// found by username
             }
         } else {
             boolean userExistByEmail = isUserExistByEmail(input, userFoundByEmail);
-            if (userExistByEmail && isCurrentUserIsFriend(userFoundByEmail.UserID, chatList)) {
-                searchResultOfFriendsList.add(chatList);
+            if (userExistByEmail && isCurrentUserIsFriend(userFoundByEmail.UserID, chatListOfWhom)) {
+                searchResultOfFriendsList.add(chatListOfWhom);
                 return true;// found by username
             }
         }
@@ -559,15 +578,12 @@ public class ListOfFriends extends JFrameInheritable {
             String[] list = input.split(" ");
             if (allfriendsList != null && allfriendsList.size() > 0) {
                 for (String item : list) {
-                    List<ChatListTable> foundList = allfriendsList
+                    List<ToWhomAliasWhatTable> foundList = allfriendsList
                             .parallelStream()
                             .filter(f -> f.AliasAs.contains(item))
                             .collect(Collectors.toList());
                     if (foundList != null) {
-                        for (ChatListTable singleItem : foundList) {
-                            searchResultOfFriendsList.add(singleItem);
-
-                        }
+                        searchResultOfFriendsList = (ArrayList<ToWhomAliasWhatTable>) foundList;
                         returnResult = true;
                     }
                 }
@@ -582,7 +598,7 @@ public class ListOfFriends extends JFrameInheritable {
      * @param aliasFound
      * @return
      */
-    public boolean isCurrentUserIsFriend(int userID, ChatListTable aliasFound) {
+    public boolean isCurrentUserIsFriend(int userID, ToWhomAliasWhatTable aliasFound) {
 //        int fields = 2;
 //        String columns[] = new String[fields];
 //        String values[] = new String[fields];
@@ -596,7 +612,7 @@ public class ListOfFriends extends JFrameInheritable {
 
         if (allfriendsList != null && allfriendsList.size() > 0) {
             aliasFound = allfriendsList.stream()
-                    .filter(f -> f.RelatedUserID == userID)
+                    .filter(f -> f.UserID == userID)
                     .findFirst()
                     .get();
         } else {
@@ -619,7 +635,7 @@ public class ListOfFriends extends JFrameInheritable {
             // username
             // or email
             // or by any alias name
-            this.friendsDisplayList.add(new JLabel("Hello"));
+            this.updateDisplayModelIntheListBox(searchResultOfFriendsList);
         } else {
             UserTable foundedUser = null;
 
