@@ -282,48 +282,35 @@ INSERT INTO `userstatus` VALUES ('15', '5', 'alim 5 state', '2014-12-29 15:50:46
 -- View structure for `friendrequestdisplay`
 -- ----------------------------
 DROP VIEW IF EXISTS `friendrequestdisplay`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `friendrequestdisplay` AS select `u1`.`FriendRequestID` AS `FriendRequestID`,`u1`.`SenderUserID` AS `SenderUserID`,`u1`.`ToWhomUserID` AS `ToWhomUserID`,`u1`.`IsAccept` AS `IsAccept`,`u1`.`Message` AS `Message`,`u1`.`IsSeen` AS `IsSeen`,`user`.`Name` AS `SenderName`,`u2`.`Name` AS `ReceiverName` from ((`user` join `friendrequest` `u1` on((`u1`.`SenderUserID` = `user`.`UserID`))) join `user` `u2` on((`u1`.`ToWhomUserID` = `u2`.`UserID`))) ;
+CREATE  VIEW `friendrequestdisplay` AS select `u1`.`FriendRequestID` AS `FriendRequestID`,`u1`.`SenderUserID` AS `SenderUserID`,`u1`.`ToWhomUserID` AS `ToWhomUserID`,`u1`.`IsAccept` AS `IsAccept`,`u1`.`Message` AS `Message`,`u1`.`IsSeen` AS `IsSeen`,`user`.`Name` AS `SenderName`,`u2`.`Name` AS `ReceiverName` from ((`user` join `friendrequest` `u1` on((`u1`.`SenderUserID` = `user`.`UserID`))) join `user` `u2` on((`u1`.`ToWhomUserID` = `u2`.`UserID`))) ;
 
 -- ----------------------------
 -- View structure for `lastchatsessionid`
 -- ----------------------------
 DROP VIEW IF EXISTS `lastchatsessionid`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `lastchatsessionid` AS select `chatsession`.`ChatSessionID` AS `ID` from `chatsession` order by `chatsession`.`ChatSessionID` desc limit 1 ;
+CREATE  VIEW `lastchatsessionid` AS select `chatsession`.`ChatSessionID` AS `ID` from `chatsession` order by `chatsession`.`ChatSessionID` desc limit 1 ;
 
 -- ----------------------------
 -- View structure for `messagerecent`
 -- ----------------------------
 DROP VIEW IF EXISTS `messagerecent`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `messagerecent` AS select `message`.`MessageID` AS `MessageID`,`message`.`SendFromUserID` AS `SendFromUserID`,`message`.`ReceiverUserId` AS `ReceiverUserId`,`message`.`Message` AS `Message`,`message`.`IsFileExit` AS `IsFileExit`,`message`.`IsSeen` AS `IsSeen` from `message` order by `message`.`MessageID` desc ;
+CREATE  VIEW `messagerecent` AS select `message`.`MessageID` AS `MessageID`,`message`.`SendFromUserID` AS `SendFromUserID`,`message`.`ReceiverUserId` AS `ReceiverUserId`,`message`.`Message` AS `Message`,`message`.`IsFileExit` AS `IsFileExit`,`message`.`IsSeen` AS `IsSeen` from `message` order by `message`.`MessageID` desc ;
 
 -- ----------------------------
 -- View structure for `newmessageview`
 -- ----------------------------
 DROP VIEW IF EXISTS `newmessageview`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `newmessageview` AS select count(`message`.`MessageID`) AS `Count`,`message`.`ReceiverUserId` AS `ReceiverUserId`,`message`.`SendFromUserID` AS `SendFromUserID` from `message` where (`message`.`IsSeen` = 0) group by `message`.`ReceiverUserId`,`message`.`SendFromUserID` ;
+CREATE  VIEW `newmessageview` AS select count(`message`.`MessageID`) AS `Count`,`message`.`ReceiverUserId` AS `ReceiverUserId`,`message`.`SendFromUserID` AS `SendFromUserID` from `message` where (`message`.`IsSeen` = 0) group by `message`.`ReceiverUserId`,`message`.`SendFromUserID` ;
 
 -- ----------------------------
 -- View structure for `towhomaliaswhat`
 -- ----------------------------
 DROP VIEW IF EXISTS `towhomaliaswhat`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `towhomaliaswhat` AS select `user`.`UserID` AS `UserID`,`chatlist`.`OriginalUserID` AS `ToWhomUserID`,`user`.`Username` AS `Username`,`user`.`Email` AS `Email`,`chatlist`.`AliasAs` AS `AliasAs`,`user`.`CurrentStatus` AS `CurrentStatus`,`user`.`IsOnline` AS `IsOnline`,`user`.`CurrentActiveState` AS `CurrentActiveState` from (`chatlist` left join `user` on((`user`.`UserID` = `chatlist`.`RelatedUserID`))) ;
+CREATE  VIEW `towhomaliaswhat` AS select `user`.`UserID` AS `UserID`,`chatlist`.`OriginalUserID` AS `ToWhomUserID`,`user`.`Username` AS `Username`,`user`.`Email` AS `Email`,`chatlist`.`AliasAs` AS `AliasAs`,`user`.`CurrentStatus` AS `CurrentStatus`,`user`.`IsOnline` AS `IsOnline`,`user`.`CurrentActiveState` AS `CurrentActiveState` from (`chatlist` left join `user` on((`user`.`UserID` = `chatlist`.`RelatedUserID`))) ;
 
 -- ----------------------------
 -- View structure for `userrecentstatus`
 -- ----------------------------
 DROP VIEW IF EXISTS `userrecentstatus`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `userrecentstatus` AS select `userstatus`.`UserStatusID` AS `UserStatusID`,`userstatus`.`UserID` AS `UserID`,`userstatus`.`Status` AS `Status`,`userstatus`.`Dated` AS `Dated` from `userstatus` order by `userstatus`.`UserStatusID` desc ;
+CREATE  VIEW `userrecentstatus` AS select `userstatus`.`UserStatusID` AS `UserStatusID`,`userstatus`.`UserID` AS `UserID`,`userstatus`.`Status` AS `Status`,`userstatus`.`Dated` AS `Dated` from `userstatus` order by `userstatus`.`UserStatusID` desc ;
 
--- ----------------------------
--- Procedure structure for `EmptyUserTable`
--- ----------------------------
-DROP PROCEDURE IF EXISTS `EmptyUserTable`;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `EmptyUserTable`()
-BEGIN
-	#Routine body goes here...
-	DELETE from `user`;
-	TRUNCATE TABLE `user`;
-END
-;;
-DELIMITER ;

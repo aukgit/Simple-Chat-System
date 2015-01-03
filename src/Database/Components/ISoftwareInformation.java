@@ -24,7 +24,7 @@ public interface ISoftwareInformation {
     public String DEVELOPER = "Alim Ul Karim";
     public String WEBSITE = "NONE";
     public String EMAIL = "auk.junk@live.com";
-    public String DATABASE_USER = "admin";
+    public String DATABASE_USER = "root";
     public String DATABASE_USER_PASSWORD = "";
 
     //public String DatabaseURL = "jdbc:mysql://localhost:3306/chatdatabase?zeroDateTimeBehavior=convertToNull";

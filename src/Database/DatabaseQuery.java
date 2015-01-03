@@ -191,7 +191,13 @@ public final class DatabaseQuery extends DbInitalizer {
                 url = AppConfig.getConnectionString();
             }
             this.url = url;
+            if(password == null){
+                password = DATABASE_USER_PASSWORD;
+            }
             this.password = password;
+            if(user == null){
+                user = DATABASE_USER;
+            }
             this.user = user;
             cnn = DriverManager.getConnection(this.url, this.user, this.password);
             stmt = cnn.createStatement();
