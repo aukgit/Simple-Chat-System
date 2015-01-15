@@ -79,7 +79,7 @@ public final class DatabaseQuery extends DbInitalizer {
     private String selectSQL, updateSQL, deleteSQL, createSQL;
     public String LastSQL; //last executed SQL Query
     private static final String SQL_COUNT = "SELECT Count(*) AS COUNT FROM ";
-    private String _showDbColumnsSQL = "SHOW COLUMNS FROM ";
+    private static final String SHOW_DB_COLUM_SQL = "SHOW COLUMNS FROM ";
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Table">
@@ -1793,7 +1793,7 @@ public final class DatabaseQuery extends DbInitalizer {
 
             String names = "";
             //int i = 1;
-            String query = _showDbColumnsSQL + getTableName();
+            String query = SHOW_DB_COLUM_SQL + getTableName();
 
             try {
                 ResultSet rs2 = tempStatement.executeQuery(query);
@@ -1820,7 +1820,7 @@ public final class DatabaseQuery extends DbInitalizer {
     public String[] getColumnsNames(boolean forceLoad) {
         String names = "";
         //int i = 1;
-        String query = _showDbColumnsSQL + getTableName();
+        String query = SHOW_DB_COLUM_SQL + getTableName();
 
         try {
             ResultSet rs2 = tempStatement.executeQuery(query);
