@@ -5,6 +5,8 @@
  */
 package EntityClass;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -15,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -32,6 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Activestate.findByColorGreen", query = "SELECT a FROM Activestate a WHERE a.colorGreen = :colorGreen"),
     @NamedQuery(name = "Activestate.findByColorBlue", query = "SELECT a FROM Activestate a WHERE a.colorBlue = :colorBlue")})
 public class Activestate implements Serializable {
+    @Transient
+    private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -71,7 +76,9 @@ public class Activestate implements Serializable {
     }
 
     public void setActiveStateID(Short activeStateID) {
+        Short oldActiveStateID = this.activeStateID;
         this.activeStateID = activeStateID;
+        changeSupport.firePropertyChange("activeStateID", oldActiveStateID, activeStateID);
     }
 
     public String getState() {
@@ -79,7 +86,9 @@ public class Activestate implements Serializable {
     }
 
     public void setState(String state) {
+        String oldState = this.state;
         this.state = state;
+        changeSupport.firePropertyChange("state", oldState, state);
     }
 
     public short getColorRed() {
@@ -87,7 +96,9 @@ public class Activestate implements Serializable {
     }
 
     public void setColorRed(short colorRed) {
+        short oldColorRed = this.colorRed;
         this.colorRed = colorRed;
+        changeSupport.firePropertyChange("colorRed", oldColorRed, colorRed);
     }
 
     public short getColorGreen() {
@@ -95,7 +106,9 @@ public class Activestate implements Serializable {
     }
 
     public void setColorGreen(short colorGreen) {
+        short oldColorGreen = this.colorGreen;
         this.colorGreen = colorGreen;
+        changeSupport.firePropertyChange("colorGreen", oldColorGreen, colorGreen);
     }
 
     public short getColorBlue() {
@@ -103,7 +116,9 @@ public class Activestate implements Serializable {
     }
 
     public void setColorBlue(short colorBlue) {
+        short oldColorBlue = this.colorBlue;
         this.colorBlue = colorBlue;
+        changeSupport.firePropertyChange("colorBlue", oldColorBlue, colorBlue);
     }
 
     @Override
@@ -129,6 +144,14 @@ public class Activestate implements Serializable {
     @Override
     public String toString() {
         return "EntityClass.Activestate[ activeStateID=" + activeStateID + " ]";
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.removePropertyChangeListener(listener);
     }
     
 }
