@@ -16,5 +16,21 @@ If you are looking for an open source java base chat client, look no further. Yo
 - Connection string(if needed to fix): Open "\src\Database\Components\ISoftwareInformation.java" , here replace the connection string with your database connection string. Easy way to get the connection string is to create a 'Master Form' with database using netbeans. Mail me if you are stuck.
 
 
+### Credentials
+- User name  : "alim"
+- Password : "test123"
+
+All the user names has the same password "test123"
+
+#### Usernames list
+- alim2
+- alim3
+- alim4
+- alim5
+- alim6
+- alim7
+- alim8 
+
+
   
 

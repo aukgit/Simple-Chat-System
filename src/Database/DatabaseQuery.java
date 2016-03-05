@@ -186,19 +186,20 @@ public final class DatabaseQuery extends DbInitalizer {
         this.selectSQL = "";
         dbAttr = dbAttribute;
         this.simpleDateFormatter = new java.text.SimpleDateFormat(dbAttr.getDefaultDateFormat());
+        if (url == null) {
+            url = AppConfig.getConnectionString();
+        }
+        this.url = url;
+        if (password == null) {
+            password = DATABASE_USER_PASSWORD;
+        }
+        this.password = password;
+        if (user == null) {
+            user = DATABASE_USER;
+        }
+        this.user = user;
         try {
-            if (url == null) {
-                url = AppConfig.getConnectionString();
-            }
-            this.url = url;
-            if(password == null){
-                password = DATABASE_USER_PASSWORD;
-            }
-            this.password = password;
-            if(user == null){
-                user = DATABASE_USER;
-            }
-            this.user = user;
+
             cnn = DriverManager.getConnection(this.url, this.user, this.password);
             stmt = cnn.createStatement();
             tempStatement = cnn.createStatement();
@@ -893,7 +894,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
 // </editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="Setting and getting LLL Limits">
+    //<editor-fold defaultstate="collapsed" desc="Setting and getting Limits">
     /**
      * start and end only possible for mysql. end only possible for microsoft
      * sql server, defining start point is not possible.
@@ -970,12 +971,10 @@ public final class DatabaseQuery extends DbInitalizer {
             if (q.equals("") == false) {
                 if (getJoiningArray() == null) {
                     q += " AND ";
+                } else if ((getJoiningArray().size() - 1) >= i) {
+                    q += " " + getJoiningArray().get(i) + " ";
                 } else {
-                    if ((getJoiningArray().size() - 1) >= i) {
-                        q += " " + getJoiningArray().get(i) + " ";
-                    } else {
-                        q += " AND ";
-                    }
+                    q += " AND ";
                 }
 
             }
@@ -1488,12 +1487,10 @@ public final class DatabaseQuery extends DbInitalizer {
             if (q.equals("") == false) {
                 if (getJoiningArray() == null) {
                     q += " AND ";
+                } else if ((getJoiningArray().size() - 1) >= i) {
+                    q += " " + getJoiningArray().get(i) + " ";
                 } else {
-                    if ((getJoiningArray().size() - 1) >= i) {
-                        q += " " + getJoiningArray().get(i) + " ";
-                    } else {
-                        q += " AND ";
-                    }
+                    q += " AND ";
                 }
 
             }
@@ -1729,7 +1726,7 @@ public final class DatabaseQuery extends DbInitalizer {
         }
         return "";
     }
-   //</editor-fold>
+    //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Others + Showing Data in Console">
     public void showData() {
@@ -2767,6 +2764,7 @@ public final class DatabaseQuery extends DbInitalizer {
     }
 
 //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Query Limit getter setter">
     /**
      * @return the queryStartLimit
      */
@@ -2794,5 +2792,6 @@ public final class DatabaseQuery extends DbInitalizer {
     public void setQueryEndLimit(int queryEndLimit) {
         this.queryEndLimit = queryEndLimit;
     }
+//</editor-fold>
 
 }

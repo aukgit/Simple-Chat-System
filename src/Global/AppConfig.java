@@ -16,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Works with application configuration.
  * @author Alim
  */
 public class AppConfig {
