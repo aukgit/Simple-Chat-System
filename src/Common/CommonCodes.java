@@ -19,10 +19,10 @@ import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
 /**
- *
+ * Contains codes for getting all the text boxes, display forms in direction
  * @author Alim
  */
-public class Codes {
+public class CommonCodes {
 
     private static final int defaultListCreatingNumber = 50;
 
@@ -110,7 +110,7 @@ public class Codes {
 //    public static void main(String args[]) {
 //        
 //        UserTable _user = new UserTable();
-//        ArrayList<String> fs = Codes.getAllFieldNames(_user.getClass());
+//        ArrayList<String> fs = CommonCodes.getAllFieldNames(_user.getClass());
 //        for (String f : fs) {
 //            Console.writeLine(f);
 //        }

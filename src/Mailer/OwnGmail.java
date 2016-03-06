@@ -6,10 +6,11 @@
 package Mailer;
 
 /**
- *
+ * Mailer with added configuration to send email.
+ * Mail will read configuration from "Mail.config" json file 
  * @author Alim
  */
-public final class OwnGmail extends Gmail {
+public final class OwnGmail extends MailerConfigInheritable {
 
     public OwnGmail() {
         super("testmailer.why@gmail.com", "asdf1234@");

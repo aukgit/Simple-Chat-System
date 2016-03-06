@@ -16,7 +16,7 @@
 package Database;
 
 //<editor-fold defaultstate="collapsed" desc="imports">
-import Common.Codes;
+import Common.CommonCodes;
 import Database.Attributes.DbAttribute;
 import Database.Attributes.*;
 import Database.Components.DbInitalizer;
@@ -1900,7 +1900,7 @@ public final class DatabaseQuery extends DbInitalizer {
      */
     public <T> void getResultsAsObject(T classObject, int row) {
 
-        Field[] fieldsInClass = Codes.getAllFields(classObject.getClass());
+        Field[] fieldsInClass = CommonCodes.getAllFields(classObject.getClass());
         List<String> Columns = Arrays.asList(getColumnsNames());
         moveToRow(row);
         try {
@@ -2007,7 +2007,7 @@ public final class DatabaseQuery extends DbInitalizer {
     public <T> ArrayList<T> getResultsAsORM(ResultSet result, T classObject) {
         if (result != null) {
             int rows = rowCount(result);
-            Field[] fieldsInClass = Codes.getAllFields(classObject.getClass());
+            Field[] fieldsInClass = CommonCodes.getAllFields(classObject.getClass());
             ArrayList<Field> availableFieldsToWorkWith = getAvailableColumnsList(fieldsInClass);
             ArrayList<T> returnList = new ArrayList<>(rows + 40);
 

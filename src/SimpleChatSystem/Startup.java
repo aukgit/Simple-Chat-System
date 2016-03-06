@@ -6,7 +6,7 @@
 package SimpleChatSystem;
 
 import OnlineServers.Inheritable.InheritableServer;
-import Common.Codes;
+import Common.CommonCodes;
 import Cryptography.Hasher;
 import CurrentDb.TableColumns.User;
 import CurrentDb.TableNames;
@@ -258,7 +258,7 @@ public class Startup extends JFrameInheritable {
         this.getDb().getResultsAsObject(_user);
 
         ListOfFriends listOfFriendsForm = new ListOfFriends(_user);
-        Codes.displayRightMiddle(listOfFriendsForm);
+        CommonCodes.displayRightMiddle(listOfFriendsForm);
         loadNewForm(listOfFriendsForm);
 
         this.hide();

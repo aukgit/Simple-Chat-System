@@ -127,11 +127,5 @@ public class ArrayMore {
             c.setSelectedIndex(count);
         }
     }
-//    public static void main(String args[]) {
-//        ArrayMore arrtest = new ArrayMore();
-//        String s[] = {"Dello", "mme", "jdwgh", "wdwq"};
-//        int k[] = {0, 2};
-//        s = arrtest.remove(s, k);
-//        arrtest.readShow(s);
-//    }
+
 }
