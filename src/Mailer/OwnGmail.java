@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package Mailer;
-
 /**
  * Mailer with added configuration to send email.
  * Mail will read configuration from "Mail.config" json file 
@@ -13,7 +12,7 @@ package Mailer;
 public final class OwnGmail extends MailerConfigInheritable {
 
     public OwnGmail() {
-        super("testmailer.why@gmail.com", "asdf1234@");
+        //super("testmailer.why@gmail.com", "asdf1234@");
     }
 
 }
